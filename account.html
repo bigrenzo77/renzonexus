@@ -1,0 +1,633 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#08111f">
+<meta name="description" content="Manage your RenzoNexus account and apply to become a seller or event organiser.">
+<title>My Account | RenzoNexus</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<style>
+:root {
+  --bg: #080d1b;
+  --panel: #10182b;
+  --panel2: #151f35;
+  --text: #f4f7ff;
+  --muted: #a6b3cb;
+  --blue: #66a6ff;
+  --cyan: #65e6ff;
+  --purple: #9a83ff;
+  --border: rgba(255,255,255,.10);
+  --success: #62e6a7;
+  --danger: #ff8585;
+}
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  background:
+    radial-gradient(circle at 10% 0%, rgba(102,166,255,.14), transparent 32%),
+    radial-gradient(circle at 100% 15%, rgba(154,131,255,.13), transparent 32%),
+    var(--bg);
+  color: var(--text);
+  font-family: 'DM Sans', sans-serif;
+  min-height: 100vh;
+}
+header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 20px 6%;
+  border-bottom: 1px solid var(--border);
+}
+.brand {
+  font: 700 23px 'Space Grotesk', sans-serif;
+  letter-spacing: -.8px;
+}
+.brand span { color: var(--cyan); }
+header a, .back {
+  color: var(--muted);
+  text-decoration: none;
+  font-size: 14px;
+}
+header a:hover, .back:hover { color: white; }
+main {
+  width: min(980px, 92%);
+  margin: 45px auto 70px;
+}
+.eyebrow {
+  color: var(--cyan);
+  text-transform: uppercase;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 2px;
+}
+h1, h2, h3 { font-family: 'Space Grotesk', sans-serif; }
+h1 {
+  font-size: clamp(31px, 6vw, 49px);
+  line-height: 1.1;
+  margin: 12px 0;
+}
+h1 span {
+  background: linear-gradient(90deg, var(--cyan), var(--blue), var(--purple));
+  -webkit-background-clip: text;
+  color: transparent;
+}
+.intro {
+  color: var(--muted);
+  line-height: 1.8;
+  max-width: 670px;
+}
+.grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 20px;
+  margin-top: 28px;
+}
+.card {
+  background: linear-gradient(145deg, rgba(21,31,53,.96), rgba(12,19,35,.96));
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  padding: 25px;
+  box-shadow: 0 18px 55px rgba(0,0,0,.14);
+}
+.card h2 { margin: 0 0 8px; font-size: 22px; }
+.card p { color: var(--muted); line-height: 1.65; font-size: 14px; }
+.icon { font-size: 32px; margin-bottom: 13px; }
+label {
+  display: block;
+  font-size: 13px;
+  font-weight: 600;
+  margin: 16px 0 7px;
+}
+input, select, textarea {
+  width: 100%;
+  border: 1px solid var(--border);
+  background: #080f20;
+  color: white;
+  border-radius: 10px;
+  padding: 13px 14px;
+  font: inherit;
+  outline: none;
+}
+input:focus, select:focus, textarea:focus {
+  border-color: var(--blue);
+}
+textarea { min-height: 95px; resize: vertical; }
+button {
+  border: 0;
+  border-radius: 10px;
+  padding: 13px 17px;
+  background: linear-gradient(100deg, var(--blue), var(--purple));
+  color: #07101f;
+  font: 700 14px 'DM Sans', sans-serif;
+  cursor: pointer;
+}
+button:disabled { opacity: .55; cursor: wait; }
+button.secondary {
+  color: var(--text);
+  background: var(--panel2);
+  border: 1px solid var(--border);
+}
+button.full { width: 100%; margin-top: 18px; }
+.actions {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-top: 14px;
+}
+.status {
+  display: none;
+  padding: 13px 15px;
+  margin-top: 16px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  font-size: 13px;
+  line-height: 1.6;
+  overflow-wrap: anywhere;
+}
+.status.show { display: block; }
+.status.good { color: var(--success); }
+.status.bad { color: var(--danger); }
+.status.info { color: var(--cyan); }
+.small { color: var(--muted); font-size: 12px; line-height: 1.7; }
+.accountbar {
+  display: none;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin: 24px 0 0;
+  padding: 15px 18px;
+  border: 1px solid var(--border);
+  border-radius: 13px;
+  background: rgba(16,24,43,.85);
+}
+.accountbar.show { display: flex; }
+.account-email { font-size: 13px; overflow-wrap: anywhere; }
+.section { margin-top: 28px; }
+.hidden { display: none !important; }
+.application-status {
+  border-top: 1px solid var(--border);
+  margin-top: 18px;
+  padding-top: 14px;
+}
+.badge {
+  display: inline-block;
+  border-radius: 30px;
+  padding: 5px 10px;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: .7px;
+  background: rgba(102,166,255,.12);
+  color: var(--cyan);
+}
+footer {
+  border-top: 1px solid var(--border);
+  padding: 23px;
+  text-align: center;
+  color: var(--muted);
+  font-size: 12px;
+}
+@media(max-width:700px) {
+  .grid { grid-template-columns: 1fr; }
+  main { margin-top: 30px; }
+  .card { padding: 21px; }
+}
+</style>
+</head>
+
+<body>
+<header>
+  <div class="brand">Renzo<span>Nexus</span></div>
+  <a href="index.html">← Back to homepage</a>
+</header>
+
+<main>
+  <div class="eyebrow">Your global marketplace account</div>
+  <h1>One account.<br><span>Endless possibilities.</span></h1>
+  <p class="intro">
+    Shop products, discover events, apply to sell your products, or become an
+    event organiser. Start with one account and unlock more opportunities as
+    your RenzoNexus journey grows.
+  </p>
+
+  <div id="accountBar" class="accountbar">
+    <div>
+      <div class="small">SIGNED IN AS</div>
+      <div id="signedInEmail" class="account-email"></div>
+    </div>
+    <button id="signOutBtn" class="secondary" type="button">Sign out</button>
+  </div>
+
+  <div class="grid" id="authGrid">
+    <section class="card">
+      <div class="icon">🌍</div>
+      <h2>Welcome back</h2>
+      <p>Sign in to access your account and manage your applications.</p>
+      <form id="loginForm">
+        <label for="loginEmail">Email address</label>
+        <input id="loginEmail" type="email" autocomplete="email" required>
+        <label for="loginPassword">Password</label>
+        <input id="loginPassword" type="password" autocomplete="current-password" required>
+        <button class="full" type="submit">Sign in</button>
+      </form>
+    </section>
+
+    <section class="card">
+      <div class="icon">✨</div>
+      <h2>Create an account</h2>
+      <p>New to RenzoNexus? Create one account for shopping, selling, and organising.</p>
+      <form id="signupForm">
+        <label for="signupName">Full name or display name</label>
+        <input id="signupName" maxlength="100" autocomplete="name" required>
+        <label for="signupEmail">Email address</label>
+        <input id="signupEmail" type="email" autocomplete="email" required>
+        <label for="signupPassword">Create password</label>
+        <input id="signupPassword" type="password" minlength="8" autocomplete="new-password" required>
+        <p class="small">Use at least 8 characters. Never share your password with anyone.</p>
+        <button class="full" type="submit">Create my account</button>
+      </form>
+    </section>
+  </div>
+
+  <div id="globalMessage" class="status" role="status" aria-live="polite"></div>
+
+  <section id="memberArea" class="hidden">
+    <div class="section">
+      <div class="eyebrow">Grow with RenzoNexus</div>
+      <h2>Choose your next opportunity</h2>
+      <p class="intro">You can apply for one or both roles using this account.</p>
+    </div>
+
+    <div class="grid">
+      <section class="card">
+        <div class="icon">🛍️</div>
+        <h2>Become a seller</h2>
+        <p>Apply to sell products on the RenzoNexus marketplace.</p>
+        <form id="sellerForm">
+          <label for="businessName">Business or shop name</label>
+          <input id="businessName" maxlength="150" required>
+          <label for="businessType">Business type</label>
+          <select id="businessType" required>
+            <option value="">Select a business type</option>
+            <option>Clothing and fashion</option>
+            <option>Electronics</option>
+            <option>Beauty and personal care</option>
+            <option>Home and lifestyle</option>
+            <option>Food and beverages</option>
+            <option>Digital products</option>
+            <option>Other</option>
+          </select>
+          <label for="sellerCountry">Country</label>
+          <input id="sellerCountry" maxlength="100" placeholder="e.g. Nigeria" required>
+          <label for="sellerDescription">Tell us about your business</label>
+          <textarea id="sellerDescription" maxlength="2000" required></textarea>
+          <button class="full" type="submit">Submit seller application</button>
+        </form>
+        <div id="sellerStatus" class="application-status small">No application loaded yet.</div>
+      </section>
+
+      <section class="card">
+        <div class="icon">🎤</div>
+        <h2>Become an organiser</h2>
+        <p>Apply to host concerts, festivals, conferences, tours, and other events.</p>
+        <form id="organiserForm">
+          <label for="organisationName">Organisation or event brand name</label>
+          <input id="organisationName" maxlength="150" required>
+          <label for="organiserType">Organiser type</label>
+          <select id="organiserType" required>
+            <option value="">Select an organiser type</option>
+            <option>Concert and music events</option>
+            <option>Festival organiser</option>
+            <option>Conference and business events</option>
+            <option>Sports events</option>
+            <option>Community events</option>
+            <option>Independent event organiser</option>
+            <option>Other</option>
+          </select>
+          <label for="organiserCountry">Country</label>
+          <input id="organiserCountry" maxlength="100" placeholder="e.g. Nigeria" required>
+          <label for="organiserDescription">Tell us about your events</label>
+          <textarea id="organiserDescription" maxlength="2000" required></textarea>
+          <button class="full" type="submit">Submit organiser application</button>
+        </form>
+        <div id="organiserStatus" class="application-status small">No application loaded yet.</div>
+      </section>
+    </div>
+  </section>
+</main>
+
+<footer>© <span id="year"></span> RenzoNexus · One World. Endless Possibilities.</footer>
+
+<script>
+(() => {
+  "use strict";
+
+  // RenzoNexus public Supabase project settings.
+  // The publishable key is intended for browser use.
+  // Never place a service-role key or payment secret in this file.
+  const SUPABASE_URL = "https://anclwctvvillzpatigbr.supabase.co";
+  const SUPABASE_KEY = "sb_publishable_t9TJatPdXprnb5gkrkINtQ_GColh4fM";
+
+  const client = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+  const $ = id => document.getElementById(id);
+  let currentUser = null;
+
+  $("year").textContent = new Date().getFullYear();
+
+  function message(text, type = "info") {
+    const box = $("globalMessage");
+    box.textContent = text;
+    box.className = "status show " + type;
+  }
+
+  function clearMessage() {
+    $("globalMessage").className = "status";
+    $("globalMessage").textContent = "";
+  }
+
+  function setBusy(form, busy) {
+    const button = form.querySelector('button[type="submit"]');
+    if (!button) return;
+    if (busy) {
+      button.dataset.originalText = button.textContent;
+      button.disabled = true;
+      button.textContent = "Please wait…";
+    } else {
+      button.disabled = false;
+      button.textContent = button.dataset.originalText || "Submit";
+    }
+  }
+
+  function safeError(error) {
+    const text = error?.message || "Something went wrong. Please try again.";
+    return text.length > 350 ? text.slice(0, 350) : text;
+  }
+
+  async function createProfile(user, displayName) {
+    const { error } = await client.from("rn_profiles").upsert({
+      user_id: user.id,
+      display_name: displayName || user.user_metadata?.display_name || "",
+      updated_at: new Date().toISOString()
+    }, { onConflict: "user_id" });
+
+    if (error) throw error;
+  }
+
+  async function refreshApplications() {
+    if (!currentUser) return;
+
+    const [sellerResult, organiserResult] = await Promise.all([
+      client.from("rn_seller_applications")
+        .select("business_name,status,admin_note,submitted_at")
+        .eq("user_id", currentUser.id)
+        .maybeSingle(),
+      client.from("rn_organiser_applications")
+        .select("organisation_name,status,admin_note,submitted_at")
+        .eq("user_id", currentUser.id)
+        .maybeSingle()
+    ]);
+
+    renderApplicationStatus(
+      "sellerStatus",
+      sellerResult.data,
+      sellerResult.error,
+      "business_name"
+    );
+
+    renderApplicationStatus(
+      "organiserStatus",
+      organiserResult.data,
+      organiserResult.error,
+      "organisation_name"
+    );
+
+    if (sellerResult.error || organiserResult.error) {
+      message(
+        "Your account is signed in, but application status could not be fully loaded. " +
+        "Please check the database permissions.",
+        "bad"
+      );
+    }
+  }
+
+  function renderApplicationStatus(elementId, data, error, nameField) {
+    const box = $(elementId);
+    box.replaceChildren();
+
+    if (error) {
+      box.textContent = "Unable to load status right now.";
+      return;
+    }
+
+    if (!data) {
+      box.textContent = "No application submitted yet.";
+      return;
+    }
+
+    const name = document.createElement("div");
+    name.textContent = data[nameField] || "Application";
+    name.style.fontWeight = "700";
+
+    const status = document.createElement("span");
+    status.className = "badge";
+    status.textContent = data.status || "pending";
+
+    const note = document.createElement("p");
+    note.textContent = data.admin_note
+      ? "Admin note: " + data.admin_note
+      : "We'll update your application status after review.";
+
+    box.append(name, document.createElement("br"), status, note);
+  }
+
+  async function updateAccountUI(user) {
+    currentUser = user || null;
+    clearMessage();
+
+    const loggedIn = !!currentUser;
+    $("authGrid").classList.toggle("hidden", loggedIn);
+    $("memberArea").classList.toggle("hidden", !loggedIn);
+    $("accountBar").classList.toggle("show", loggedIn);
+
+    if (!loggedIn) {
+      $("signedInEmail").textContent = "";
+      $("sellerStatus").textContent = "Sign in to view your application status.";
+      $("organiserStatus").textContent = "Sign in to view your application status.";
+      return;
+    }
+
+    $("signedInEmail").textContent = currentUser.email || "";
+    await refreshApplications();
+  }
+
+  $("loginForm").addEventListener("submit", async event => {
+    event.preventDefault();
+    const form = event.currentTarget;
+    setBusy(form, true);
+    clearMessage();
+
+    try {
+      const { data, error } = await client.auth.signInWithPassword({
+        email: $("loginEmail").value.trim(),
+        password: $("loginPassword").value
+      });
+
+      if (error) throw error;
+
+      await updateAccountUI(data.user);
+      message("You're signed in. Welcome to RenzoNexus!", "good");
+    } catch (error) {
+      message(safeError(error), "bad");
+    } finally {
+      setBusy(form, false);
+    }
+  });
+
+  $("signupForm").addEventListener("submit", async event => {
+    event.preventDefault();
+    const form = event.currentTarget;
+    setBusy(form, true);
+    clearMessage();
+
+    const name = $("signupName").value.trim();
+    const email = $("signupEmail").value.trim();
+    const password = $("signupPassword").value;
+
+    try {
+      const { data, error } = await client.auth.signUp({
+        email,
+        password,
+        options: {
+          data: { display_name: name },
+          emailRedirectTo: window.location.origin +
+            window.location.pathname
+        }
+      });
+
+      if (error) throw error;
+
+      if (data.user && data.session) {
+        await createProfile(data.user, name);
+        await updateAccountUI(data.user);
+        message("Account created successfully. Welcome to RenzoNexus!", "good");
+      } else {
+        message(
+          "Registration started! Check your email for the confirmation link. " +
+          "After confirming, return here and sign in.",
+          "good"
+        );
+      }
+    } catch (error) {
+      message(safeError(error), "bad");
+    } finally {
+      setBusy(form, false);
+    }
+  });
+
+  async function submitApplication(form, table, fields, statusName) {
+    if (!currentUser) {
+      message("Please sign in before submitting an application.", "bad");
+      return;
+    }
+
+    setBusy(form, true);
+    clearMessage();
+
+    try {
+      const payload = {
+        user_id: currentUser.id,
+        ...fields,
+        status: "pending"
+      };
+
+      const { error } = await client.from(table).insert(payload);
+
+      if (error) {
+        if (error.code === "23505") {
+          throw new Error(
+            "You already have an application. Check the status displayed below."
+          );
+        }
+        throw error;
+      }
+
+      message(
+        "Your " + statusName +
+        " application has been submitted and is awaiting review.",
+        "good"
+      );
+
+      form.reset();
+      await refreshApplications();
+    } catch (error) {
+      message(safeError(error), "bad");
+    } finally {
+      setBusy(form, false);
+    }
+  }
+
+  $("sellerForm").addEventListener("submit", event => {
+    event.preventDefault();
+    submitApplication(
+      event.currentTarget,
+      "rn_seller_applications",
+      {
+        business_name: $("businessName").value.trim(),
+        business_type: $("businessType").value,
+        country: $("sellerCountry").value.trim(),
+        description: $("sellerDescription").value.trim()
+      },
+      "seller"
+    );
+  });
+
+  $("organiserForm").addEventListener("submit", event => {
+    event.preventDefault();
+    submitApplication(
+      event.currentTarget,
+      "rn_organiser_applications",
+      {
+        organisation_name: $("organisationName").value.trim(),
+        organiser_type: $("organiserType").value,
+        country: $("organiserCountry").value.trim(),
+        description: $("organiserDescription").value.trim()
+      },
+      "organiser"
+    );
+  });
+
+  $("signOutBtn").addEventListener("click", async () => {
+    const { error } = await client.auth.signOut();
+    if (error) {
+      message(safeError(error), "bad");
+      return;
+    }
+    await updateAccountUI(null);
+    message("You've signed out successfully.", "good");
+  });
+
+  client.auth.onAuthStateChange((event, session) => {
+    if (event === "SIGNED_IN" || event === "SIGNED_OUT" || event === "INITIAL_SESSION") {
+      updateAccountUI(session?.user || null);
+    }
+  });
+
+  client.auth.getSession().then(({ data, error }) => {
+    if (error) {
+      message(safeError(error), "bad");
+      return;
+    }
+    updateAccountUI(data.session?.user || null);
+  });
+})();
+</script>
+</body>
+</html>
