@@ -1,657 +1,435 @@
-<!DOCTYPE html><html lang="en">
+<!DOCTYPE html>
+<html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="theme-color" content="#08111f">
-  <meta name="description" content="RenzoNexus — One World. Endless Possibilities. Discover products, events, and opportunities.">
-  <title>RenzoNexus — One World. Endless Possibilities.</title>  <style>
-    :root {
-      --bg: #08111f;
-      --panel: #101d30;
-      --panel2: #152740;
-      --text: #f4f7fb;
-      --muted: #a9b8ca;
-      --cyan: #58d9f4;
-      --blue: #648bff;
-      --gold: #f1c86b;
-      --green: #65dfa4;
-      --red: #ff8d98;
-      --border: rgba(255,255,255,.12);
-    }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#08111f">
+<meta name="description" content="RenzoNexus — One World. Endless Possibilities.">
+<title>RenzoNexus — One World. Endless Possibilities.</title>
 
-    * { box-sizing: border-box; }
+<style>
+:root {
+  --bg:#08111f;
+  --panel:#101d30;
+  --panel2:#152740;
+  --text:#f4f7fb;
+  --muted:#a9b8ca;
+  --cyan:#58d9f4;
+  --blue:#648bff;
+  --gold:#f1c86b;
+  --green:#65dfa4;
+  --red:#ff8d98;
+  --border:rgba(255,255,255,.12);
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  margin:0;color:var(--text);
+  background:radial-gradient(circle at 85% 0%,rgba(58,114,220,.18),transparent 28rem),var(--bg);
+  font-family:Arial,Helvetica,sans-serif;line-height:1.6
+}
+a{color:inherit;text-decoration:none}
+button,input,select{font:inherit}
+button{cursor:pointer}
+.container{width:min(1120px,calc(100% - 32px));margin:auto}
+header{
+  position:sticky;top:0;z-index:10;
+  background:rgba(8,17,31,.95);
+  border-bottom:1px solid var(--border);
+  backdrop-filter:blur(15px)
+}
+.nav{
+  min-height:76px;display:flex;align-items:center;
+  justify-content:space-between;gap:18px;flex-wrap:wrap;padding:12px 0
+}
+.brand{display:flex;align-items:center;gap:10px;font-size:20px;font-weight:900}
+.brand-icon{
+  width:43px;height:43px;display:grid;place-items:center;
+  border-radius:14px;color:#07111e;
+  background:linear-gradient(135deg,var(--cyan),var(--blue))
+}
+.brand small{display:block;color:var(--muted);font-size:9px;letter-spacing:1.5px}
+nav{display:flex;align-items:center;flex-wrap:wrap;gap:5px}
+nav a{color:var(--muted);padding:8px 10px;border-radius:9px;font-size:13px;font-weight:bold}
+nav a:hover{color:white;background:rgba(255,255,255,.07)}
+.btn{
+  display:inline-flex;align-items:center;justify-content:center;
+  padding:11px 16px;border:0;border-radius:11px;
+  color:#06121f;background:linear-gradient(135deg,var(--cyan),#a0eafa);
+  font-weight:800
+}
+.btn.gold{background:linear-gradient(135deg,var(--gold),#ffe7a5)}
+.btn.secondary{color:var(--text);background:var(--panel2);border:1px solid var(--border)}
+.btn.danger{color:white;background:#9b3545}
+button:disabled{opacity:.55;cursor:not-allowed}
+.hero{padding:76px 0 48px}
+.hero-grid{display:grid;grid-template-columns:1.2fr .8fr;gap:30px;align-items:center}
+.eyebrow{
+  display:inline-block;color:var(--cyan);
+  border:1px solid rgba(88,217,244,.3);background:rgba(88,217,244,.06);
+  padding:7px 12px;border-radius:30px;font-size:12px;font-weight:bold;letter-spacing:1px
+}
+h1{margin:20px 0;font-size:clamp(40px,6vw,70px);line-height:1.05;letter-spacing:-2px}
+.gradient{
+  color:var(--cyan);background:linear-gradient(90deg,var(--cyan),#a9b9ff);
+  background-clip:text;-webkit-background-clip:text;-webkit-text-fill-color:transparent
+}
+p{color:var(--muted)}
+.hero p{max-width:620px;font-size:17px}
+.actions{display:flex;flex-wrap:wrap;gap:12px;margin-top:24px}
+.hero-card,.card{
+  border:1px solid var(--border);border-radius:20px;
+  background:linear-gradient(145deg,rgba(20,39,64,.95),rgba(12,25,42,.96));
+  padding:24px
+}
+.hero-card{padding:30px}
+.hero-symbol{
+  font-size:45px;width:80px;height:80px;display:grid;place-items:center;
+  border-radius:24px;background:rgba(88,217,244,.1)
+}
+section{padding:42px 0;scroll-margin-top:100px}
+h2{font-size:clamp(27px,4vw,38px);margin:12px 0 8px}
+h3{margin-top:10px}
+.section-intro{margin-bottom:22px}
+.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+.icon{
+  font-size:25px;width:49px;height:49px;display:grid;place-items:center;
+  border-radius:14px;background:rgba(88,217,244,.1)
+}
+.tag,.role-pill{
+  display:inline-block;padding:5px 10px;border-radius:20px;
+  border:1px solid var(--border);font-size:12px;color:var(--cyan)
+}
+.account-grid{display:grid;grid-template-columns:.8fr 1.2fr;gap:18px;align-items:start}
+.welcome{border-color:rgba(241,200,107,.28);background:linear-gradient(145deg,rgba(66,49,24,.35),var(--panel))}
+.forms-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+label{display:block;margin:12px 0 5px;font-size:13px;font-weight:bold;color:var(--muted)}
+input,select{
+  display:block;width:100%;padding:12px;color:white;background:#091626;
+  border:1px solid var(--border);border-radius:10px;outline:none
+}
+input:focus,select:focus{border-color:var(--cyan)}
+form button{margin-top:15px}
+.message{margin-top:12px;font-size:13px;overflow-wrap:anywhere}
+.success{color:var(--green)}
+.error{color:var(--red)}
+.muted{color:var(--muted)}
+.hidden{display:none!important}
+.dashboard-top{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:14px}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:20px}
+.stat{padding:20px;background:rgba(255,255,255,.035);border:1px solid var(--border);border-radius:15px}
+.stat span{color:var(--muted);font-size:13px}
+.stat strong{display:block;font-size:30px;margin-top:6px}
+.notice{
+  padding:13px;border:1px solid rgba(241,200,107,.25);border-radius:11px;
+  color:#ead9ac;background:rgba(241,200,107,.06);font-size:13px;margin-top:16px
+}
+.rate-list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-top:15px}
+.rate-row{
+  padding:15px;display:flex;justify-content:space-between;align-items:center;
+  gap:12px;background:rgba(255,255,255,.035);
+  border:1px solid var(--border);border-radius:12px
+}
+.rate-row strong{color:var(--gold);white-space:nowrap}
+footer{margin-top:30px;padding:28px 0;border-top:1px solid var(--border);color:var(--muted);font-size:13px}
+@media(max-width:850px){
+  .hero-grid,.account-grid{grid-template-columns:1fr}
+  .grid{grid-template-columns:1fr 1fr}
+}
+@media(max-width:600px){
+  .nav{align-items:flex-start}
+  nav{justify-content:flex-start}
+  nav a{padding:7px;font-size:12px}
+  .hero{padding-top:45px}
+  .grid,.forms-grid,.stats,.rate-list{grid-template-columns:1fr}
+  .card,.hero-card{padding:20px}
+}
+</style>
+</head>
 
-    html { scroll-behavior: smooth; }
-
-    body {
-      margin: 0;
-      color: var(--text);
-      background:
-        radial-gradient(circle at 85% 0%, rgba(58,114,220,.18), transparent 28rem),
-        var(--bg);
-      font-family: Arial, Helvetica, sans-serif;
-      line-height: 1.6;
-    }
-
-    a { color: inherit; text-decoration: none; }
-    button, input, select { font: inherit; }
-    button { cursor: pointer; }
-
-    .container {
-      width: min(1120px, calc(100% - 32px));
-      margin: auto;
-    }
-
-    header {
-      position: sticky;
-      top: 0;
-      z-index: 10;
-      background: rgba(8,17,31,.95);
-      border-bottom: 1px solid var(--border);
-      backdrop-filter: blur(15px);
-    }
-
-    .nav {
-      min-height: 76px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 18px;
-      flex-wrap: wrap;
-      padding: 12px 0;
-    }
-
-    .brand {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      font-size: 20px;
-      font-weight: 900;
-    }
-
-    .brand-icon {
-      width: 43px;
-      height: 43px;
-      display: grid;
-      place-items: center;
-      border-radius: 14px;
-      color: #07111e;
-      background: linear-gradient(135deg,var(--cyan),var(--blue));
-    }
-
-    .brand small {
-      display: block;
-      color: var(--muted);
-      font-size: 9px;
-      letter-spacing: 1.5px;
-    }
-
-    nav {
-      display: flex;
-      align-items: center;
-      flex-wrap: wrap;
-      gap: 5px;
-    }
-
-    nav a {
-      color: var(--muted);
-      padding: 8px 10px;
-      border-radius: 9px;
-      font-size: 13px;
-      font-weight: bold;
-    }
-
-    nav a:hover {
-      color: white;
-      background: rgba(255,255,255,.07);
-    }
-
-    .btn {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      padding: 11px 16px;
-      border: 0;
-      border-radius: 11px;
-      color: #06121f;
-      background: linear-gradient(135deg,var(--cyan),#a0eafa);
-      font-weight: 800;
-    }
-
-    .btn.gold {
-      background: linear-gradient(135deg,var(--gold),#ffe7a5);
-    }
-
-    .btn.secondary {
-      color: var(--text);
-      background: var(--panel2);
-      border: 1px solid var(--border);
-    }
-
-    .btn.danger {
-      color: white;
-      background: #9b3545;
-    }
-
-    .hero { padding: 76px 0 48px; }
-
-    .hero-grid {
-      display: grid;
-      grid-template-columns: 1.2fr .8fr;
-      gap: 30px;
-      align-items: center;
-    }
-
-    .eyebrow {
-      display: inline-block;
-      color: var(--cyan);
-      border: 1px solid rgba(88,217,244,.3);
-      background: rgba(88,217,244,.06);
-      padding: 7px 12px;
-      border-radius: 30px;
-      font-size: 12px;
-      font-weight: bold;
-      letter-spacing: 1px;
-    }
-
-    h1 {
-      margin: 20px 0;
-      font-size: clamp(40px,6vw,70px);
-      line-height: 1.05;
-      letter-spacing: -2px;
-    }
-
-    .gradient {
-      color: var(--cyan);
-      background: linear-gradient(90deg,var(--cyan),#a9b9ff);
-      background-clip: text;
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-    }
-
-    p { color: var(--muted); }
-
-    .hero p { max-width: 620px; font-size: 17px; }
-
-    .actions {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 12px;
-      margin-top: 24px;
-    }
-
-    .hero-card, .card {
-      border: 1px solid var(--border);
-      border-radius: 20px;
-      background: linear-gradient(145deg,rgba(20,39,64,.95),rgba(12,25,42,.96));
-      padding: 24px;
-    }
-
-    .hero-card { padding: 30px; }
-
-    .hero-symbol {
-      font-size: 45px;
-      width: 80px;
-      height: 80px;
-      display: grid;
-      place-items: center;
-      border-radius: 24px;
-      background: rgba(88,217,244,.1);
-    }
-
-    section {
-      padding: 42px 0;
-      scroll-margin-top: 100px;
-    }
-
-    h2 { font-size: clamp(27px,4vw,38px); margin: 12px 0 8px; }
-    h3 { margin-top: 10px; }
-
-    .section-intro { margin-bottom: 22px; }
-
-    .grid {
-      display: grid;
-      grid-template-columns: repeat(3,1fr);
-      gap: 16px;
-    }
-
-    .icon {
-      font-size: 25px;
-      width: 49px;
-      height: 49px;
-      display: grid;
-      place-items: center;
-      border-radius: 14px;
-      background: rgba(88,217,244,.1);
-    }
-
-    .tag, .role-pill {
-      display: inline-block;
-      padding: 5px 10px;
-      border-radius: 20px;
-      border: 1px solid var(--border);
-      font-size: 12px;
-      color: var(--cyan);
-    }
-
-    .account-grid {
-      display: grid;
-      grid-template-columns: .8fr 1.2fr;
-      gap: 18px;
-      align-items: start;
-    }
-
-    .welcome {
-      border-color: rgba(241,200,107,.28);
-      background: linear-gradient(145deg,rgba(66,49,24,.35),var(--panel));
-    }
-
-    .forms-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 20px;
-    }
-
-    label {
-      display: block;
-      margin: 12px 0 5px;
-      font-size: 13px;
-      font-weight: bold;
-      color: var(--muted);
-    }
-
-    input, select {
-      display: block;
-      width: 100%;
-      padding: 12px;
-      color: white;
-      background: #091626;
-      border: 1px solid var(--border);
-      border-radius: 10px;
-      outline: none;
-    }
-
-    input:focus, select:focus {
-      border-color: var(--cyan);
-    }
-
-    form button { margin-top: 15px; }
-
-    .message {
-      margin-top: 12px;
-      font-size: 13px;
-      overflow-wrap: anywhere;
-    }
-
-    .success { color: var(--green); }
-    .error { color: var(--red); }
-    .muted { color: var(--muted); }
-
-    .hidden { display: none !important; }
-
-    .dashboard-top {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      flex-wrap: wrap;
-      gap: 14px;
-    }
-
-    .stats {
-      display: grid;
-      grid-template-columns: repeat(3,1fr);
-      gap: 14px;
-      margin-top: 20px;
-    }
-
-    .stat {
-      padding: 20px;
-      background: rgba(255,255,255,.035);
-      border: 1px solid var(--border);
-      border-radius: 15px;
-    }
-
-    .stat span { color: var(--muted); font-size: 13px; }
-    .stat strong { display: block; font-size: 30px; margin-top: 6px; }
-
-    .notice {
-      padding: 13px;
-      border: 1px solid rgba(241,200,107,.25);
-      border-radius: 11px;
-      color: #ead9ac;
-      background: rgba(241,200,107,.06);
-      font-size: 13px;
-      margin-top: 16px;
-    }
-
-    footer {
-      margin-top: 30px;
-      padding: 28px 0;
-      border-top: 1px solid var(--border);
-      color: var(--muted);
-      font-size: 13px;
-    }
-
-    @media(max-width:850px) {
-      .hero-grid, .account-grid { grid-template-columns: 1fr; }
-      .grid { grid-template-columns: 1fr 1fr; }
-    }
-
-    @media(max-width:600px) {
-      .nav { align-items: flex-start; }
-      nav { justify-content: flex-start; }
-      nav a { padding: 7px; font-size: 12px; }
-      .hero { padding-top: 45px; }
-      .grid, .forms-grid, .stats { grid-template-columns: 1fr; }
-      .card, .hero-card { padding: 20px; }
-    }
-  </style></head><body><header>
+<body>
+<header>
   <div class="container nav">
     <a class="brand" href="#home">
       <span class="brand-icon">RN</span>
       <span>RenzoNexus<small>ONE WORLD. ENDLESS POSSIBILITIES.</small></span>
-    </a><nav aria-label="Main navigation">
-  <a href="#home">Home</a>
-  <a href="#discover">Discover</a>
-  <a href="#events">Events</a>
-  <a href="#merch">Merch</a>
-  <a href="#sell">Sell With Us</a>
-  <a href="#account">Account</a>
-  <a id="adminNav" class="hidden" href="#admin">👑 Admin</a>
-</nav>
-
+    </a>
+    <nav aria-label="Main navigation">
+      <a href="#home">Home</a>
+      <a href="#discover">Discover</a>
+      <a href="#events">Events</a>
+      <a href="#merch">Merch</a>
+      <a href="#sell">Sell With Us</a>
+      <a href="#account">Account</a>
+      <a id="adminNav" class="hidden" href="#admin">👑 Admin</a>
+    </nav>
   </div>
-</header><main>
-  <section class="hero" id="home">
-    <div class="container hero-grid">
-      <div>
-        <span class="eyebrow">✦ DISCOVER WHAT CONNECTS US</span>
-        <h1>One World.<br><span class="gradient">Endless Possibilities.</span></h1>
-        <p>Discover products, explore events, and connect with new opportunities in one growing digital space for people, creators, sellers, and communities.</p>
-        <div class="actions">
-          <a class="btn" href="#discover">Explore RenzoNexus →</a>
-          <a class="btn secondary" href="#sell">Join as a Seller</a>
-        </div>
-      </div>  <div class="hero-card">
-    <div class="hero-symbol">🌐</div>
-    <h3>Your world, connected.</h3>
-    <p>Discovery, commerce, events, and opportunities—together in one place.</p>
+</header>
+
+<main>
+<section class="hero" id="home">
+  <div class="container hero-grid">
+    <div>
+      <span class="eyebrow">✦ DISCOVER WHAT CONNECTS US</span>
+      <h1>One World.<br><span class="gradient">Endless Possibilities.</span></h1>
+      <p>Discover products, explore events, and connect with new opportunities in one growing digital space for people, creators, sellers, and communities.</p>
+      <div class="actions">
+        <a class="btn" href="#discover">Explore RenzoNexus →</a>
+        <a class="btn secondary" href="#sell">Join as a Seller</a>
+      </div>
+    </div>
+    <div class="hero-card">
+      <div class="hero-symbol">🌐</div>
+      <h3>Your world, connected.</h3>
+      <p>Discovery, commerce, events, and opportunities—together in one place.</p>
+      <div class="grid">
+        <div><strong>🛍️ Marketplace</strong><br><small class="muted">Discover products</small></div>
+        <div><strong>🎟️ Events</strong><br><small class="muted">Find experiences</small></div>
+        <div><strong>🤝 Community</strong><br><small class="muted">Build connections</small></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="discover">
+  <div class="container">
+    <span class="eyebrow">EXPLORE</span>
+    <h2>Discover RenzoNexus</h2>
+    <p class="section-intro">Explore the opportunities that interest you.</p>
     <div class="grid">
-      <div><strong>🛍️ Marketplace</strong><br><small class="muted">Discover products</small></div>
-      <div><strong>🎟️ Events</strong><br><small class="muted">Find experiences</small></div>
-      <div><strong>🤝 Community</strong><br><small class="muted">Build connections</small></div>
+      <article class="card"><div class="icon">🛍️</div><h3>Marketplace</h3><p>Discover products and independent sellers as the marketplace grows.</p><span class="tag">Shopping</span></article>
+      <article class="card"><div class="icon">🎟️</div><h3>Events & Experiences</h3><p>Find events and experiences shared by event organisers.</p><span class="tag">Events</span></article>
+      <article class="card"><div class="icon">🚀</div><h3>Opportunities</h3><p>Make room for collaboration, new ideas, and growth.</p><span class="tag">Community</span></article>
     </div>
   </div>
-</div>
+</section>
 
-  </section>  <section id="discover">
-    <div class="container">
-      <span class="eyebrow">EXPLORE</span>
-      <h2>Discover RenzoNexus</h2>
-      <p class="section-intro">Explore the opportunities that interest you.</p>  <div class="grid">
-    <article class="card">
-      <div class="icon">🛍️</div>
-      <h3>Marketplace</h3>
-      <p>Discover products and independent sellers as the marketplace grows.</p>
-      <span class="tag">Shopping</span>
-    </article>
-    <article class="card">
-      <div class="icon">🎟️</div>
-      <h3>Events & Experiences</h3>
-      <p>Find events and experiences shared by event organisers.</p>
-      <span class="tag">Events</span>
-    </article>
-    <article class="card">
-      <div class="icon">🚀</div>
-      <h3>Opportunities</h3>
-      <p>Make room for collaboration, new ideas, and growth.</p>
-      <span class="tag">Community</span>
-    </article>
+<section id="events">
+  <div class="container">
+    <span class="eyebrow">WHAT'S HAPPENING</span>
+    <h2>Events</h2>
+    <div class="card">
+      <div class="icon">📅</div>
+      <h3>Discover upcoming experiences</h3>
+      <p>Event publishing and public listings still need to be connected. Event organisers can express interest through the section below.</p>
+      <a class="btn secondary" href="#sell">Become an Organiser</a>
+    </div>
   </div>
-</div>
+</section>
 
-  </section>  <section id="events">
-    <div class="container">
-      <span class="eyebrow">WHAT'S HAPPENING</span>
-      <h2>Events</h2>
+<section id="merch">
+  <div class="container">
+    <span class="eyebrow">SHOP & DISCOVER</span>
+    <h2>Marketplace & Merchandise</h2>
+    <div class="grid">
+      <article class="card"><div class="icon">✨</div><h3>Featured products</h3><p>Product listings can be connected here as the marketplace database is developed.</p></article>
+      <article class="card"><div class="icon">🏷️</div><h3>Independent sellers</h3><p>Support businesses and creators as the platform grows.</p></article>
+      <article class="card"><div class="icon">🔒</div><h3>Safer shopping</h3><p>Payment processing must be configured before real purchases are offered.</p></article>
+    </div>
+  </div>
+</section>
+
+<section id="sell">
+  <div class="container">
+    <span class="eyebrow">BUILD WITH US</span>
+    <h2>Sell or Organise with RenzoNexus</h2>
+    <div class="grid">
+      <article class="card"><div class="icon">🛍️</div><h3>Seller programme</h3><p>For businesses and individuals interested in selling products.</p><button class="btn secondary choose-type" data-type="seller">Apply to Sell</button></article>
+      <article class="card"><div class="icon">🎟️</div><h3>Event organiser programme</h3><p>For people who want to publish events and experiences.</p><button class="btn secondary choose-type" data-type="organiser">Apply to Organise</button></article>
+      <article class="card"><div class="icon">🤝</div><h3>Grow together</h3><p>Join the community as RenzoNexus expands.</p><a class="btn secondary" href="#account">Create an Account</a></article>
+    </div>
+
+    <div class="card" style="margin-top:18px">
+      <h3>Application interest</h3>
+      <p>This is a front-end form only. It does not submit applications to Supabase yet.</p>
+      <form id="interestForm">
+        <label for="interestName">Full name</label>
+        <input id="interestName" required maxlength="100" placeholder="Your full name">
+        <label for="interestEmail">Email address</label>
+        <input id="interestEmail" type="email" required placeholder="you@example.com">
+        <label for="interestType">Application type</label>
+        <select id="interestType" required>
+          <option value="">Choose one</option>
+          <option value="seller">Seller</option>
+          <option value="organiser">Event organiser</option>
+        </select>
+        <button class="btn" type="submit">Check Application Setup</button>
+        <div id="interestMessage" class="message" role="status"></div>
+      </form>
+    </div>
+  </div>
+</section>
+
+<section id="account">
+  <div class="container">
+    <span class="eyebrow">YOUR RENZONEXUS</span>
+    <h2>Account</h2>
+    <p>Sign in or create an account to join the platform.</p>
+    <div class="account-grid">
+      <div class="card welcome">
+        <div class="icon">👤</div>
+        <h3 id="welcomeName">Welcome to RenzoNexus</h3>
+        <p id="welcomeEmail">Sign in to view your account.</p>
+        <span id="roleBadge" class="role-pill">Guest</span>
+        <p id="verificationStatus" class="message"></p>
+        <button id="signOutButton" class="btn secondary hidden" type="button">Sign Out</button>
+        <div id="adminShortcut" class="hidden" style="margin-top:15px">
+          <a class="btn gold" href="#admin">Open Admin Dashboard →</a>
+        </div>
+      </div>
+
       <div class="card">
-        <div class="icon">📅</div>
-        <h3>Discover upcoming experiences</h3>
-        <p>Event publishing and public listings still need to be connected. Event organisers can express interest through the section below.</p>
-        <a class="btn secondary" href="#sell">Become an Organiser</a>
+        <div id="authForms">
+          <div class="forms-grid">
+            <div>
+              <h3>Sign In</h3>
+              <form id="loginForm">
+                <label for="loginEmail">Email</label>
+                <input id="loginEmail" type="email" autocomplete="email" required placeholder="you@example.com">
+                <label for="loginPassword">Password</label>
+                <input id="loginPassword" type="password" autocomplete="current-password" required placeholder="Your password">
+                <button class="btn" type="submit">Sign In</button>
+                <button id="resetButton" class="btn secondary" type="button">Forgot Password?</button>
+              </form>
+            </div>
+            <div>
+              <h3>Create Account</h3>
+              <form id="signupForm">
+                <label for="signupName">Display name</label>
+                <input id="signupName" required maxlength="60" autocomplete="nickname" placeholder="Your display name">
+                <label for="signupEmail">Email</label>
+                <input id="signupEmail" type="email" required autocomplete="email" placeholder="you@example.com">
+                <label for="signupPassword">Password (8+ characters)</label>
+                <input id="signupPassword" type="password" minlength="8" required autocomplete="new-password" placeholder="Create a password">
+                <button class="btn" type="submit">Create Account</button>
+              </form>
+            </div>
+          </div>
+        </div>
+        <div id="authMessage" class="message" role="status" aria-live="polite"></div>
       </div>
     </div>
-  </section>  <section id="merch">
-    <div class="container">
-      <span class="eyebrow">SHOP & DISCOVER</span>
-      <h2>Marketplace & Merchandise</h2>
-      <div class="grid">
-        <article class="card">
-          <div class="icon">✨</div>
-          <h3>Featured products</h3>
-          <p>Product listings can be connected here as the marketplace database is developed.</p>
-        </article>
-        <article class="card">
-          <div class="icon">🏷️</div>
-          <h3>Independent sellers</h3>
-          <p>Support businesses and creators as the platform grows.</p>
-        </article>
-        <article class="card">
-          <div class="icon">🔒</div>
-          <h3>Safer shopping</h3>
-          <p>Payment processing must be configured before real purchases are offered.</p>
-        </article>
-      </div>
-    </div>
-  </section>  <section id="sell">
-    <div class="container">
-      <span class="eyebrow">BUILD WITH US</span>
-      <h2>Sell or Organise with RenzoNexus</h2>
-      <div class="grid">
-        <article class="card">
-          <div class="icon">🛍️</div>
-          <h3>Seller programme</h3>
-          <p>For businesses and individuals interested in selling products.</p>
-          <button class="btn secondary choose-type" data-type="seller">Apply to Sell</button>
-        </article>
-        <article class="card">
-          <div class="icon">🎟️</div>
-          <h3>Event organiser programme</h3>
-          <p>For people who want to publish events and experiences.</p>
-          <button class="btn secondary choose-type" data-type="organiser">Apply to Organise</button>
-        </article>
-        <article class="card">
-          <div class="icon">🤝</div>
-          <h3>Grow together</h3>
-          <p>Join the community as RenzoNexus expands.</p>
-          <a class="btn secondary" href="#account">Create an Account</a>
-        </article>
-      </div>  <div class="card" style="margin-top:18px">
-    <h3>Application interest</h3>
-    <p>This is a front-end form only. It does not submit applications to Supabase yet.</p>
-    <form id="interestForm">
-      <label for="interestName">Full name</label>
-      <input id="interestName" required maxlength="100" placeholder="Your full name">
-
-      <label for="interestEmail">Email address</label>
-      <input id="interestEmail" type="email" required placeholder="you@example.com">
-
-      <label for="interestType">Application type</label>
-      <select id="interestType" required>
-        <option value="">Choose one</option>
-        <option value="seller">Seller</option>
-        <option value="organiser">Event organiser</option>
-      </select>
-
-      <button class="btn" type="submit">Check Application Setup</button>
-      <div id="interestMessage" class="message" role="status"></div>
-    </form>
   </div>
-</div>
+</section>
 
-  </section>  <section id="account">
-    <div class="container">
-      <span class="eyebrow">YOUR RENZONEXUS</span>
-      <h2>Account</h2>
-      <p>Sign in or create an account to join the platform.</p>  <div class="account-grid">
-    <div class="card welcome">
-      <div class="icon">👤</div>
-      <h3 id="welcomeName">Welcome to RenzoNexus</h3>
-      <p id="welcomeEmail">Sign in to view your account.</p>
-      <span id="roleBadge" class="role-pill">Guest</span>
-      <p id="verificationStatus" class="message"></p>
-
-      <button id="signOutButton" class="btn secondary hidden" type="button">Sign Out</button>
-
-      <div id="adminShortcut" class="hidden" style="margin-top:15px">
-        <a class="btn gold" href="#admin">Open Admin Dashboard →</a>
+<section id="admin" class="hidden">
+  <div class="container">
+    <div class="dashboard-top">
+      <div>
+        <span class="eyebrow">RESTRICTED AREA</span>
+        <h2>RenzoNexus Admin Dashboard</h2>
+        <p>Account: <strong id="adminEmail"></strong></p>
+        <p>Role: <strong id="adminRole"></strong></p>
       </div>
+      <span class="role-pill">✓ Admin role verified</span>
     </div>
 
     <div class="card">
-      <div id="authForms">
-        <div class="forms-grid">
-          <div>
-            <h3>Sign In</h3>
-            <form id="loginForm">
-              <label for="loginEmail">Email</label>
-              <input id="loginEmail" type="email" autocomplete="email" required placeholder="you@example.com">
-
-              <label for="loginPassword">Password</label>
-              <input id="loginPassword" type="password" autocomplete="current-password" required placeholder="Your password">
-
-              <button class="btn" type="submit">Sign In</button>
-              <button id="resetButton" class="btn secondary" type="button">Forgot Password?</button>
-            </form>
-          </div>
-
-          <div>
-            <h3>Create Account</h3>
-            <form id="signupForm">
-              <label for="signupName">Display name</label>
-              <input id="signupName" required maxlength="60" autocomplete="nickname" placeholder="Your display name">
-
-              <label for="signupEmail">Email</label>
-              <input id="signupEmail" type="email" required autocomplete="email" placeholder="you@example.com">
-
-              <label for="signupPassword">Password (8+ characters)</label>
-              <input id="signupPassword" type="password" minlength="8" required autocomplete="new-password" placeholder="Create a password">
-
-              <button class="btn" type="submit">Create Account</button>
-            </form>
-          </div>
-        </div>
+      <h3>Dashboard Overview</h3>
+      <p>Statistics appear only when the signed-in account has permission to read the corresponding table.</p>
+      <div class="stats">
+        <div class="stat"><span>Profiles</span><strong id="profileCount">—</strong></div>
+        <div class="stat"><span>Seller applications</span><strong id="sellerCount">—</strong></div>
+        <div class="stat"><span>Organiser applications</span><strong id="organiserCount">—</strong></div>
       </div>
-
-      <div id="authMessage" class="message" role="status" aria-live="polite"></div>
-    </div>
-  </div>
-</div>
-
-  </section>  <section id="admin" class="hidden">
-    <div class="container">
-      <div class="dashboard-top">
-        <div>
-          <span class="eyebrow">RESTRICTED AREA</span>
-          <h2>RenzoNexus Admin Dashboard</h2>
-          <p>Account: <strong id="adminEmail"></strong></p>
-          <p>Role: <strong id="adminRole"></strong></p>
-        </div>
-        <span class="role-pill">✓ Admin role verified</span>
-      </div>  <div class="card">
-    <h3>Dashboard Overview</h3>
-    <p>Statistics appear only when the signed-in account has permission to read the corresponding table.</p>
-
-    <div class="stats">
-      <div class="stat">
-        <span>Profiles</span>
-        <strong id="profileCount">—</strong>
-      </div>
-      <div class="stat">
-        <span>Seller applications</span>
-        <strong id="sellerCount">—</strong>
-      </div>
-      <div class="stat">
-        <span>Organiser applications</span>
-        <strong id="organiserCount">—</strong>
-      </div>
+      <div id="dashboardMessage" class="notice" role="status">Loading permitted dashboard data…</div>
     </div>
 
-    <div id="dashboardMessage" class="notice" role="status">
-      Loading permitted dashboard data…
+    <!-- FOUNDER-ONLY COMMISSION MANAGEMENT -->
+    <div id="commissionCard" class="card hidden" style="margin-top:18px">
+      <span class="eyebrow">FOUNDER CONTROLS</span>
+      <h3>💰 Commission Management</h3>
+      <p>Set the commission percentage for each category. Only the Founder / Super Admin can save changes.</p>
+
+      <form id="commissionForm">
+        <label for="commissionCategory">Product category</label>
+        <select id="commissionCategory" required>
+          <option value="Celebrity Tickets">Celebrity Tickets</option>
+          <option value="Meet-and-Greet">Meet-and-Greet</option>
+          <option value="Custom Jewellery">Custom Jewellery</option>
+          <option value="Custom T-Shirts">Custom T-Shirts</option>
+          <option value="General Marketplace">General Marketplace</option>
+          <option value="Events and Experiences">Events and Experiences</option>
+        </select>
+
+        <label for="commissionPercent">Commission percentage (%)</label>
+        <input id="commissionPercent" type="number" min="0" max="100" step="0.01" required placeholder="For example, 10">
+
+        <button class="btn gold" id="saveCommissionBtn" type="submit">Save Commission Rate</button>
+      </form>
+
+      <div id="commissionMessage" class="message" role="status" aria-live="polite"></div>
+
+      <h3>Current Commission Rates</h3>
+      <div id="commissionRates" class="rate-list" aria-live="polite">Loading commission rates…</div>
     </div>
-  </div>
+    <!-- END FOUNDER-ONLY COMMISSION MANAGEMENT -->
 
-  <div class="grid" style="margin-top:18px">
-    <article class="card">
-      <div class="icon">👥</div>
-      <h3>Member Management</h3>
-      <p>Member-management actions require additional secure database policies.</p>
-      <span class="tag">Setup required</span>
-    </article>
-    <article class="card">
-      <div class="icon">🛍️</div>
-      <h3>Seller Applications</h3>
-      <p>Review tools need the exact table schema and permissions before activation.</p>
-      <span class="tag">Setup required</span>
-    </article>
-    <article class="card">
-      <div class="icon">🎟️</div>
-      <h3>Organiser Applications</h3>
-      <p>Review and approval workflows will be added after database access is configured.</p>
-      <span class="tag">Setup required</span>
-    </article>
-  </div>
+    <div class="grid" style="margin-top:18px">
+      <article class="card"><div class="icon">👥</div><h3>Member Management</h3><p>Member-management actions require additional secure database policies.</p><span class="tag">Setup required</span></article>
+      <article class="card"><div class="icon">🛍️</div><h3>Seller Applications</h3><p>Review tools need the exact table schema and permissions before activation.</p><span class="tag">Setup required</span></article>
+      <article class="card"><div class="icon">🎟️</div><h3>Organiser Applications</h3><p>Review and approval workflows will be added after database access is configured.</p><span class="tag">Setup required</span></article>
+    </div>
 
-  <div class="notice">
-    Security: showing this dashboard is not enough to secure administrative actions. Database policies must protect each action. Never put a Supabase service-role secret in this file.
+    <div class="notice">Security: the database must protect administrative actions. Never put a Supabase service-role secret in this file.</div>
   </div>
-</div>
+</section>
+</main>
 
-  </section>
-</main><footer>
+<footer>
   <div class="container">
     <strong>RenzoNexus</strong> — One World. Endless Possibilities.
     <br>© <span id="year"></span> RenzoNexus.
   </div>
-</footer><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
 (() => {
   "use strict";
 
-  // Public browser credentials only. Never use a service-role secret here.
   const SUPABASE_URL = "https://anclwctvvillzpatigbr.supabase.co";
   const SUPABASE_PUBLISHABLE_KEY = "sb_publishable_t9TJatPdXprnb5gkrkINtQ_GColh4fM";
 
-  const $ = (id) => document.getElementById(id);
+  const $ = id => document.getElementById(id);
   $("year").textContent = new Date().getFullYear();
 
-  const clientLibrary = window.supabase;
+  const library = window.supabase;
 
-  if (!clientLibrary || !clientLibrary.createClient) {
+  if (!library || !library.createClient) {
     $("authMessage").textContent =
-      "The Supabase library could not load. Check your connection and reload the page.";
+      "Supabase could not load. Check your connection and reload the website.";
     $("authMessage").className = "message error";
     return;
   }
 
-  const db = clientLibrary.createClient(
-    SUPABASE_URL,
-    SUPABASE_PUBLISHABLE_KEY
-  );
+  const db = library.createClient(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY);
 
   let activeSession = null;
   let sessionVersion = 0;
+  let currentRole = null;
+
+  const categories = [
+    "Celebrity Tickets",
+    "Meet-and-Greet",
+    "Custom Jewellery",
+    "Custom T-Shirts",
+    "General Marketplace",
+    "Events and Experiences"
+  ];
 
   function message(id, text, type = "") {
-    const element = $(id);
-    element.textContent = text || "";
-    element.className = "message " + type;
+    const el = $(id);
+    el.textContent = text || "";
+    el.className = "message " + type;
   }
 
   function hideAdmin() {
     $("adminNav").classList.add("hidden");
     $("adminShortcut").classList.add("hidden");
     $("admin").classList.add("hidden");
+    $("commissionCard").classList.add("hidden");
+    currentRole = null;
   }
 
   function renderAccount(session) {
@@ -698,11 +476,10 @@
       if (version !== sessionVersion) return;
 
       if (!error && data?.display_name?.trim()) {
-        $("welcomeName").textContent =
-          "Welcome, " + data.display_name.trim();
+        $("welcomeName").textContent = "Welcome, " + data.display_name.trim();
       }
     } catch (error) {
-      console.warn("Profile display name could not be loaded.", error);
+      console.warn("Profile name could not be loaded.", error);
     }
   }
 
@@ -718,9 +495,9 @@
   async function countFirstAvailable(tableNames) {
     let lastError;
 
-    for (const tableName of tableNames) {
+    for (const name of tableNames) {
       try {
-        return await countTable(tableName);
+        return await countTable(name);
       } catch (error) {
         lastError = error;
       }
@@ -732,10 +509,7 @@
   async function loadDashboard(version) {
     const results = await Promise.allSettled([
       countTable("profiles"),
-      countFirstAvailable([
-        "seller_applications",
-        "seller applications"
-      ]),
+      countFirstAvailable(["seller_applications", "seller applications"]),
       countFirstAvailable([
         "organiser_applications",
         "organizer_applications",
@@ -746,26 +520,65 @@
 
     if (version !== sessionVersion) return;
 
-    const targets = [
-      "profileCount",
-      "sellerCount",
-      "organiserCount"
-    ];
+    const targets = ["profileCount", "sellerCount", "organiserCount"];
 
     results.forEach((result, index) => {
       $(targets[index]).textContent =
-        result.status === "fulfilled"
-          ? String(result.value)
-          : "—";
+        result.status === "fulfilled" ? String(result.value) : "—";
     });
 
-    const hasFailures = results.some(
-      result => result.status === "rejected"
-    );
+    const failed = results.some(result => result.status === "rejected");
 
-    $("dashboardMessage").textContent = hasFailures
-      ? "Some statistics are unavailable. The table name or Row Level Security policies may need adjustment. No missing data has been assumed to be zero."
-      : "Dashboard counts loaded. Application review and management actions still need their own secure database policies.";
+    $("dashboardMessage").textContent = failed
+      ? "Some statistics are unavailable. Check table names and Row Level Security policies."
+      : "Dashboard counts loaded. Application review actions still require secure database policies.";
+  }
+
+  function formatPercentage(value) {
+    return Number(value).toFixed(2).replace(/\.?0+$/, "") + "%";
+  }
+
+  async function loadCommissionRates(version = sessionVersion) {
+    const container = $("commissionRates");
+    container.textContent = "Loading commission rates…";
+
+    try {
+      const { data, error } = await db
+        .from("commission_rates")
+        .select("category, percentage")
+        .order("category");
+
+      if (version !== sessionVersion) return;
+      if (error) throw error;
+
+      container.replaceChildren();
+
+      const rates = data || [];
+
+      if (!rates.length) {
+        container.textContent =
+          "No rates were found. Check the commission_rates table in Supabase.";
+        return;
+      }
+
+      rates.forEach(rate => {
+        const row = document.createElement("div");
+        row.className = "rate-row";
+
+        const category = document.createElement("span");
+        category.textContent = rate.category;
+
+        const percentage = document.createElement("strong");
+        percentage.textContent = formatPercentage(rate.percentage);
+
+        row.append(category, percentage);
+        container.appendChild(row);
+      });
+    } catch (error) {
+      container.textContent =
+        "Could not load rates: " + (error.message || "Unknown error");
+      console.error("Commission rates load failed:", error);
+    }
   }
 
   async function checkAdministrator(session, version) {
@@ -785,9 +598,9 @@
         return;
       }
 
-      if (!data || !["super_admin", "admin"].includes(data.role)) {
-        return;
-      }
+      if (!data || !["super_admin", "admin"].includes(data.role)) return;
+
+      currentRole = data.role;
 
       $("adminNav").classList.remove("hidden");
       $("adminShortcut").classList.remove("hidden");
@@ -801,7 +614,17 @@
       $("adminEmail").textContent = session.user.email || "";
       $("adminRole").textContent = roleName;
 
-      await loadDashboard(version);
+      // Commission management is visible only to the Super Admin.
+      if (data.role === "super_admin") {
+        $("commissionCard").classList.remove("hidden");
+        await Promise.all([
+          loadDashboard(version),
+          loadCommissionRates(version)
+        ]);
+      } else {
+        $("commissionCard").classList.add("hidden");
+        await loadDashboard(version);
+      }
     } catch (error) {
       console.error("Administrator check failed.", error);
     }
@@ -816,10 +639,75 @@
     if (!session?.user) return;
 
     await loadProfileName(session, version);
-
-    // Check the role after rendering the immediate account UI.
     await checkAdministrator(session, version);
   }
+
+  $("commissionForm").addEventListener("submit", async event => {
+    event.preventDefault();
+
+    if (!activeSession?.user) {
+      return message("commissionMessage", "Please sign in first.", "error");
+    }
+
+    if (currentRole !== "super_admin") {
+      return message(
+        "commissionMessage",
+        "Only the Founder / Super Admin can change commission rates.",
+        "error"
+      );
+    }
+
+    const category = $("commissionCategory").value;
+    const percentage = Number($("commissionPercent").value);
+
+    if (!categories.includes(category)) {
+      return message("commissionMessage", "Please select a valid category.", "error");
+    }
+
+    if (!Number.isFinite(percentage) || percentage < 0 || percentage > 100) {
+      return message("commissionMessage", "Enter a percentage between 0 and 100.", "error");
+    }
+
+    const button = $("saveCommissionBtn");
+    button.disabled = true;
+    message("commissionMessage", "Saving commission rate…");
+
+    try {
+      const { error } = await db
+        .from("commission_rates")
+        .upsert({
+          category,
+          percentage,
+          updated_at: new Date().toISOString(),
+          updated_by: activeSession.user.id
+        }, {
+          onConflict: "category"
+        });
+
+      if (error) throw error;
+
+      message(
+        "commissionMessage",
+        "Commission rate saved successfully: " +
+          category + " — " + formatPercentage(percentage),
+        "success"
+      );
+
+      await loadCommissionRates();
+      $("commissionPercent").value = "";
+    } catch (error) {
+      console.error("Saving commission rate failed:", error);
+
+      message(
+        "commissionMessage",
+        "Could not save the rate. Check the commission_rates table, permissions, and Super Admin policies. Details: " +
+          (error.message || "Unknown error"),
+        "error"
+      );
+    } finally {
+      button.disabled = false;
+    }
+  });
 
   $("signupForm").addEventListener("submit", async event => {
     event.preventDefault();
@@ -847,8 +735,7 @@
             display_name: displayName,
             full_name: displayName
           },
-          emailRedirectTo:
-            window.location.origin + window.location.pathname
+          emailRedirectTo: window.location.origin + window.location.pathname
         }
       });
 
@@ -875,7 +762,6 @@
 
   $("loginForm").addEventListener("submit", async event => {
     event.preventDefault();
-
     message("authMessage", "Signing in…");
 
     try {
@@ -900,11 +786,7 @@
     const email = $("loginEmail").value.trim();
 
     if (!email) {
-      return message(
-        "authMessage",
-        "Enter your email in the sign-in email field first.",
-        "error"
-      );
+      return message("authMessage", "Enter your email in the sign-in email field first.", "error");
     }
 
     message("authMessage", "Sending password reset instructions…");
@@ -953,12 +835,11 @@
 
     message(
       "interestMessage",
-      "This form is a prototype and does not save applications yet. We will connect it to the existing Supabase application tables next."
+      "This form is a prototype and does not save applications yet."
     );
   });
 
   db.auth.onAuthStateChange((event, session) => {
-    // Defer database queries until after the auth callback has returned.
     window.setTimeout(() => refreshSession(session), 0);
   });
 
@@ -971,5 +852,6 @@
     refreshSession(data.session);
   });
 })();
-</script></body>
+</script>
+</body>
 </html>
