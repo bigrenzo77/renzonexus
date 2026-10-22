@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="theme-color" content="#080d1b">
+<meta name="description" content="RenzoNexus Founder Management Dashboard">
 
 <title>RenzoNexus | Founder Management</title>
 
@@ -260,21 +261,24 @@ tr:last-child td {
 
 .badge.paid,
 .badge.completed,
-.badge.approved {
+.badge.approved,
+.badge.active {
   background: #123c30;
   color: #8dffd0;
 }
 
 .badge.failed,
 .badge.cancelled,
-.badge.refunded {
+.badge.refunded,
+.badge.inactive {
   background: #48232d;
   color: #ffb6bf;
 }
 
 .badge.awaiting_payment,
 .badge.pending_payment,
-.badge.payment_verification {
+.badge.payment_verification,
+.badge.pending {
   background: #45391c;
   color: #ffe09a;
 }
@@ -361,7 +365,9 @@ footer {
 
     <div id="userArea" class="hidden">
       <span id="signedInEmail" class="small"></span>
-      <button id="logoutButton" class="secondary">Sign Out</button>
+      <button id="logoutButton" class="secondary" type="button">
+        Sign Out
+      </button>
     </div>
   </div>
 </header>
@@ -371,9 +377,7 @@ footer {
   <section id="loginPanel" class="panel auth-box">
     <h1>Founder Management</h1>
 
-    <p>
-      Sign in with your existing RenzoNexus administrator account.
-    </p>
+    <p>Sign in with your existing RenzoNexus administrator account.</p>
 
     <form id="loginForm">
       <label for="email">Administrator email</label>
@@ -403,27 +407,23 @@ footer {
     </form>
 
     <p class="small">
-      If your administrator account has not been registered in Supabase
-      Authentication, create the account first and assign its authorised
-      administrator role securely.
+      Access is limited to administrator accounts authorised in Supabase.
     </p>
   </section>
 
   <section id="deniedPanel" class="panel hidden">
     <h2>Administrator Access Required</h2>
-    <p>
-      This account is not authorised to access Founder Management.
-    </p>
-    <button id="deniedLogoutButton" class="secondary">Sign Out</button>
+    <p>This account is not authorised to access Founder Management.</p>
+    <button id="deniedLogoutButton" class="secondary" type="button">
+      Sign Out
+    </button>
   </section>
 
   <section id="dashboard" class="hidden">
 
     <div>
       <h1>Founder Dashboard 👑</h1>
-      <p>
-        Central management for orders, payments, commissions and payouts.
-      </p>
+      <p>Central management for orders, payments, commissions and payouts.</p>
     </div>
 
     <div class="grid">
@@ -457,7 +457,7 @@ footer {
           </p>
         </div>
 
-        <button id="refreshOrders" class="secondary">
+        <button id="refreshOrders" class="secondary" type="button">
           Refresh Orders
         </button>
       </div>
@@ -523,7 +523,7 @@ footer {
           </p>
         </div>
 
-        <button id="refreshCommissions" class="secondary">
+        <button id="refreshCommissions" class="secondary" type="button">
           Refresh
         </button>
       </div>
@@ -591,8 +591,8 @@ footer {
       </p>
 
       <div class="notice">
-        The next development stage will connect seller/organiser balances,
-        payout approvals and transaction references to this dashboard.
+        The next development stage will connect seller and organiser
+        balances, payout approvals and transaction references to this dashboard.
       </div>
     </section>
 
@@ -608,9 +608,8 @@ footer {
 "use strict";
 
 /*
- * RenzoNexus management dashboard.
- * The publishable key is suitable for browser use.
- * NEVER place a Supabase service-role key or payment secret here.
+ * RenzoNexus Founder Management.
+ * Never put a Supabase service-role key or payment secret in this file.
  */
 
 const SUPABASE_URL =
@@ -630,6 +629,8 @@ let currentUser = null;
 let orders = [];
 let commissionRules = [];
 let loadingOrders = false;
+let loadingCommissions = false;
+let sessionCheckNumber = 0;
 
 const ORDER_STATUSES = [
   "pending_payment",
@@ -688,12 +689,10 @@ function badgeClass(value) {
     .replace(/[^a-z0-9_-]/g, "_");
 }
 
-function makeCell(value, className = "") {
+function makeCell(value) {
   const td = document.createElement("td");
-  td.textContent = value == null || value === "" ? "—" : String(value);
-
-  if (className) td.className = className;
-
+  td.textContent =
+    value == null || value === "" ? "—" : String(value);
   return td;
 }
 
@@ -718,6 +717,8 @@ async function checkAdmin() {
 }
 
 async function handleSession(session) {
+  const checkNumber = ++sessionCheckNumber;
+
   currentUser = session?.user || null;
 
   show($("userArea"), Boolean(currentUser));
@@ -728,6 +729,8 @@ async function handleSession(session) {
   if (!currentUser) {
     orders = [];
     commissionRules = [];
+    $("ordersBody").replaceChildren();
+    $("commissionsBody").replaceChildren();
     return;
   }
 
@@ -735,9 +738,12 @@ async function handleSession(session) {
 
   const allowed = await checkAdmin();
 
+  if (checkNumber !== sessionCheckNumber) return;
+
   if (!allowed) {
     show($("loginPanel"), false);
     show($("deniedPanel"), true);
+    show($("dashboard"), false);
     return;
   }
 
@@ -759,31 +765,43 @@ async function login(event) {
 
   message("loginMessage", "");
 
-  const { error } = await client.auth.signInWithPassword({
-    email: $("email").value.trim(),
-    password: $("password").value
-  });
+  try {
+    const { error } = await client.auth.signInWithPassword({
+      email: $("email").value.trim(),
+      password: $("password").value
+    });
 
-  button.disabled = false;
-  button.textContent = "Sign In";
+    if (error) throw error;
 
-  if (error) {
+    $("password").value = "";
+  } catch (error) {
     console.error("Login failed:", error);
 
     message(
       "loginMessage",
-      "Sign-in failed. Check your details and try again.",
+      "Sign-in failed. Check your email and password, then try again.",
+      "error"
+    );
+  } finally {
+    button.disabled = false;
+    button.textContent = "Sign In";
+  }
+}
+
+async function logout() {
+  const { error } = await client.auth.signOut();
+
+  if (error) {
+    console.error("Sign-out failed:", error);
+
+    message(
+      "loginMessage",
+      "Could not sign out. Please try again.",
       "error"
     );
 
     return;
   }
-
-  $("password").value = "";
-}
-
-async function logout() {
-  await client.auth.signOut();
 
   currentUser = null;
   orders = [];
@@ -799,7 +817,6 @@ async function loadOrders() {
   if (loadingOrders) return;
 
   loadingOrders = true;
-
   $("refreshOrders").disabled = true;
 
   message("ordersMessage", "Loading orders…");
@@ -839,7 +856,6 @@ async function loadOrders() {
       `Loaded ${orders.length} order record(s).`,
       "success"
     );
-
   } catch (error) {
     console.error("Order loading failed:", error);
 
@@ -848,10 +864,9 @@ async function loadOrders() {
 
     message(
       "ordersMessage",
-      "Orders could not be loaded. Check the database permissions and try again.",
+      "Orders could not be loaded. Check database permissions and column names.",
       "error"
     );
-
   } finally {
     loadingOrders = false;
     $("refreshOrders").disabled = false;
@@ -886,6 +901,7 @@ function renderOrders() {
 
   $("awaitingOrders").textContent = orders.filter(
     order => [
+      "pending_payment",
       "awaiting_payment",
       "verification_pending"
     ].includes(order.payment_status)
@@ -918,7 +934,7 @@ function renderOrders() {
     const ref = document.createElement("td");
 
     const strong = document.createElement("strong");
-    strong.textContent = order.order_reference;
+    strong.textContent = order.order_reference || order.id;
 
     const date = document.createElement("div");
     date.className = "small muted";
@@ -929,11 +945,11 @@ function renderOrders() {
     const customer = document.createElement("td");
 
     const name = document.createElement("strong");
-    name.textContent = order.customer_name;
+    name.textContent = order.customer_name || "Customer";
 
     const email = document.createElement("div");
     email.className = "small muted";
-    email.textContent = order.customer_email;
+    email.textContent = order.customer_email || "";
 
     customer.append(name, email);
 
@@ -953,16 +969,19 @@ function renderOrders() {
     controls.className = "order-controls";
 
     const select = document.createElement("select");
+
     select.setAttribute(
       "aria-label",
-      "New order status for " + order.order_reference
+      "New order status for " + (order.order_reference || order.id)
     );
 
     ORDER_STATUSES.forEach((value) => {
       select.add(new Option(value, value));
     });
 
-    select.value = order.order_status;
+    select.value = ORDER_STATUSES.includes(order.order_status)
+      ? order.order_status
+      : "pending_payment";
 
     const save = document.createElement("button");
     save.type = "button";
@@ -976,7 +995,10 @@ function renderOrders() {
     controls.append(select, save);
 
     row.append(ref, customer, total, payment, status, controls);
-      });
+
+    /* Important: actually add each order row to the table. */
+    body.append(row);
+  });
 }
 
 async function updateOrderStatus(order, select, button) {
@@ -996,7 +1018,7 @@ async function updateOrderStatus(order, select, button) {
   ) {
     message(
       "ordersMessage",
-      "This order cannot progress until its payment has been verified.",
+      "This order cannot progress until its payment has been verified by the payment backend.",
       "error"
     );
     return;
@@ -1029,10 +1051,9 @@ async function updateOrderStatus(order, select, button) {
 
     message(
       "ordersMessage",
-      `Order ${order.order_reference} updated successfully.`,
+      `Order ${order.order_reference || order.id} updated successfully.`,
       "success"
     );
-
   } catch (error) {
     console.error("Order status update failed:", error);
 
@@ -1041,14 +1062,18 @@ async function updateOrderStatus(order, select, button) {
       "Could not update the order. Check database permissions and try again.",
       "error"
     );
-
   } finally {
     button.disabled = false;
     button.textContent = "Save Status";
   }
 }
 
+/* COMMISSION MANAGEMENT */
+
 async function loadCommissions() {
+  if (loadingCommissions) return;
+
+  loadingCommissions = true;
   $("refreshCommissions").disabled = true;
 
   message("commissionMessage", "Loading commission rules…");
@@ -1070,17 +1095,16 @@ async function loadCommissions() {
       `Loaded ${commissionRules.length} commission rule(s).`,
       "success"
     );
-
   } catch (error) {
     console.error("Commission loading failed:", error);
 
     message(
       "commissionMessage",
-      "Could not load commission rules. Check the table and its permissions.",
+      "Could not load commission rules. Check the table columns and database permissions.",
       "error"
     );
-
   } finally {
+    loadingCommissions = false;
     $("refreshCommissions").disabled = false;
   }
 }
@@ -1093,6 +1117,7 @@ function renderCommissions() {
   if (!commissionRules.length) {
     const row = document.createElement("tr");
     const cell = makeCell("No commission rules found yet.");
+
     cell.colSpan = 4;
     row.append(cell);
     body.append(row);
@@ -1103,24 +1128,24 @@ function renderCommissions() {
     const row = document.createElement("tr");
 
     row.append(makeCell(rule.category));
-
-    const rate = Number(rule.rate || 0);
-
-    row.append(makeCell(`${rate}%`));
+    row.append(makeCell(`${Number(rule.commission_rate)}%`));
 
     const statusCell = document.createElement("td");
+
     statusCell.append(
-      makeBadge(rule.active === false ? "inactive" : "active")
+      makeBadge(rule.is_active ? "active" : "inactive")
     );
+
     row.append(statusCell);
 
     const actionCell = document.createElement("td");
-
     const toggleButton = document.createElement("button");
+
     toggleButton.type = "button";
     toggleButton.className = "secondary";
-    toggleButton.textContent =
-      rule.active === false ? "Activate" : "Deactivate";
+    toggleButton.textContent = rule.is_active
+      ? "Deactivate"
+      : "Activate";
 
     toggleButton.addEventListener("click", async () => {
       toggleButton.disabled = true;
@@ -1129,29 +1154,28 @@ function renderCommissions() {
         const { error } = await client
           .from("rn_commission_rules")
           .update({
-            active: rule.active === false
+            is_active: !rule.is_active,
+            updated_at: new Date().toISOString()
           })
           .eq("id", rule.id);
 
         if (error) throw error;
 
-        message(
-          "commissionMessage",
-          "Commission rule updated.",
-          "success"
-        );
-
         await loadCommissions();
 
+        message(
+          "commissionMessage",
+          "Commission status updated successfully.",
+          "success"
+        );
       } catch (error) {
         console.error("Commission update failed:", error);
 
         message(
           "commissionMessage",
-          "Could not update this commission rule.",
+          "Could not update this commission. Check database permissions.",
           "error"
         );
-
       } finally {
         toggleButton.disabled = false;
       }
@@ -1159,13 +1183,21 @@ function renderCommissions() {
 
     actionCell.append(toggleButton);
     row.append(actionCell);
-
     body.append(row);
   });
 }
 
 async function saveCommission(event) {
   event.preventDefault();
+
+  if (!currentUser) {
+    message(
+      "commissionMessage",
+      "Please sign in again before saving a commission.",
+      "error"
+    );
+    return;
+  }
 
   const category = $("commissionCategory").value.trim();
   const rate = Number($("commissionRate").value);
@@ -1194,27 +1226,30 @@ async function saveCommission(event) {
   try {
     const existing = commissionRules.find(
       rule =>
-        String(rule.category).toLowerCase() ===
+        String(rule.category).trim().toLowerCase() ===
         category.toLowerCase()
     );
+
+    const values = {
+      category,
+      commission_rate: rate,
+      is_active: true,
+      updated_at: new Date().toISOString()
+    };
 
     let result;
 
     if (existing) {
       result = await client
         .from("rn_commission_rules")
-        .update({
-          rate: rate,
-          active: true
-        })
+        .update(values)
         .eq("id", existing.id);
     } else {
       result = await client
         .from("rn_commission_rules")
         .insert({
-          category: category,
-          rate: rate,
-          active: true
+          ...values,
+          created_by: currentUser.id
         });
     }
 
@@ -1223,30 +1258,28 @@ async function saveCommission(event) {
     $("commissionCategory").value = "";
     $("commissionRate").value = "";
 
+    await loadCommissions();
+
     message(
       "commissionMessage",
       "Commission rule saved successfully.",
       "success"
     );
-
-    await loadCommissions();
-
   } catch (error) {
     console.error("Saving commission failed:", error);
 
     message(
       "commissionMessage",
-      "Could not save the commission. Check the table columns and permissions.",
+      "Could not save the commission. Check database permissions, column names and required fields.",
       "error"
     );
-
   } finally {
     button.disabled = false;
     button.textContent = "Save Commission";
   }
 }
 
-/* Connect the page controls. */
+/* CONNECT PAGE CONTROLS */
 
 $("loginForm").addEventListener("submit", login);
 
@@ -1264,7 +1297,7 @@ $("orderFilter").addEventListener("change", renderOrders);
 
 $("commissionForm").addEventListener("submit", saveCommission);
 
-/* Restore an existing login or display the login form. */
+/* RESTORE LOGIN SESSION */
 
 client.auth.onAuthStateChange((event, session) => {
   setTimeout(() => {
@@ -1287,7 +1320,6 @@ client.auth.onAuthStateChange((event, session) => {
     if (error) throw error;
 
     await handleSession(data.session);
-
   } catch (error) {
     console.error("Initialisation failed:", error);
 
