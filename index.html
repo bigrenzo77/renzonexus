@@ -2,856 +2,1327 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="theme-color" content="#08111f">
-<meta name="description" content="RenzoNexus — One World. Endless Possibilities.">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#080d1b">
+<meta name="description" content="RenzoNexus — One World. Endless Possibilities. Discover events, shop products, and build your business on a global marketplace.">
+
 <title>RenzoNexus — One World. Endless Possibilities.</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
 <style>
 :root {
-  --bg:#08111f;
-  --panel:#101d30;
-  --panel2:#152740;
-  --text:#f4f7fb;
-  --muted:#a9b8ca;
-  --cyan:#58d9f4;
-  --blue:#648bff;
-  --gold:#f1c86b;
-  --green:#65dfa4;
-  --red:#ff8d98;
-  --border:rgba(255,255,255,.12);
+  --bg: #080d1b;
+  --panel: #10182b;
+  --panel2: #141f35;
+  --line: rgba(255,255,255,.09);
+  --text: #f4f7ff;
+  --muted: #a1adc5;
+  --blue: #66a6ff;
+  --cyan: #65e6ff;
+  --purple: #9a83ff;
+  --gold: #e9c77b;
+  --green: #50dfa5;
+  --red: #ff7889;
+  --radius: 20px;
 }
-*{box-sizing:border-box}
-html{scroll-behavior:smooth}
-body{
-  margin:0;color:var(--text);
-  background:radial-gradient(circle at 85% 0%,rgba(58,114,220,.18),transparent 28rem),var(--bg);
-  font-family:Arial,Helvetica,sans-serif;line-height:1.6
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font-family: "DM Sans", sans-serif;
+  line-height: 1.6;
 }
-a{color:inherit;text-decoration:none}
-button,input,select{font:inherit}
-button{cursor:pointer}
-.container{width:min(1120px,calc(100% - 32px));margin:auto}
-header{
-  position:sticky;top:0;z-index:10;
-  background:rgba(8,17,31,.95);
-  border-bottom:1px solid var(--border);
-  backdrop-filter:blur(15px)
+button, input, textarea, select { font: inherit; }
+button { cursor: pointer; }
+a { color: inherit; text-decoration: none; }
+button:focus-visible, a:focus-visible, input:focus-visible,
+textarea:focus-visible, select:focus-visible {
+  outline: 2px solid var(--cyan);
+  outline-offset: 3px;
 }
-.nav{
-  min-height:76px;display:flex;align-items:center;
-  justify-content:space-between;gap:18px;flex-wrap:wrap;padding:12px 0
+.container { width: min(1180px, 92%); margin: auto; }
+.hidden { display: none !important; }
+.muted { color: var(--muted); }
+.small { font-size: .86rem; }
+.gold { color: var(--gold); }
+.gradient-text {
+  background: linear-gradient(100deg, var(--cyan), var(--blue), var(--purple));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
 }
-.brand{display:flex;align-items:center;gap:10px;font-size:20px;font-weight:900}
-.brand-icon{
-  width:43px;height:43px;display:grid;place-items:center;
-  border-radius:14px;color:#07111e;
-  background:linear-gradient(135deg,var(--cyan),var(--blue))
+.topbar {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  background: rgba(8,13,27,.93);
+  backdrop-filter: blur(18px);
+  border-bottom: 1px solid var(--line);
 }
-.brand small{display:block;color:var(--muted);font-size:9px;letter-spacing:1.5px}
-nav{display:flex;align-items:center;flex-wrap:wrap;gap:5px}
-nav a{color:var(--muted);padding:8px 10px;border-radius:9px;font-size:13px;font-weight:bold}
-nav a:hover{color:white;background:rgba(255,255,255,.07)}
-.btn{
-  display:inline-flex;align-items:center;justify-content:center;
-  padding:11px 16px;border:0;border-radius:11px;
-  color:#06121f;background:linear-gradient(135deg,var(--cyan),#a0eafa);
-  font-weight:800
+.nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  min-height: 76px;
 }
-.btn.gold{background:linear-gradient(135deg,var(--gold),#ffe7a5)}
-.btn.secondary{color:var(--text);background:var(--panel2);border:1px solid var(--border)}
-.btn.danger{color:white;background:#9b3545}
-button:disabled{opacity:.55;cursor:not-allowed}
-.hero{padding:76px 0 48px}
-.hero-grid{display:grid;grid-template-columns:1.2fr .8fr;gap:30px;align-items:center}
-.eyebrow{
-  display:inline-block;color:var(--cyan);
-  border:1px solid rgba(88,217,244,.3);background:rgba(88,217,244,.06);
-  padding:7px 12px;border-radius:30px;font-size:12px;font-weight:bold;letter-spacing:1px
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  font-family: "Space Grotesk", sans-serif;
+  font-weight: 700;
+  font-size: 1.18rem;
+  white-space: nowrap;
 }
-h1{margin:20px 0;font-size:clamp(40px,6vw,70px);line-height:1.05;letter-spacing:-2px}
-.gradient{
-  color:var(--cyan);background:linear-gradient(90deg,var(--cyan),#a9b9ff);
-  background-clip:text;-webkit-background-clip:text;-webkit-text-fill-color:transparent
+.brand-mark {
+  display: grid;
+  place-items: center;
+  width: 42px;
+  height: 42px;
+  border-radius: 14px;
+  color: #06101c;
+  background: linear-gradient(135deg, var(--cyan), var(--blue), var(--purple));
+  font-weight: 900;
 }
-p{color:var(--muted)}
-.hero p{max-width:620px;font-size:17px}
-.actions{display:flex;flex-wrap:wrap;gap:12px;margin-top:24px}
-.hero-card,.card{
-  border:1px solid var(--border);border-radius:20px;
-  background:linear-gradient(145deg,rgba(20,39,64,.95),rgba(12,25,42,.96));
-  padding:24px
+.navlinks {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 7px;
 }
-.hero-card{padding:30px}
-.hero-symbol{
-  font-size:45px;width:80px;height:80px;display:grid;place-items:center;
-  border-radius:24px;background:rgba(88,217,244,.1)
+.navlinks button {
+  border: 0;
+  background: transparent;
+  color: var(--muted);
+  padding: 10px 12px;
+  border-radius: 10px;
 }
-section{padding:42px 0;scroll-margin-top:100px}
-h2{font-size:clamp(27px,4vw,38px);margin:12px 0 8px}
-h3{margin-top:10px}
-.section-intro{margin-bottom:22px}
-.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
-.icon{
-  font-size:25px;width:49px;height:49px;display:grid;place-items:center;
-  border-radius:14px;background:rgba(88,217,244,.1)
+.navlinks button:hover,
+.navlinks button.active {
+  color: white;
+  background: rgba(102,166,255,.12);
 }
-.tag,.role-pill{
-  display:inline-block;padding:5px 10px;border-radius:20px;
-  border:1px solid var(--border);font-size:12px;color:var(--cyan)
+.btn {
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 11px 17px;
+  color: white;
+  background: var(--panel2);
+  font-weight: 700;
+  transition: .2s;
 }
-.account-grid{display:grid;grid-template-columns:.8fr 1.2fr;gap:18px;align-items:start}
-.welcome{border-color:rgba(241,200,107,.28);background:linear-gradient(145deg,rgba(66,49,24,.35),var(--panel))}
-.forms-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px}
-label{display:block;margin:12px 0 5px;font-size:13px;font-weight:bold;color:var(--muted)}
-input,select{
-  display:block;width:100%;padding:12px;color:white;background:#091626;
-  border:1px solid var(--border);border-radius:10px;outline:none
+.btn:hover { transform: translateY(-1px); border-color: var(--blue); }
+.btn-primary {
+  border: 0;
+  color: #06101c;
+  background: linear-gradient(110deg, var(--cyan), var(--blue));
 }
-input:focus,select:focus{border-color:var(--cyan)}
-form button{margin-top:15px}
-.message{margin-top:12px;font-size:13px;overflow-wrap:anywhere}
-.success{color:var(--green)}
-.error{color:var(--red)}
-.muted{color:var(--muted)}
-.hidden{display:none!important}
-.dashboard-top{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:14px}
-.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:20px}
-.stat{padding:20px;background:rgba(255,255,255,.035);border:1px solid var(--border);border-radius:15px}
-.stat span{color:var(--muted);font-size:13px}
-.stat strong{display:block;font-size:30px;margin-top:6px}
-.notice{
-  padding:13px;border:1px solid rgba(241,200,107,.25);border-radius:11px;
-  color:#ead9ac;background:rgba(241,200,107,.06);font-size:13px;margin-top:16px
+.btn-gold {
+  border: 0;
+  color: #201707;
+  background: linear-gradient(110deg, #f2dca2, var(--gold));
 }
-.rate-list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-top:15px}
-.rate-row{
-  padding:15px;display:flex;justify-content:space-between;align-items:center;
-  gap:12px;background:rgba(255,255,255,.035);
-  border:1px solid var(--border);border-radius:12px
+.btn-danger { background: rgba(255,120,137,.12); color: #ff9eaa; }
+.btn-success { background: rgba(80,223,165,.12); color: var(--green); }
+.btn-sm { padding: 7px 11px; font-size: .85rem; }
+.btn:disabled { opacity: .55; cursor: not-allowed; transform: none; }
+.hero {
+  position: relative;
+  overflow: hidden;
+  padding: 85px 0 75px;
 }
-.rate-row strong{color:var(--gold);white-space:nowrap}
-footer{margin-top:30px;padding:28px 0;border-top:1px solid var(--border);color:var(--muted);font-size:13px}
-@media(max-width:850px){
-  .hero-grid,.account-grid{grid-template-columns:1fr}
-  .grid{grid-template-columns:1fr 1fr}
+.hero:before {
+  content: "";
+  position: absolute;
+  width: 520px;
+  height: 520px;
+  right: -160px;
+  top: -150px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(102,166,255,.18), transparent 70%);
+  pointer-events: none;
 }
-@media(max-width:600px){
-  .nav{align-items:flex-start}
-  nav{justify-content:flex-start}
-  nav a{padding:7px;font-size:12px}
-  .hero{padding-top:45px}
-  .grid,.forms-grid,.stats,.rate-list{grid-template-columns:1fr}
-  .card,.hero-card{padding:20px}
+.hero:after {
+  content: "";
+  position: absolute;
+  width: 380px;
+  height: 380px;
+  left: -180px;
+  bottom: -200px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(154,131,255,.15), transparent 70%);
+  pointer-events: none;
+}
+.hero-grid {
+  display: grid;
+  grid-template-columns: 1.15fr .85fr;
+  align-items: center;
+  gap: 45px;
+  position: relative;
+  z-index: 1;
+}
+.eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 7px 12px;
+  border: 1px solid rgba(101,230,255,.23);
+  background: rgba(101,230,255,.07);
+  color: var(--cyan);
+  border-radius: 100px;
+  font-size: .82rem;
+  font-weight: 700;
+}
+h1, h2, h3, h4 { font-family: "Space Grotesk", sans-serif; line-height: 1.2; }
+h1 { font-size: clamp(2.6rem, 6vw, 5rem); letter-spacing: -.055em; margin: 22px 0; }
+h2 { font-size: clamp(1.8rem, 4vw, 2.8rem); letter-spacing: -.035em; }
+h3 { font-size: 1.25rem; }
+.hero p { color: var(--muted); font-size: 1.08rem; max-width: 620px; }
+.hero-actions { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 27px; }
+.hero-card {
+  border: 1px solid rgba(255,255,255,.12);
+  background: linear-gradient(145deg, rgba(20,31,53,.96), rgba(12,19,36,.96));
+  padding: 26px;
+  border-radius: 28px;
+  box-shadow: 0 25px 80px rgba(0,0,0,.24);
+}
+.hero-card-top { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+.pill {
+  display: inline-flex;
+  align-items: center;
+  border: 1px solid var(--line);
+  border-radius: 100px;
+  padding: 5px 10px;
+  font-size: .78rem;
+  color: var(--muted);
+}
+.orbit {
+  height: 180px;
+  margin: 22px 0;
+  border-radius: 20px;
+  display: grid;
+  place-items: center;
+  background:
+    radial-gradient(circle at center, rgba(101,230,255,.2), transparent 35%),
+    linear-gradient(135deg, rgba(102,166,255,.12), rgba(154,131,255,.12));
+  border: 1px solid var(--line);
+  font-size: 4rem;
+}
+.stats { display: grid; grid-template-columns: repeat(3,1fr); gap: 12px; }
+.stat { background: rgba(255,255,255,.035); border: 1px solid var(--line); padding: 13px; border-radius: 14px; }
+.stat strong { display: block; font-family: "Space Grotesk", sans-serif; font-size: 1.2rem; }
+.stat span { color: var(--muted); font-size: .77rem; }
+.section { padding: 68px 0; }
+.section-head {
+  display: flex;
+  align-items: end;
+  justify-content: space-between;
+  gap: 20px;
+  margin-bottom: 26px;
+}
+.section-head h2 { margin: 0 0 8px; }
+.section-head p { color: var(--muted); margin: 0; }
+.grid { display: grid; gap: 18px; }
+.grid-3 { grid-template-columns: repeat(3,minmax(0,1fr)); }
+.grid-2 { grid-template-columns: repeat(2,minmax(0,1fr)); }
+.card {
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: 22px;
+  min-width: 0;
+}
+.card:hover { border-color: rgba(102,166,255,.35); }
+.card-icon {
+  display: grid;
+  place-items: center;
+  width: 50px;
+  height: 50px;
+  border-radius: 15px;
+  background: rgba(102,166,255,.12);
+  font-size: 1.55rem;
+  margin-bottom: 15px;
+}
+.card h3 { margin: 8px 0; }
+.card p { color: var(--muted); }
+.feature-number { font-size: .82rem; color: var(--cyan); font-weight: 800; }
+.page { display: none; min-height: 70vh; }
+.page.active { display: block; }
+.page-intro { padding: 52px 0 22px; }
+.page-intro h1 { font-size: clamp(2rem, 5vw, 3.5rem); margin: 12px 0; }
+.page-intro p { color: var(--muted); max-width: 750px; }
+.toolbar { display: flex; flex-wrap: wrap; gap: 12px; margin: 20px 0; }
+.field { margin-bottom: 15px; }
+.field label { display: block; margin-bottom: 6px; font-size: .9rem; font-weight: 700; }
+.field input, .field select, .field textarea, .input {
+  width: 100%;
+  color: white;
+  background: #0b1324;
+  border: 1px solid var(--line);
+  border-radius: 11px;
+  padding: 12px 13px;
+}
+.field textarea { min-height: 120px; resize: vertical; }
+.field input::placeholder, .field textarea::placeholder { color: #78869f; }
+.form-card { max-width: 700px; margin: 0 auto; }
+.form-note { padding: 13px; background: rgba(101,230,255,.06); border: 1px solid rgba(101,230,255,.17); border-radius: 12px; color: var(--muted); font-size: .88rem; margin-bottom: 20px; }
+.notice { padding: 14px 16px; border-radius: 12px; margin: 15px 0; }
+.notice.success { color: var(--green); background: rgba(80,223,165,.09); border: 1px solid rgba(80,223,165,.22); }
+.notice.error { color: #ff9eaa; background: rgba(255,120,137,.09); border: 1px solid rgba(255,120,137,.22); }
+.notice.info { color: var(--cyan); background: rgba(101,230,255,.07); border: 1px solid rgba(101,230,255,.18); }
+.auth-box { max-width: 480px; margin: 0 auto; }
+.auth-tabs { display: flex; gap: 8px; margin-bottom: 20px; }
+.auth-tabs button { flex: 1; }
+.table-wrap { overflow-x: auto; border: 1px solid var(--line); border-radius: 14px; }
+table { width: 100%; border-collapse: collapse; min-width: 650px; }
+th, td { padding: 13px 14px; text-align: left; border-bottom: 1px solid var(--line); vertical-align: top; }
+th { color: var(--muted); font-size: .82rem; background: rgba(255,255,255,.025); }
+td { font-size: .9rem; }
+tr:last-child td { border-bottom: 0; }
+.badge { display: inline-block; padding: 5px 9px; border-radius: 100px; background: rgba(102,166,255,.12); color: var(--blue); font-size: .77rem; font-weight: 700; }
+.badge.pending { background: rgba(233,199,123,.12); color: var(--gold); }
+.badge.approved { background: rgba(80,223,165,.12); color: var(--green); }
+.badge.rejected { background: rgba(255,120,137,.12); color: #ff9eaa; }
+.admin-tabs { display: flex; gap: 8px; flex-wrap: wrap; margin: 22px 0; }
+.admin-tabs button.active { color: var(--cyan); border-color: var(--cyan); }
+.application-card { margin-bottom: 14px; }
+.application-actions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
+.divider { border: 0; border-top: 1px solid var(--line); margin: 25px 0; }
+.empty { padding: 35px 20px; text-align: center; color: var(--muted); background: rgba(255,255,255,.02); border: 1px dashed var(--line); border-radius: 16px; }
+footer { border-top: 1px solid var(--line); margin-top: 45px; padding: 36px 0; color: var(--muted); }
+.footer-grid { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 20px; }
+.toast {
+  position: fixed;
+  z-index: 100;
+  bottom: 20px;
+  right: 20px;
+  max-width: min(400px, calc(100vw - 40px));
+  padding: 14px 18px;
+  border-radius: 12px;
+  background: #17243a;
+  border: 1px solid var(--line);
+  box-shadow: 0 10px 40px #0007;
+}
+.loading { opacity: .7; pointer-events: none; }
+.menu-toggle { display: none; }
+@media(max-width:900px) {
+  .hero-grid { grid-template-columns: 1fr; }
+  .hero { padding: 60px 0; }
+  .grid-3 { grid-template-columns: repeat(2,minmax(0,1fr)); }
+  .nav { flex-wrap: wrap; padding: 12px 0; }
+  .navlinks { width: 100%; justify-content: flex-start; }
+}
+@media(max-width:600px) {
+  .grid-3, .grid-2 { grid-template-columns: 1fr; }
+  .section { padding: 48px 0; }
+  .section-head { align-items: flex-start; flex-direction: column; }
+  .navlinks { gap: 3px; }
+  .navlinks button { padding: 8px; font-size: .85rem; }
+  .hero-card { padding: 19px; }
+  .stats { gap: 7px; }
+  .stat { padding: 10px; }
+  .stat strong { font-size: 1rem; }
+  .brand { font-size: 1rem; }
 }
 </style>
 </head>
 
 <body>
-<header>
+<header class="topbar">
   <div class="container nav">
-    <a class="brand" href="#home">
-      <span class="brand-icon">RN</span>
-      <span>RenzoNexus<small>ONE WORLD. ENDLESS POSSIBILITIES.</small></span>
+    <a href="#" class="brand" onclick="showPage('home');return false;">
+      <span class="brand-mark">RN</span>
+      <span>Renzo<span class="gradient-text">Nexus</span></span>
     </a>
-    <nav aria-label="Main navigation">
-      <a href="#home">Home</a>
-      <a href="#discover">Discover</a>
-      <a href="#events">Events</a>
-      <a href="#merch">Merch</a>
-      <a href="#sell">Sell With Us</a>
-      <a href="#account">Account</a>
-      <a id="adminNav" class="hidden" href="#admin">👑 Admin</a>
+
+    <nav class="navlinks" aria-label="Main navigation">
+      <button class="active" data-page="home" onclick="showPage('home')">Home</button>
+      <button data-page="discover" onclick="showPage('discover')">Discover</button>
+      <button data-page="events" onclick="showPage('events')">Events</button>
+      <button data-page="merch" onclick="showPage('merch')">Merch</button>
+      <button data-page="sell" onclick="showPage('sell')">Sell With Us</button>
+      <button data-page="account" onclick="showPage('account')">Account</button>
+      <button data-page="admin" id="adminNav" class="hidden" onclick="showPage('admin')">Admin</button>
     </nav>
   </div>
 </header>
 
 <main>
-<section class="hero" id="home">
-  <div class="container hero-grid">
-    <div>
-      <span class="eyebrow">✦ DISCOVER WHAT CONNECTS US</span>
-      <h1>One World.<br><span class="gradient">Endless Possibilities.</span></h1>
-      <p>Discover products, explore events, and connect with new opportunities in one growing digital space for people, creators, sellers, and communities.</p>
-      <div class="actions">
-        <a class="btn" href="#discover">Explore RenzoNexus →</a>
-        <a class="btn secondary" href="#sell">Join as a Seller</a>
-      </div>
-    </div>
-    <div class="hero-card">
-      <div class="hero-symbol">🌐</div>
-      <h3>Your world, connected.</h3>
-      <p>Discovery, commerce, events, and opportunities—together in one place.</p>
-      <div class="grid">
-        <div><strong>🛍️ Marketplace</strong><br><small class="muted">Discover products</small></div>
-        <div><strong>🎟️ Events</strong><br><small class="muted">Find experiences</small></div>
-        <div><strong>🤝 Community</strong><br><small class="muted">Build connections</small></div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<section id="discover">
-  <div class="container">
-    <span class="eyebrow">EXPLORE</span>
-    <h2>Discover RenzoNexus</h2>
-    <p class="section-intro">Explore the opportunities that interest you.</p>
-    <div class="grid">
-      <article class="card"><div class="icon">🛍️</div><h3>Marketplace</h3><p>Discover products and independent sellers as the marketplace grows.</p><span class="tag">Shopping</span></article>
-      <article class="card"><div class="icon">🎟️</div><h3>Events & Experiences</h3><p>Find events and experiences shared by event organisers.</p><span class="tag">Events</span></article>
-      <article class="card"><div class="icon">🚀</div><h3>Opportunities</h3><p>Make room for collaboration, new ideas, and growth.</p><span class="tag">Community</span></article>
-    </div>
-  </div>
-</section>
-
-<section id="events">
-  <div class="container">
-    <span class="eyebrow">WHAT'S HAPPENING</span>
-    <h2>Events</h2>
-    <div class="card">
-      <div class="icon">📅</div>
-      <h3>Discover upcoming experiences</h3>
-      <p>Event publishing and public listings still need to be connected. Event organisers can express interest through the section below.</p>
-      <a class="btn secondary" href="#sell">Become an Organiser</a>
-    </div>
-  </div>
-</section>
-
-<section id="merch">
-  <div class="container">
-    <span class="eyebrow">SHOP & DISCOVER</span>
-    <h2>Marketplace & Merchandise</h2>
-    <div class="grid">
-      <article class="card"><div class="icon">✨</div><h3>Featured products</h3><p>Product listings can be connected here as the marketplace database is developed.</p></article>
-      <article class="card"><div class="icon">🏷️</div><h3>Independent sellers</h3><p>Support businesses and creators as the platform grows.</p></article>
-      <article class="card"><div class="icon">🔒</div><h3>Safer shopping</h3><p>Payment processing must be configured before real purchases are offered.</p></article>
-    </div>
-  </div>
-</section>
-
-<section id="sell">
-  <div class="container">
-    <span class="eyebrow">BUILD WITH US</span>
-    <h2>Sell or Organise with RenzoNexus</h2>
-    <div class="grid">
-      <article class="card"><div class="icon">🛍️</div><h3>Seller programme</h3><p>For businesses and individuals interested in selling products.</p><button class="btn secondary choose-type" data-type="seller">Apply to Sell</button></article>
-      <article class="card"><div class="icon">🎟️</div><h3>Event organiser programme</h3><p>For people who want to publish events and experiences.</p><button class="btn secondary choose-type" data-type="organiser">Apply to Organise</button></article>
-      <article class="card"><div class="icon">🤝</div><h3>Grow together</h3><p>Join the community as RenzoNexus expands.</p><a class="btn secondary" href="#account">Create an Account</a></article>
-    </div>
-
-    <div class="card" style="margin-top:18px">
-      <h3>Application interest</h3>
-      <p>This is a front-end form only. It does not submit applications to Supabase yet.</p>
-      <form id="interestForm">
-        <label for="interestName">Full name</label>
-        <input id="interestName" required maxlength="100" placeholder="Your full name">
-        <label for="interestEmail">Email address</label>
-        <input id="interestEmail" type="email" required placeholder="you@example.com">
-        <label for="interestType">Application type</label>
-        <select id="interestType" required>
-          <option value="">Choose one</option>
-          <option value="seller">Seller</option>
-          <option value="organiser">Event organiser</option>
-        </select>
-        <button class="btn" type="submit">Check Application Setup</button>
-        <div id="interestMessage" class="message" role="status"></div>
-      </form>
-    </div>
-  </div>
-</section>
-
-<section id="account">
-  <div class="container">
-    <span class="eyebrow">YOUR RENZONEXUS</span>
-    <h2>Account</h2>
-    <p>Sign in or create an account to join the platform.</p>
-    <div class="account-grid">
-      <div class="card welcome">
-        <div class="icon">👤</div>
-        <h3 id="welcomeName">Welcome to RenzoNexus</h3>
-        <p id="welcomeEmail">Sign in to view your account.</p>
-        <span id="roleBadge" class="role-pill">Guest</span>
-        <p id="verificationStatus" class="message"></p>
-        <button id="signOutButton" class="btn secondary hidden" type="button">Sign Out</button>
-        <div id="adminShortcut" class="hidden" style="margin-top:15px">
-          <a class="btn gold" href="#admin">Open Admin Dashboard →</a>
-        </div>
-      </div>
-
-      <div class="card">
-        <div id="authForms">
-          <div class="forms-grid">
-            <div>
-              <h3>Sign In</h3>
-              <form id="loginForm">
-                <label for="loginEmail">Email</label>
-                <input id="loginEmail" type="email" autocomplete="email" required placeholder="you@example.com">
-                <label for="loginPassword">Password</label>
-                <input id="loginPassword" type="password" autocomplete="current-password" required placeholder="Your password">
-                <button class="btn" type="submit">Sign In</button>
-                <button id="resetButton" class="btn secondary" type="button">Forgot Password?</button>
-              </form>
-            </div>
-            <div>
-              <h3>Create Account</h3>
-              <form id="signupForm">
-                <label for="signupName">Display name</label>
-                <input id="signupName" required maxlength="60" autocomplete="nickname" placeholder="Your display name">
-                <label for="signupEmail">Email</label>
-                <input id="signupEmail" type="email" required autocomplete="email" placeholder="you@example.com">
-                <label for="signupPassword">Password (8+ characters)</label>
-                <input id="signupPassword" type="password" minlength="8" required autocomplete="new-password" placeholder="Create a password">
-                <button class="btn" type="submit">Create Account</button>
-              </form>
-            </div>
-          </div>
-        </div>
-        <div id="authMessage" class="message" role="status" aria-live="polite"></div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<section id="admin" class="hidden">
-  <div class="container">
-    <div class="dashboard-top">
+<!-- HOME -->
+<section class="page active" id="page-home">
+  <div class="hero">
+    <div class="container hero-grid">
       <div>
-        <span class="eyebrow">RESTRICTED AREA</span>
-        <h2>RenzoNexus Admin Dashboard</h2>
-        <p>Account: <strong id="adminEmail"></strong></p>
-        <p>Role: <strong id="adminRole"></strong></p>
+        <span class="eyebrow">✦ A world of opportunities</span>
+        <h1>One World.<br><span class="gradient-text">Endless Possibilities.</span></h1>
+        <p>
+          Discover events, explore products, support creators and build your business.
+          Welcome to a marketplace designed to connect people and opportunities across borders.
+        </p>
+        <div class="hero-actions">
+          <button class="btn btn-primary" onclick="showPage('discover')">Explore Marketplace ↗</button>
+          <button class="btn" onclick="showPage('events')">Discover Events</button>
+        </div>
+        <p class="small">Built for buyers, sellers, event organisers and creators.</p>
       </div>
-      <span class="role-pill">✓ Admin role verified</span>
-    </div>
 
-    <div class="card">
-      <h3>Dashboard Overview</h3>
-      <p>Statistics appear only when the signed-in account has permission to read the corresponding table.</p>
-      <div class="stats">
-        <div class="stat"><span>Profiles</span><strong id="profileCount">—</strong></div>
-        <div class="stat"><span>Seller applications</span><strong id="sellerCount">—</strong></div>
-        <div class="stat"><span>Organiser applications</span><strong id="organiserCount">—</strong></div>
+      <div class="hero-card">
+        <div class="hero-card-top">
+          <div>
+            <span class="pill">RENZONEXUS GLOBAL</span>
+            <h3 style="margin-bottom:0">Your next opportunity starts here.</h3>
+          </div>
+          <span class="gold">✦</span>
+        </div>
+        <div class="orbit">🌐</div>
+        <div class="stats">
+          <div class="stat"><strong>Global</strong><span>Ambition</span></div>
+          <div class="stat"><strong>One</strong><span>Marketplace</span></div>
+          <div class="stat"><strong>∞</strong><span>Possibilities</span></div>
+        </div>
       </div>
-      <div id="dashboardMessage" class="notice" role="status">Loading permitted dashboard data…</div>
     </div>
+  </div>
 
-    <!-- FOUNDER-ONLY COMMISSION MANAGEMENT -->
-    <div id="commissionCard" class="card hidden" style="margin-top:18px">
-      <span class="eyebrow">FOUNDER CONTROLS</span>
-      <h3>💰 Commission Management</h3>
-      <p>Set the commission percentage for each category. Only the Founder / Super Admin can save changes.</p>
+  <div class="container section">
+    <div class="section-head">
+      <div>
+        <span class="feature-number">EXPLORE RENZONEXUS</span>
+        <h2>Everything begins with discovery.</h2>
+        <p>Explore opportunities or choose how you want to participate.</p>
+      </div>
+    </div>
+    <div class="grid grid-3">
+      <article class="card">
+        <div class="card-icon">🛍️</div>
+        <h3>Marketplace</h3>
+        <p>Discover products and services offered by participating sellers.</p>
+        <button class="btn" onclick="showPage('discover')">Explore marketplace →</button>
+      </article>
+      <article class="card">
+        <div class="card-icon">🎟️</div>
+        <h3>Events & Tickets</h3>
+        <p>Find concerts, conferences, festivals and other experiences.</p>
+        <button class="btn" onclick="showPage('events')">Explore events →</button>
+      </article>
+      <article class="card">
+        <div class="card-icon">👕</div>
+        <h3>Merchandise</h3>
+        <p>Explore merchandise and creator-inspired products.</p>
+        <button class="btn" onclick="showPage('merch')">Explore merch →</button>
+      </article>
+      <article class="card">
+        <div class="card-icon">🏪</div>
+        <h3>Become a Seller</h3>
+        <p>Apply to offer products and services through RenzoNexus.</p>
+        <button class="btn" onclick="showPage('seller-application')">Apply to sell →</button>
+      </article>
+      <article class="card">
+        <div class="card-icon">🎤</div>
+        <h3>Organise Events</h3>
+        <p>Apply to list and manage your events on the platform.</p>
+        <button class="btn" onclick="showPage('organiser-application')">Apply to organise →</button>
+      </article>
+      <article class="card">
+        <div class="card-icon">🌍</div>
+        <h3>Global Community</h3>
+        <p>A growing platform for people, creators, sellers and organisers.</p>
+        <button class="btn" onclick="showPage('account')">Join RenzoNexus →</button>
+      </article>
+    </div>
+  </div>
 
-      <form id="commissionForm">
-        <label for="commissionCategory">Product category</label>
-        <select id="commissionCategory" required>
-          <option value="Celebrity Tickets">Celebrity Tickets</option>
-          <option value="Meet-and-Greet">Meet-and-Greet</option>
-          <option value="Custom Jewellery">Custom Jewellery</option>
-          <option value="Custom T-Shirts">Custom T-Shirts</option>
-          <option value="General Marketplace">General Marketplace</option>
-          <option value="Events and Experiences">Events and Experiences</option>
-        </select>
+  <div class="container section">
+    <div class="card" style="padding:clamp(24px,5vw,48px);background:linear-gradient(120deg,#101c31,#171a35)">
+      <span class="eyebrow">YOUR NEXT CHAPTER</span>
+      <h2>Have something to offer the world?</h2>
+      <p class="muted">Create an account and apply to join our growing community of sellers and event organisers.</p>
+      <div class="hero-actions">
+        <button class="btn btn-primary" onclick="showPage('seller-application')">Become a Seller</button>
+        <button class="btn btn-gold" onclick="showPage('organiser-application')">Become an Organiser</button>
+      </div>
+    </div>
+  </div>
+</section>
 
-        <label for="commissionPercent">Commission percentage (%)</label>
-        <input id="commissionPercent" type="number" min="0" max="100" step="0.01" required placeholder="For example, 10">
+<!-- DISCOVER -->
+<section class="page" id="page-discover">
+  <div class="container">
+    <div class="page-intro">
+      <span class="eyebrow">MARKETPLACE</span>
+      <h1>Discover <span class="gradient-text">something new.</span></h1>
+      <p>Explore goods and services from participating RenzoNexus sellers.</p>
+    </div>
+    <div class="toolbar">
+      <input id="marketSearch" class="input" style="flex:1;min-width:200px" placeholder="Search products or services..." oninput="filterMarket()">
+      <select id="marketCategory" class="input" style="max-width:220px" onchange="filterMarket()">
+        <option value="">All categories</option>
+        <option>Fashion</option><option>Electronics</option><option>Home</option>
+        <option>Beauty</option><option>Services</option><option>Other</option>
+      </select>
+    </div>
+    <div id="marketGrid" class="grid grid-3">
+      <div class="card"><div class="card-icon">🛍️</div><h3>Marketplace coming to life</h3><p>Seller product listings will appear here when a product catalogue is connected.</p></div>
+      <div class="card"><div class="card-icon">🌟</div><h3>Discover local finds</h3><p>Explore products and services as more sellers join the platform.</p></div>
+      <div class="card"><div class="card-icon">🤝</div><h3>Support sellers</h3><p>Help independent businesses reach more customers.</p></div>
+    </div>
+    <div class="notice info">Product listings and checkout require a product catalogue and a configured payment provider. This starter website does not pretend that demo products are available for purchase.</div>
+  </div>
+</section>
 
-        <button class="btn gold" id="saveCommissionBtn" type="submit">Save Commission Rate</button>
+<!-- EVENTS -->
+<section class="page" id="page-events">
+  <div class="container">
+    <div class="page-intro">
+      <span class="eyebrow">EVENT DISCOVERY</span>
+      <h1>Find your next <span class="gradient-text">experience.</span></h1>
+      <p>Explore concerts, tours, festivals, conferences and events as organisers join RenzoNexus.</p>
+    </div>
+    <div class="grid grid-3">
+      <div class="card"><div class="card-icon">🎵</div><h3>Concerts & Tours</h3><p>Discover live music and performances.</p><span class="badge">Listings to come</span></div>
+      <div class="card"><div class="card-icon">🎪</div><h3>Festivals</h3><p>Find cultural, entertainment and community events.</p><span class="badge">Listings to come</span></div>
+      <div class="card"><div class="card-icon">💼</div><h3>Business Events</h3><p>Explore conferences, networking and professional gatherings.</p><span class="badge">Listings to come</span></div>
+    </div>
+    <div class="card" style="margin-top:22px">
+      <h3>Are you an event organiser?</h3>
+      <p>Apply to join RenzoNexus and let our team review your application.</p>
+      <button class="btn btn-primary" onclick="showPage('organiser-application')">Apply to organise events</button>
+    </div>
+  </div>
+</section>
+
+<!-- MERCH -->
+<section class="page" id="page-merch">
+  <div class="container">
+    <div class="page-intro">
+      <span class="eyebrow">CREATOR CULTURE</span>
+      <h1>Wear what <span class="gradient-text">inspires you.</span></h1>
+      <p>RenzoNexus merchandise is intended to support fashion, creator-inspired products and event merchandise.</p>
+    </div>
+    <div class="grid grid-3">
+      <div class="card"><div class="card-icon">👕</div><h3>Custom T-shirts</h3><p>Discover original designs and custom merchandise from approved sellers.</p></div>
+      <div class="card"><div class="card-icon">🧢</div><h3>Accessories</h3><p>Explore accessories and lifestyle products.</p></div>
+      <div class="card"><div class="card-icon">🎁</div><h3>Limited Editions</h3><p>Special merchandise may be listed by participating creators and organisers.</p></div>
+    </div>
+    <div class="notice info">Merchandise displayed for sale must be added by an authorised seller. Celebrity names, logos and artwork should only be used with appropriate permission.</div>
+    <button class="btn btn-primary" onclick="showPage('seller-application')">Apply to sell merchandise</button>
+  </div>
+</section>
+
+<!-- SELL WITH US -->
+<section class="page" id="page-sell">
+  <div class="container">
+    <div class="page-intro">
+      <span class="eyebrow">GROW WITH US</span>
+      <h1>Build your business on <span class="gradient-text">RenzoNexus.</span></h1>
+      <p>Choose the application that matches what you want to do.</p>
+    </div>
+    <div class="grid grid-2">
+      <div class="card">
+        <div class="card-icon">🏪</div>
+        <h3>Seller Application</h3>
+        <p>For people and businesses that want to offer products or services.</p>
+        <button class="btn btn-primary" onclick="showPage('seller-application')">Apply as Seller</button>
+      </div>
+      <div class="card">
+        <div class="card-icon">🎟️</div>
+        <h3>Event Organiser Application</h3>
+        <p>For event organisers who want to publish and manage event listings.</p>
+        <button class="btn btn-primary" onclick="showPage('organiser-application')">Apply as Organiser</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ACCOUNT -->
+<section class="page" id="page-account">
+  <div class="container">
+    <div class="page-intro">
+      <span class="eyebrow">YOUR ACCOUNT</span>
+      <h1>Welcome to <span class="gradient-text">RenzoNexus.</span></h1>
+      <p>Create an account or log in to submit applications and view your account information.</p>
+    </div>
+    <div id="accountSignedOut" class="card auth-box">
+      <div class="auth-tabs">
+        <button id="loginTab" class="btn btn-primary" onclick="setAuthMode('login')">Log In</button>
+        <button id="signupTab" class="btn" onclick="setAuthMode('signup')">Create Account</button>
+      </div>
+      <form id="authForm" onsubmit="handleAuth(event)">
+        <div class="field" id="authNameWrap" class="hidden">
+          <label for="authName">Full name</label>
+          <input id="authName" autocomplete="name" placeholder="Your full name">
+        </div>
+        <div class="field">
+          <label for="authEmail">Email address</label>
+          <input id="authEmail" type="email" autocomplete="email" required placeholder="you@example.com">
+        </div>
+        <div class="field">
+          <label for="authPassword">Password</label>
+          <input id="authPassword" type="password" autocomplete="current-password" minlength="8" required placeholder="At least 8 characters">
+        </div>
+        <button id="authSubmit" class="btn btn-primary" style="width:100%" type="submit">Log In</button>
+        <div id="authMessage" aria-live="polite"></div>
       </form>
-
-      <div id="commissionMessage" class="message" role="status" aria-live="polite"></div>
-
-      <h3>Current Commission Rates</h3>
-      <div id="commissionRates" class="rate-list" aria-live="polite">Loading commission rates…</div>
+      <hr class="divider">
+      <button class="btn" style="width:100%" onclick="resetPassword()">Forgot password?</button>
     </div>
-    <!-- END FOUNDER-ONLY COMMISSION MANAGEMENT -->
-
-    <div class="grid" style="margin-top:18px">
-      <article class="card"><div class="icon">👥</div><h3>Member Management</h3><p>Member-management actions require additional secure database policies.</p><span class="tag">Setup required</span></article>
-      <article class="card"><div class="icon">🛍️</div><h3>Seller Applications</h3><p>Review tools need the exact table schema and permissions before activation.</p><span class="tag">Setup required</span></article>
-      <article class="card"><div class="icon">🎟️</div><h3>Organiser Applications</h3><p>Review and approval workflows will be added after database access is configured.</p><span class="tag">Setup required</span></article>
+    <div id="accountSignedIn" class="card hidden">
+      <span class="eyebrow">SIGNED IN</span>
+      <h2 id="accountGreeting">Your account</h2>
+      <p id="accountEmail" class="muted"></p>
+      <div id="accountRole"></div>
+      <div class="hero-actions">
+        <button class="btn btn-primary" onclick="showPage('seller-application')">Apply as Seller</button>
+        <button class="btn" onclick="showPage('organiser-application')">Apply as Organiser</button>
+        <button class="btn" onclick="loadMyApplications()">My Applications</button>
+        <button class="btn btn-danger" onclick="signOut()">Log Out</button>
+      </div>
+      <div id="myApplications" style="margin-top:24px"></div>
     </div>
+  </div>
+</section>
 
-    <div class="notice">Security: the database must protect administrative actions. Never put a Supabase service-role secret in this file.</div>
+<!-- SELLER APPLICATION -->
+<section class="page" id="page-seller-application">
+  <div class="container">
+    <div class="page-intro">
+      <span class="eyebrow">SELLER ONBOARDING</span>
+      <h1>Become a <span class="gradient-text">RenzoNexus Seller.</span></h1>
+      <p>Tell us about your business. Your application will be submitted for review.</p>
+    </div>
+    <div class="card form-card">
+      <div class="form-note">You must log in before submitting. Please provide accurate information. Submitting an application does not automatically approve your seller account.</div>
+      <form id="sellerForm" onsubmit="submitSellerApplication(event)">
+        <div class="grid grid-2">
+          <div class="field"><label for="sellerFullName">Full name *</label><input id="sellerFullName" required maxlength="120" autocomplete="name"></div>
+          <div class="field"><label for="sellerEmail">Email address *</label><input id="sellerEmail" type="email" required maxlength="254" autocomplete="email"></div>
+        </div>
+        <div class="field"><label for="sellerBusinessName">Business name *</label><input id="sellerBusinessName" required maxlength="160" placeholder="Your store or business name"></div>
+        <div class="field"><label for="sellerDescription">Business description *</label><textarea id="sellerDescription" required maxlength="3000" placeholder="What do you sell or what services do you provide?"></textarea></div>
+        <div class="grid grid-2">
+          <div class="field">
+            <label for="sellerCategory">Product or service category *</label>
+            <select id="sellerCategory" required>
+              <option value="">Choose category</option>
+              <option>Fashion</option><option>Electronics</option><option>Home</option>
+              <option>Beauty</option><option>Food</option><option>Services</option><option>Merchandise</option><option>Other</option>
+            </select>
+          </div>
+          <div class="field"><label for="sellerCountry">Country *</label><input id="sellerCountry" required maxlength="100" placeholder="e.g. Nigeria"></div>
+        </div>
+        <button class="btn btn-primary" type="submit" id="sellerSubmit">Submit Seller Application</button>
+        <div id="sellerMessage" aria-live="polite"></div>
+      </form>
+    </div>
+  </div>
+</section>
+
+<!-- ORGANISER APPLICATION -->
+<section class="page" id="page-organiser-application">
+  <div class="container">
+    <div class="page-intro">
+      <span class="eyebrow">EVENT ORGANISER ONBOARDING</span>
+      <h1>Bring your events to <span class="gradient-text">the world.</span></h1>
+      <p>Apply to become a RenzoNexus event organiser.</p>
+    </div>
+    <div class="card form-card">
+      <div class="form-note">You must log in before submitting. Approval is required before organiser privileges are granted.</div>
+      <form id="organiserForm" onsubmit="submitOrganiserApplication(event)">
+        <div class="field"><label for="organiserName">Organisation or organiser name *</label><input id="organiserName" required maxlength="160" placeholder="Your organisation or public organiser name"></div>
+        <div class="field"><label for="organiserDescription">Tell us about your events *</label><textarea id="organiserDescription" required maxlength="3000" placeholder="What types of events do you organise?"></textarea></div>
+        <button class="btn btn-primary" type="submit" id="organiserSubmit">Submit Organiser Application</button>
+        <div id="organiserMessage" aria-live="polite"></div>
+      </form>
+    </div>
+  </div>
+</section>
+
+<!-- ADMIN -->
+<section class="page" id="page-admin">
+  <div class="container">
+    <div class="page-intro">
+      <span class="eyebrow">RESTRICTED AREA</span>
+      <h1>RenzoNexus <span class="gradient-text">Admin Dashboard.</span></h1>
+      <p>Review applications and manage their status. Only accounts recognised by the database's admin security checks should have access.</p>
+    </div>
+    <div id="adminAccessMessage" class="notice info">Checking your administrator access...</div>
+    <div id="adminDashboard" class="hidden">
+      <div class="grid grid-3">
+        <div class="card"><span class="muted">Seller applications</span><h2 id="sellerCount">—</h2></div>
+        <div class="card"><span class="muted">Organiser applications</span><h2 id="organiserCount">—</h2></div>
+        <div class="card"><span class="muted">Your access</span><h2 id="adminRoleLabel" style="font-size:1.5rem">—</h2></div>
+      </div>
+      <div class="admin-tabs">
+        <button class="btn active" id="sellerAdminTab" onclick="loadAdminApplications('seller')">Seller Applications</button>
+        <button class="btn" id="organiserAdminTab" onclick="loadAdminApplications('organiser')">Organiser Applications</button>
+        <button class="btn" onclick="refreshAdmin()">Refresh</button>
+      </div>
+      <div id="adminResults"><div class="empty">Choose a section to view applications.</div></div>
+    </div>
   </div>
 </section>
 </main>
 
 <footer>
-  <div class="container">
-    <strong>RenzoNexus</strong> — One World. Endless Possibilities.
-    <br>© <span id="year"></span> RenzoNexus.
+  <div class="container footer-grid">
+    <div class="brand"><span class="brand-mark">RN</span><span>Renzo<span class="gradient-text">Nexus</span></span></div>
+    <div>
+      <strong>One World. Endless Possibilities.</strong>
+      <div class="small">© <span id="year"></span> RenzoNexus. All rights reserved.</div>
+    </div>
+    <div class="small">Founder: Solomon Onyedikachi Chiwendu (BiG Renzo)</div>
   </div>
 </footer>
 
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<div id="toast" class="toast hidden" role="status" aria-live="polite"></div>
+
 <script>
-(() => {
-  "use strict";
+/* ==========================================================
+   RENZONEXUS CONFIGURATION
+   This file uses your existing Supabase project.
+   Never put a Supabase service-role key in website code.
+   ========================================================== */
 
-  const SUPABASE_URL = "https://anclwctvvillzpatigbr.supabase.co";
-  const SUPABASE_PUBLISHABLE_KEY = "sb_publishable_t9TJatPdXprnb5gkrkINtQ_GColh4fM";
+const SUPABASE_URL = "https://anclwctvvillzpatigbr.supabase.co";
+const SUPABASE_KEY = "sb_publishable_t9TJatPdXprnb5gkrkINtQ_GColh4fM";
 
-  const $ = id => document.getElementById(id);
-  $("year").textContent = new Date().getFullYear();
+const db = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-  const library = window.supabase;
+let currentSession = null;
+let currentUser = null;
+let currentAdminRole = null;
+let authMode = "login";
+let currentAdminSection = "seller";
+let toastTimer = null;
 
-  if (!library || !library.createClient) {
-    $("authMessage").textContent =
-      "Supabase could not load. Check your connection and reload the website.";
-    $("authMessage").className = "message error";
-    return;
+document.getElementById("year").textContent = new Date().getFullYear();
+
+function escapeHTML(value) {
+  return String(value ?? "").replace(/[&<>"']/g, ch => ({
+    "&": "&amp;",
+    "<": "&lt;",
+    ">": "&gt;",
+    '"': "&quot;",
+    "'": "&#39;"
+  })[ch]);
+}
+
+function showToast(message) {
+  const el = document.getElementById("toast");
+  el.textContent = message;
+  el.classList.remove("hidden");
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => el.classList.add("hidden"), 4200);
+}
+
+function setMessage(id, message, type = "info") {
+  const el = document.getElementById(id);
+  if (!el) return;
+  el.innerHTML = message
+    ? `<div class="notice ${type}">${escapeHTML(message)}</div>`
+    : "";
+}
+
+function friendlyError(error) {
+  const msg = error?.message || "Something went wrong. Please try again.";
+  if (/row-level security|permission denied|not allowed/i.test(msg)) {
+    return "The database blocked this action. The Supabase security policies need to be checked.";
   }
-
-  const db = library.createClient(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY);
-
-  let activeSession = null;
-  let sessionVersion = 0;
-  let currentRole = null;
-
-  const categories = [
-    "Celebrity Tickets",
-    "Meet-and-Greet",
-    "Custom Jewellery",
-    "Custom T-Shirts",
-    "General Marketplace",
-    "Events and Experiences"
-  ];
-
-  function message(id, text, type = "") {
-    const el = $(id);
-    el.textContent = text || "";
-    el.className = "message " + type;
+  if (/duplicate key|already exists/i.test(msg)) {
+    return "An application may already exist, or this record conflicts with an existing entry.";
   }
-
-  function hideAdmin() {
-    $("adminNav").classList.add("hidden");
-    $("adminShortcut").classList.add("hidden");
-    $("admin").classList.add("hidden");
-    $("commissionCard").classList.add("hidden");
-    currentRole = null;
+  if (/network|fetch/i.test(msg)) {
+    return "Could not reach Supabase. Check your internet connection and try again.";
   }
+  return msg;
+}
 
-  function renderAccount(session) {
-    const user = session?.user;
-    const signedIn = Boolean(user);
+/* NAVIGATION */
 
-    $("authForms").classList.toggle("hidden", signedIn);
-    $("signOutButton").classList.toggle("hidden", !signedIn);
+const pageIds = [
+  "home", "discover", "events", "merch", "sell",
+  "account", "seller-application", "organiser-application", "admin"
+];
 
-    $("welcomeName").textContent = signedIn
-      ? "Welcome, " + (
-          user.user_metadata?.display_name ||
-          user.user_metadata?.full_name ||
-          user.email ||
-          "RenzoNexus Member"
-        )
-      : "Welcome to RenzoNexus";
+function showPage(name) {
+  if (!pageIds.includes(name)) name = "home";
 
-    $("welcomeEmail").textContent = signedIn
-      ? (user.email || "")
-      : "Sign in to view your account.";
+  document.querySelectorAll(".page").forEach(p => p.classList.remove("active"));
+  const page = document.getElementById("page-" + name);
+  if (page) page.classList.add("active");
 
-    $("roleBadge").textContent = signedIn ? "Member account" : "Guest";
-
-    $("verificationStatus").textContent = signedIn
-      ? (user.email_confirmed_at
-          ? "Email status: verified"
-          : "Email status: awaiting verification, if required by your settings.")
-      : "";
-
-    hideAdmin();
-  }
-
-  async function loadProfileName(session, version) {
-    if (!session?.user) return;
-
-    try {
-      const { data, error } = await db
-        .from("profiles")
-        .select("display_name")
-        .eq("id", session.user.id)
-        .maybeSingle();
-
-      if (version !== sessionVersion) return;
-
-      if (!error && data?.display_name?.trim()) {
-        $("welcomeName").textContent = "Welcome, " + data.display_name.trim();
-      }
-    } catch (error) {
-      console.warn("Profile name could not be loaded.", error);
-    }
-  }
-
-  async function countTable(tableName) {
-    const { count, error } = await db
-      .from(tableName)
-      .select("*", { count: "exact", head: true });
-
-    if (error) throw error;
-    return count ?? 0;
-  }
-
-  async function countFirstAvailable(tableNames) {
-    let lastError;
-
-    for (const name of tableNames) {
-      try {
-        return await countTable(name);
-      } catch (error) {
-        lastError = error;
-      }
-    }
-
-    throw lastError || new Error("No accessible table found.");
-  }
-
-  async function loadDashboard(version) {
-    const results = await Promise.allSettled([
-      countTable("profiles"),
-      countFirstAvailable(["seller_applications", "seller applications"]),
-      countFirstAvailable([
-        "organiser_applications",
-        "organizer_applications",
-        "organiser applications",
-        "organizer applications"
-      ])
-    ]);
-
-    if (version !== sessionVersion) return;
-
-    const targets = ["profileCount", "sellerCount", "organiserCount"];
-
-    results.forEach((result, index) => {
-      $(targets[index]).textContent =
-        result.status === "fulfilled" ? String(result.value) : "—";
-    });
-
-    const failed = results.some(result => result.status === "rejected");
-
-    $("dashboardMessage").textContent = failed
-      ? "Some statistics are unavailable. Check table names and Row Level Security policies."
-      : "Dashboard counts loaded. Application review actions still require secure database policies.";
-  }
-
-  function formatPercentage(value) {
-    return Number(value).toFixed(2).replace(/\.?0+$/, "") + "%";
-  }
-
-  async function loadCommissionRates(version = sessionVersion) {
-    const container = $("commissionRates");
-    container.textContent = "Loading commission rates…";
-
-    try {
-      const { data, error } = await db
-        .from("commission_rates")
-        .select("category, percentage")
-        .order("category");
-
-      if (version !== sessionVersion) return;
-      if (error) throw error;
-
-      container.replaceChildren();
-
-      const rates = data || [];
-
-      if (!rates.length) {
-        container.textContent =
-          "No rates were found. Check the commission_rates table in Supabase.";
-        return;
-      }
-
-      rates.forEach(rate => {
-        const row = document.createElement("div");
-        row.className = "rate-row";
-
-        const category = document.createElement("span");
-        category.textContent = rate.category;
-
-        const percentage = document.createElement("strong");
-        percentage.textContent = formatPercentage(rate.percentage);
-
-        row.append(category, percentage);
-        container.appendChild(row);
-      });
-    } catch (error) {
-      container.textContent =
-        "Could not load rates: " + (error.message || "Unknown error");
-      console.error("Commission rates load failed:", error);
-    }
-  }
-
-  async function checkAdministrator(session, version) {
-    if (!session?.user) return;
-
-    try {
-      const { data, error } = await db
-        .from("admin_users")
-        .select("role")
-        .eq("user_id", session.user.id)
-        .maybeSingle();
-
-      if (version !== sessionVersion) return;
-
-      if (error) {
-        console.error("Admin role check failed:", error.message);
-        return;
-      }
-
-      if (!data || !["super_admin", "admin"].includes(data.role)) return;
-
-      currentRole = data.role;
-
-      $("adminNav").classList.remove("hidden");
-      $("adminShortcut").classList.remove("hidden");
-      $("admin").classList.remove("hidden");
-
-      const roleName = data.role === "super_admin"
-        ? "Founder / Super Admin"
-        : "Administrator";
-
-      $("roleBadge").textContent = roleName;
-      $("adminEmail").textContent = session.user.email || "";
-      $("adminRole").textContent = roleName;
-
-      // Commission management is visible only to the Super Admin.
-      if (data.role === "super_admin") {
-        $("commissionCard").classList.remove("hidden");
-        await Promise.all([
-          loadDashboard(version),
-          loadCommissionRates(version)
-        ]);
-      } else {
-        $("commissionCard").classList.add("hidden");
-        await loadDashboard(version);
-      }
-    } catch (error) {
-      console.error("Administrator check failed.", error);
-    }
-  }
-
-  async function refreshSession(session) {
-    activeSession = session || null;
-    const version = ++sessionVersion;
-
-    renderAccount(session);
-
-    if (!session?.user) return;
-
-    await loadProfileName(session, version);
-    await checkAdministrator(session, version);
-  }
-
-  $("commissionForm").addEventListener("submit", async event => {
-    event.preventDefault();
-
-    if (!activeSession?.user) {
-      return message("commissionMessage", "Please sign in first.", "error");
-    }
-
-    if (currentRole !== "super_admin") {
-      return message(
-        "commissionMessage",
-        "Only the Founder / Super Admin can change commission rates.",
-        "error"
-      );
-    }
-
-    const category = $("commissionCategory").value;
-    const percentage = Number($("commissionPercent").value);
-
-    if (!categories.includes(category)) {
-      return message("commissionMessage", "Please select a valid category.", "error");
-    }
-
-    if (!Number.isFinite(percentage) || percentage < 0 || percentage > 100) {
-      return message("commissionMessage", "Enter a percentage between 0 and 100.", "error");
-    }
-
-    const button = $("saveCommissionBtn");
-    button.disabled = true;
-    message("commissionMessage", "Saving commission rate…");
-
-    try {
-      const { error } = await db
-        .from("commission_rates")
-        .upsert({
-          category,
-          percentage,
-          updated_at: new Date().toISOString(),
-          updated_by: activeSession.user.id
-        }, {
-          onConflict: "category"
-        });
-
-      if (error) throw error;
-
-      message(
-        "commissionMessage",
-        "Commission rate saved successfully: " +
-          category + " — " + formatPercentage(percentage),
-        "success"
-      );
-
-      await loadCommissionRates();
-      $("commissionPercent").value = "";
-    } catch (error) {
-      console.error("Saving commission rate failed:", error);
-
-      message(
-        "commissionMessage",
-        "Could not save the rate. Check the commission_rates table, permissions, and Super Admin policies. Details: " +
-          (error.message || "Unknown error"),
-        "error"
-      );
-    } finally {
-      button.disabled = false;
-    }
+  document.querySelectorAll("[data-page]").forEach(btn => {
+    btn.classList.toggle("active", btn.dataset.page === name);
   });
 
-  $("signupForm").addEventListener("submit", async event => {
-    event.preventDefault();
+  window.scrollTo({ top: 0, behavior: "smooth" });
 
-    const displayName = $("signupName").value.trim();
-    const email = $("signupEmail").value.trim();
-    const password = $("signupPassword").value;
-
-    if (!displayName) {
-      return message("authMessage", "Please enter a display name.", "error");
+  if (name === "account") updateAccountUI();
+  if (name === "admin") checkAdminAccess();
+  if (name === "seller-application" || name === "organiser-application") {
+    if (!currentUser) {
+      showToast("Please log in before submitting an application.");
+    } else {
+      fillApplicationDefaults();
     }
+  }
+}
 
-    if (password.length < 8) {
-      return message("authMessage", "Use a password with at least 8 characters.", "error");
-    }
+/* AUTHENTICATION */
 
-    message("authMessage", "Creating your account…");
+function setAuthMode(mode) {
+  authMode = mode;
+  const signup = mode === "signup";
+  document.getElementById("loginTab").classList.toggle("btn-primary", !signup);
+  document.getElementById("signupTab").classList.toggle("btn-primary", signup);
+  document.getElementById("authNameWrap").classList.toggle("hidden", !signup);
+  document.getElementById("authName").required = signup;
+  document.getElementById("authPassword").autocomplete = signup ? "new-password" : "current-password";
+  document.getElementById("authSubmit").textContent = signup ? "Create Account" : "Log In";
+  setMessage("authMessage", "");
+}
 
-    try {
+async function handleAuth(event) {
+  event.preventDefault();
+  const email = document.getElementById("authEmail").value.trim();
+  const password = document.getElementById("authPassword").value;
+  const name = document.getElementById("authName").value.trim();
+  const button = document.getElementById("authSubmit");
+
+  button.disabled = true;
+  button.textContent = "Please wait...";
+  setMessage("authMessage", "");
+
+  try {
+    if (authMode === "signup") {
       const { data, error } = await db.auth.signUp({
         email,
         password,
         options: {
-          data: {
-            display_name: displayName,
-            full_name: displayName
-          },
-          emailRedirectTo: window.location.origin + window.location.pathname
+          data: { display_name: name, full_name: name }
         }
       });
-
-      if (error) {
-        return message("authMessage", error.message, "error");
-      }
+      if (error) throw error;
 
       if (data.session) {
-        await refreshSession(data.session);
-        message("authMessage", "Your account has been created and you are signed in.", "success");
+        setMessage("authMessage", "Your account has been created.", "success");
       } else {
-        message(
-          "authMessage",
-          "Registration received. Check your email for verification if required by your Supabase settings.",
-          "success"
-        );
+        setMessage("authMessage", "Account created. Check your email for a confirmation link before logging in.", "success");
       }
-
-      $("signupPassword").value = "";
-    } catch (error) {
-      message("authMessage", "Registration failed. Please try again.", "error");
+    } else {
+      const { error } = await db.auth.signInWithPassword({ email, password });
+      if (error) throw error;
+      setMessage("authMessage", "You are now logged in.", "success");
+      showToast("Welcome to RenzoNexus!");
     }
-  });
+  } catch (error) {
+    setMessage("authMessage", friendlyError(error), "error");
+  } finally {
+    button.disabled = false;
+    button.textContent = authMode === "signup" ? "Create Account" : "Log In";
+  }
+}
 
-  $("loginForm").addEventListener("submit", async event => {
-    event.preventDefault();
-    message("authMessage", "Signing in…");
+async function resetPassword() {
+  const email = document.getElementById("authEmail").value.trim();
+  if (!email) {
+    showToast("Enter your email address first.");
+    return;
+  }
 
-    try {
-      const { data, error } = await db.auth.signInWithPassword({
-        email: $("loginEmail").value.trim(),
-        password: $("loginPassword").value
-      });
+  try {
+    const redirectTo = window.location.origin + window.location.pathname;
+    const { error } = await db.auth.resetPasswordForEmail(email, { redirectTo });
+    if (error) throw error;
+    showToast("If the address is registered, a password reset email will be sent.");
+  } catch (error) {
+    showToast(friendlyError(error));
+  }
+}
 
-      if (error) {
-        return message("authMessage", error.message, "error");
-      }
+async function signOut() {
+  const { error } = await db.auth.signOut();
+  if (error) {
+    showToast(friendlyError(error));
+    return;
+  }
+  currentSession = null;
+  currentUser = null;
+  currentAdminRole = null;
+  updateAccountUI();
+  showPage("home");
+  showToast("You have logged out.");
+}
 
-      await refreshSession(data.session);
-      message("authMessage", "You are signed in.", "success");
-      $("loginPassword").value = "";
-    } catch (error) {
-      message("authMessage", "Sign-in failed. Please try again.", "error");
-    }
-  });
+function updateAccountUI() {
+  const signedIn = Boolean(currentUser);
+  document.getElementById("accountSignedOut").classList.toggle("hidden", signedIn);
+  document.getElementById("accountSignedIn").classList.toggle("hidden", !signedIn);
+  document.getElementById("adminNav").classList.toggle("hidden", !currentAdminRole);
 
-  $("resetButton").addEventListener("click", async () => {
-    const email = $("loginEmail").value.trim();
+  if (signedIn) {
+    const metadata = currentUser.user_metadata || {};
+    const displayName = metadata.display_name || metadata.full_name || currentUser.email;
+    document.getElementById("accountGreeting").textContent = "Welcome, " + displayName;
+    document.getElementById("accountEmail").textContent = currentUser.email || "";
+    document.getElementById("accountRole").innerHTML = currentAdminRole
+      ? `<span class="badge approved">${escapeHTML(currentAdminRole)}</span>`
+      : `<span class="badge">Member</span>`;
+    document.getElementById("sellerEmail").value = currentUser.email || "";
+    document.getElementById("sellerFullName").value = metadata.full_name || metadata.display_name || "";
+  }
+}
 
-    if (!email) {
-      return message("authMessage", "Enter your email in the sign-in email field first.", "error");
-    }
+function fillApplicationDefaults() {
+  if (!currentUser) return;
+  const metadata = currentUser.user_metadata || {};
+  document.getElementById("sellerEmail").value = currentUser.email || "";
+  document.getElementById("sellerFullName").value =
+    metadata.full_name || metadata.display_name || document.getElementById("sellerFullName").value;
+}
 
-    message("authMessage", "Sending password reset instructions…");
+/* ADMIN ROLE CHECK */
 
-    try {
-      const { error } = await db.auth.resetPasswordForEmail(email, {
-        redirectTo: window.location.origin + window.location.pathname
-      });
+async function checkAdminAccess() {
+  const message = document.getElementById("adminAccessMessage");
+  const dashboard = document.getElementById("adminDashboard");
 
-      if (error) {
-        return message("authMessage", error.message, "error");
-      }
+  dashboard.classList.add("hidden");
+  message.className = "notice info";
 
-      message(
-        "authMessage",
-        "If this email is registered, password reset instructions will be sent.",
-        "success"
-      );
-    } catch (error) {
-      message("authMessage", "Could not request a password reset.", "error");
-    }
-  });
+  if (!currentUser) {
+    message.textContent = "Please log in with an authorised administrator account to access this dashboard.";
+    return;
+  }
 
-  $("signOutButton").addEventListener("click", async () => {
-    message("authMessage", "Signing out…");
+  message.textContent = "Verifying administrator access...";
 
-    const { error } = await db.auth.signOut();
+  try {
+    const { data, error } = await db
+      .from("admin_users")
+      .select("role")
+      .eq("user_id", currentUser.id)
+      .maybeSingle();
 
-    if (error) {
-      return message("authMessage", error.message, "error");
-    }
+    if (error) throw error;
 
-    await refreshSession(null);
-    message("authMessage", "You have signed out.", "success");
-  });
-
-  document.querySelectorAll(".choose-type").forEach(button => {
-    button.addEventListener("click", () => {
-      $("interestType").value = button.dataset.type;
-      $("interestForm").scrollIntoView({ behavior: "smooth" });
-    });
-  });
-
-  $("interestForm").addEventListener("submit", event => {
-    event.preventDefault();
-
-    message(
-      "interestMessage",
-      "This form is a prototype and does not save applications yet."
-    );
-  });
-
-  db.auth.onAuthStateChange((event, session) => {
-    window.setTimeout(() => refreshSession(session), 0);
-  });
-
-  db.auth.getSession().then(({ data, error }) => {
-    if (error) {
-      message("authMessage", error.message, "error");
+    if (!data) {
+      currentAdminRole = null;
+      document.getElementById("adminNav").classList.add("hidden");
+      message.className = "notice error";
+      message.textContent = "Access denied. This account is not listed as an administrator.";
+      updateAccountUI();
       return;
     }
 
-    refreshSession(data.session);
+    currentAdminRole = data.role;
+    document.getElementById("adminRoleLabel").textContent = data.role;
+    document.getElementById("adminNav").classList.remove("hidden");
+    message.className = "notice success";
+    message.textContent = "Administrator account recognised. Database permissions will still control which records you can access.";
+    dashboard.classList.remove("hidden");
+    updateAccountUI();
+    await refreshAdmin();
+
+  } catch (error) {
+    message.className = "notice error";
+    message.textContent = friendlyError(error);
+    dashboard.classList.add("hidden");
+  }
+}
+
+async function refreshAdmin() {
+  if (!currentAdminRole || !currentUser) return;
+
+  try {
+    const [sellerResult, organiserResult] = await Promise.all([
+      db.from("seller_applications").select("id", { count: "exact", head: true }),
+      db.from("organiser_applications").select("id", { count: "exact", head: true })
+    ]);
+
+    document.getElementById("sellerCount").textContent =
+      sellerResult.error ? "—" : String(sellerResult.count ?? 0);
+    document.getElementById("organiserCount").textContent =
+      organiserResult.error ? "—" : String(organiserResult.count ?? 0);
+
+    await loadAdminApplications(currentAdminSection);
+  } catch (error) {
+    showToast(friendlyError(error));
+  }
+}
+
+/* APPLICATION SUBMISSION */
+
+async function submitSellerApplication(event) {
+  event.preventDefault();
+
+  if (!currentUser) {
+    showToast("Please log in before submitting.");
+    showPage("account");
+    return;
+  }
+
+  const button = document.getElementById("sellerSubmit");
+  button.disabled = true;
+  button.textContent = "Submitting...";
+  setMessage("sellerMessage", "");
+
+  const application = {
+    user_id: currentUser.id,
+    full_name: document.getElementById("sellerFullName").value.trim(),
+    email: document.getElementById("sellerEmail").value.trim(),
+    business_name: document.getElementById("sellerBusinessName").value.trim(),
+    business_description: document.getElementById("sellerDescription").value.trim(),
+    product_category: document.getElementById("sellerCategory").value,
+    country: document.getElementById("sellerCountry").value.trim(),
+    status: "pending"
+  };
+
+  try {
+    const { error } = await db.from("seller_applications").insert(application);
+    if (error) throw error;
+
+    document.getElementById("sellerForm").reset();
+    fillApplicationDefaults();
+    setMessage("sellerMessage", "Your seller application has been submitted successfully. You can check its status from your account.", "success");
+    showToast("Seller application submitted!");
+  } catch (error) {
+    setMessage("sellerMessage", friendlyError(error), "error");
+  } finally {
+    button.disabled = false;
+    button.textContent = "Submit Seller Application";
+  }
+}
+
+async function submitOrganiserApplication(event) {
+  event.preventDefault();
+
+  if (!currentUser) {
+    showToast("Please log in before submitting.");
+    showPage("account");
+    return;
+  }
+
+  const button = document.getElementById("organiserSubmit");
+  button.disabled = true;
+  button.textContent = "Submitting...";
+  setMessage("organiserMessage", "");
+
+  const application = {
+    user_id: currentUser.id,
+    organisation_name: document.getElementById("organiserName").value.trim(),
+    organisation_description: document.getElementById("organiserDescription").value.trim(),
+    status: "pending"
+  };
+
+  try {
+    const { error } = await db.from("organiser_applications").insert(application);
+    if (error) throw error;
+
+    document.getElementById("organiserForm").reset();
+    setMessage("organiserMessage", "Your organiser application has been submitted successfully. You can check its status from your account.", "success");
+    showToast("Organiser application submitted!");
+  } catch (error) {
+    setMessage("organiserMessage", friendlyError(error), "error");
+  } finally {
+    button.disabled = false;
+    button.textContent = "Submit Organiser Application";
+  }
+}
+
+/* APPLICANT'S OWN APPLICATIONS */
+
+async function loadMyApplications() {
+  const target = document.getElementById("myApplications");
+  if (!currentUser) {
+    target.innerHTML = '<div class="notice info">Log in to view your applications.</div>';
+    return;
+  }
+
+  target.innerHTML = '<div class="empty">Loading your applications...</div>';
+
+  try {
+    const [sellerResult, organiserResult] = await Promise.all([
+      db.from("seller_applications")
+        .select("id,business_name,status,created_at,admin_notes")
+        .eq("user_id", currentUser.id)
+        .order("created_at", { ascending: false }),
+      db.from("organiser_applications")
+        .select("id,organisation_name,status,created_at")
+        .eq("user_id", currentUser.id)
+        .order("created_at", { ascending: false })
+    ]);
+
+    let html = "<h3>My Applications</h3>";
+
+    if (sellerResult.error) {
+      html += `<div class="notice error">Seller applications: ${escapeHTML(friendlyError(sellerResult.error))}</div>`;
+    } else {
+      html += "<h4>Seller Applications</h4>";
+      html += renderOwnApplications(sellerResult.data || [], "business_name");
+    }
+
+    if (organiserResult.error) {
+      html += `<div class="notice error">Organiser applications: ${escapeHTML(friendlyError(organiserResult.error))}</div>`;
+    } else {
+      html += "<h4>Organiser Applications</h4>";
+      html += renderOwnApplications(organiserResult.data || [], "organisation_name");
+    }
+
+    target.innerHTML = html;
+  } catch (error) {
+    target.innerHTML = `<div class="notice error">${escapeHTML(friendlyError(error))}</div>`;
+  }
+}
+
+function renderOwnApplications(rows, nameField) {
+  if (!rows.length) return '<div class="empty">No applications submitted yet.</div>';
+
+  return rows.map(row => `
+    <div class="card application-card">
+      <div style="display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap">
+        <strong>${escapeHTML(row[nameField] || "Application")}</strong>
+        ${statusBadge(row.status)}
+      </div>
+      <div class="small muted">Submitted: ${escapeHTML(formatDate(row.created_at))}</div>
+      ${row.admin_notes ? `<p class="small">Admin note: ${escapeHTML(row.admin_notes)}</p>` : ""}
+    </div>
+  `).join("");
+}
+
+function formatDate(value) {
+  if (!value) return "Date unavailable";
+  const date = new Date(value);
+  return Number.isNaN(date.getTime()) ? "Date unavailable" : date.toLocaleDateString();
+}
+
+function statusBadge(status) {
+  const value = String(status || "pending").toLowerCase();
+  const css = value === "approved" ? "approved" :
+              value === "rejected" ? "rejected" : "pending";
+  return `<span class="badge ${css}">${escapeHTML(status || "pending")}</span>`;
+}
+
+/* ADMIN APPLICATION REVIEW */
+
+async function loadAdminApplications(section) {
+  if (!currentUser || !currentAdminRole) {
+    document.getElementById("adminResults").innerHTML =
+      '<div class="notice error">You are not authorised to view this section.</div>';
+    return;
+  }
+
+  currentAdminSection = section;
+
+  document.getElementById("sellerAdminTab").classList.toggle("active", section === "seller");
+  document.getElementById("organiserAdminTab").classList.toggle("active", section === "organiser");
+
+  const target = document.getElementById("adminResults");
+  target.innerHTML = '<div class="empty">Loading applications...</div>';
+
+  try {
+    let result;
+
+    if (section === "seller") {
+      result = await db.from("seller_applications")
+        .select("id,user_id,full_name,email,business_name,business_description,product_category,country,status,admin_notes,created_at")
+        .order("created_at", { ascending: false });
+    } else {
+      result = await db.from("organiser_applications")
+        .select("id,user_id,organisation_name,organisation_description,status,created_at")
+        .order("created_at", { ascending: false });
+    }
+
+    if (result.error) throw result.error;
+
+    const rows = result.data || [];
+    if (!rows.length) {
+      target.innerHTML = '<div class="empty">No applications found. New applications will appear here when submitted.</div>';
+      return;
+    }
+
+    target.innerHTML = rows.map(row => renderAdminApplication(row, section)).join("");
+  } catch (error) {
+    target.innerHTML = `
+      <div class="notice error">
+        Could not load ${section} applications: ${escapeHTML(friendlyError(error))}
+        <br><br>
+        If this is a permission error, your Supabase administrator policies need to allow authorised admins to read these records.
+      </div>`;
+  }
+}
+
+function renderAdminApplication(row, section) {
+  const isSeller = section === "seller";
+  const title = isSeller ? row.business_name : row.organisation_name;
+  const description = isSeller ? row.business_description : row.organisation_description;
+  const id = escapeHTML(row.id);
+  const status = String(row.status || "pending").toLowerCase();
+
+  return `
+    <article class="card application-card">
+      <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:14px;flex-wrap:wrap">
+        <div>
+          <span class="feature-number">${isSeller ? "SELLER APPLICATION" : "ORGANISER APPLICATION"}</span>
+          <h3>${escapeHTML(title || "Unnamed application")}</h3>
+          <div class="small muted">Submitted: ${escapeHTML(formatDate(row.created_at))}</div>
+        </div>
+        ${statusBadge(row.status)}
+      </div>
+
+      ${isSeller ? `
+        <p><strong>Applicant:</strong> ${escapeHTML(row.full_name)}</p>
+        <p><strong>Email:</strong> ${escapeHTML(row.email)}</p>
+        <p><strong>Category:</strong> ${escapeHTML(row.product_category)}</p>
+        <p><strong>Country:</strong> ${escapeHTML(row.country)}</p>
+      ` : ""}
+
+      <p><strong>Description:</strong><br>${escapeHTML(description || "No description provided")}</p>
+
+      <div class="field">
+        <label for="note-${id}">Admin note</label>
+        <textarea id="note-${id}" maxlength="2000" placeholder="Add a review note...">${escapeHTML(row.admin_notes || "")}</textarea>
+      </div>
+
+      <div class="application-actions">
+        <button class="btn btn-success btn-sm" onclick="reviewApplication('${id}','${section}','approved')">Approve</button>
+        <button class="btn btn-danger btn-sm" onclick="reviewApplication('${id}','${section}','rejected')">Reject</button>
+        <button class="btn btn-sm" onclick="reviewApplication('${id}','${section}','pending')">Set Pending</button>
+      </div>
+    </article>
+  `;
+}
+
+async function reviewApplication(id, section, status) {
+  if (!currentUser || !currentAdminRole) {
+    showToast("You must be an authorised administrator.");
+    return;
+  }
+
+  if (!confirm(`Change this application's status to "${status}"?`)) return;
+
+  const noteField = document.getElementById("note-" + id);
+  const adminNote = noteField ? noteField.value.trim() : "";
+
+  try {
+    let result;
+
+    if (section === "seller") {
+      result = await db.from("seller_applications")
+        .update({
+          status,
+          admin_notes: adminNote,
+          reviewed_at: new Date().toISOString(),
+          reviewed_by: currentUser.id
+        })
+        .eq("id", id);
+    } else {
+      /*
+       * Existing organiser table columns confirmed so far:
+       * id, user_id, organisation_name,
+       * organisation_description, status, created_at.
+       * Update only the confirmed status column.
+       */
+      result = await db.from("organiser_applications")
+        .update({ status })
+        .eq("id", id);
+    }
+
+    if (result.error) throw result.error;
+
+    showToast("Application status updated, if permitted by the database.");
+    await refreshAdmin();
+  } catch (error) {
+    showToast("Could not update application: " + friendlyError(error));
+  }
+}
+
+/* SIMPLE MARKETPLACE FILTER */
+
+function filterMarket() {
+  const query = (document.getElementById("marketSearch").value || "").toLowerCase();
+  const category = document.getElementById("marketCategory").value;
+  document.querySelectorAll("#marketGrid .card").forEach(card => {
+    const text = card.textContent.toLowerCase();
+    const categoryMatches = !category || text.includes(category.toLowerCase());
+    card.style.display = text.includes(query) && categoryMatches ? "" : "none";
   });
-})();
+}
+
+/* STARTUP */
+
+async function initialise() {
+  try {
+    const { data, error } = await db.auth.getSession();
+    if (error) throw error;
+
+    currentSession = data.session;
+    currentUser = currentSession?.user || null;
+
+    if (currentUser) {
+      await loadAdminRoleForNavigation();
+    }
+
+    updateAccountUI();
+  } catch (error) {
+    console.error("RenzoNexus startup:", error);
+  }
+}
+
+async function loadAdminRoleForNavigation() {
+  if (!currentUser) return;
+
+  try {
+    const { data, error } = await db
+      .from("admin_users")
+      .select("role")
+      .eq("user_id", currentUser.id)
+      .maybeSingle();
+
+    if (!error && data) {
+      currentAdminRole = data.role;
+      document.getElementById("adminNav").classList.remove("hidden");
+    } else {
+      currentAdminRole = null;
+      document.getElementById("adminNav").classList.add("hidden");
+    }
+  } catch (_) {
+    currentAdminRole = null;
+  }
+}
+
+db.auth.onAuthStateChange((_event, session) => {
+  currentSession = session;
+  currentUser = session?.user || null;
+
+  /*
+   * Defer database queries outside the auth callback to avoid
+   * holding up Supabase's auth event processing.
+   */
+  setTimeout(async () => {
+    await loadAdminRoleForNavigation();
+    updateAccountUI();
+
+    if (document.getElementById("page-admin").classList.contains("active")) {
+      await checkAdminAccess();
+    }
+  }, 0);
+});
+
+setAuthMode("login");
+initialise();
 </script>
 </body>
 </html>
