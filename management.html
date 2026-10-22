@@ -975,4 +975,330 @@ function renderOrders() {
 
     controls.append(select, save);
 
-    row.append(ref, customer, to
+    row.append(ref, customer, total, payment, status, controls);
+      });
+}
+
+async function updateOrderStatus(order, select, button) {
+  const newStatus = select.value;
+
+  const requiresPayment = [
+    "submitted_to_management",
+    "under_review",
+    "approved",
+    "processing",
+    "completed"
+  ];
+
+  if (
+    requiresPayment.includes(newStatus) &&
+    order.payment_status !== "paid"
+  ) {
+    message(
+      "ordersMessage",
+      "This order cannot progress until its payment has been verified.",
+      "error"
+    );
+    return;
+  }
+
+  if (newStatus === order.order_status) {
+    message("ordersMessage", "The order already has this status.");
+    return;
+  }
+
+  button.disabled = true;
+  button.textContent = "Saving…";
+
+  try {
+    const { data, error } = await client
+      .from("rn_orders")
+      .update({
+        order_status: newStatus,
+        updated_at: new Date().toISOString()
+      })
+      .eq("id", order.id)
+      .select("id, order_status")
+      .single();
+
+    if (error) throw error;
+
+    order.order_status = data.order_status;
+
+    renderOrders();
+
+    message(
+      "ordersMessage",
+      `Order ${order.order_reference} updated successfully.`,
+      "success"
+    );
+
+  } catch (error) {
+    console.error("Order status update failed:", error);
+
+    message(
+      "ordersMessage",
+      "Could not update the order. Check database permissions and try again.",
+      "error"
+    );
+
+  } finally {
+    button.disabled = false;
+    button.textContent = "Save Status";
+  }
+}
+
+async function loadCommissions() {
+  $("refreshCommissions").disabled = true;
+
+  message("commissionMessage", "Loading commission rules…");
+
+  try {
+    const { data, error } = await client
+      .from("rn_commission_rules")
+      .select("*")
+      .order("category", { ascending: true });
+
+    if (error) throw error;
+
+    commissionRules = data || [];
+
+    renderCommissions();
+
+    message(
+      "commissionMessage",
+      `Loaded ${commissionRules.length} commission rule(s).`,
+      "success"
+    );
+
+  } catch (error) {
+    console.error("Commission loading failed:", error);
+
+    message(
+      "commissionMessage",
+      "Could not load commission rules. Check the table and its permissions.",
+      "error"
+    );
+
+  } finally {
+    $("refreshCommissions").disabled = false;
+  }
+}
+
+function renderCommissions() {
+  const body = $("commissionsBody");
+
+  body.replaceChildren();
+
+  if (!commissionRules.length) {
+    const row = document.createElement("tr");
+    const cell = makeCell("No commission rules found yet.");
+    cell.colSpan = 4;
+    row.append(cell);
+    body.append(row);
+    return;
+  }
+
+  commissionRules.forEach((rule) => {
+    const row = document.createElement("tr");
+
+    row.append(makeCell(rule.category));
+
+    const rate = Number(rule.rate || 0);
+
+    row.append(makeCell(`${rate}%`));
+
+    const statusCell = document.createElement("td");
+    statusCell.append(
+      makeBadge(rule.active === false ? "inactive" : "active")
+    );
+    row.append(statusCell);
+
+    const actionCell = document.createElement("td");
+
+    const toggleButton = document.createElement("button");
+    toggleButton.type = "button";
+    toggleButton.className = "secondary";
+    toggleButton.textContent =
+      rule.active === false ? "Activate" : "Deactivate";
+
+    toggleButton.addEventListener("click", async () => {
+      toggleButton.disabled = true;
+
+      try {
+        const { error } = await client
+          .from("rn_commission_rules")
+          .update({
+            active: rule.active === false
+          })
+          .eq("id", rule.id);
+
+        if (error) throw error;
+
+        message(
+          "commissionMessage",
+          "Commission rule updated.",
+          "success"
+        );
+
+        await loadCommissions();
+
+      } catch (error) {
+        console.error("Commission update failed:", error);
+
+        message(
+          "commissionMessage",
+          "Could not update this commission rule.",
+          "error"
+        );
+
+      } finally {
+        toggleButton.disabled = false;
+      }
+    });
+
+    actionCell.append(toggleButton);
+    row.append(actionCell);
+
+    body.append(row);
+  });
+}
+
+async function saveCommission(event) {
+  event.preventDefault();
+
+  const category = $("commissionCategory").value.trim();
+  const rate = Number($("commissionRate").value);
+
+  if (!category) {
+    message("commissionMessage", "Enter a category.", "error");
+    return;
+  }
+
+  if (!Number.isFinite(rate) || rate < 0 || rate > 100) {
+    message(
+      "commissionMessage",
+      "Commission must be between 0 and 100 percent.",
+      "error"
+    );
+    return;
+  }
+
+  const button = $("commissionForm").querySelector(
+    'button[type="submit"]'
+  );
+
+  button.disabled = true;
+  button.textContent = "Saving…";
+
+  try {
+    const existing = commissionRules.find(
+      rule =>
+        String(rule.category).toLowerCase() ===
+        category.toLowerCase()
+    );
+
+    let result;
+
+    if (existing) {
+      result = await client
+        .from("rn_commission_rules")
+        .update({
+          rate: rate,
+          active: true
+        })
+        .eq("id", existing.id);
+    } else {
+      result = await client
+        .from("rn_commission_rules")
+        .insert({
+          category: category,
+          rate: rate,
+          active: true
+        });
+    }
+
+    if (result.error) throw result.error;
+
+    $("commissionCategory").value = "";
+    $("commissionRate").value = "";
+
+    message(
+      "commissionMessage",
+      "Commission rule saved successfully.",
+      "success"
+    );
+
+    await loadCommissions();
+
+  } catch (error) {
+    console.error("Saving commission failed:", error);
+
+    message(
+      "commissionMessage",
+      "Could not save the commission. Check the table columns and permissions.",
+      "error"
+    );
+
+  } finally {
+    button.disabled = false;
+    button.textContent = "Save Commission";
+  }
+}
+
+/* Connect the page controls. */
+
+$("loginForm").addEventListener("submit", login);
+
+$("logoutButton").addEventListener("click", logout);
+
+$("deniedLogoutButton").addEventListener("click", logout);
+
+$("refreshOrders").addEventListener("click", loadOrders);
+
+$("refreshCommissions").addEventListener("click", loadCommissions);
+
+$("orderSearch").addEventListener("input", renderOrders);
+
+$("orderFilter").addEventListener("change", renderOrders);
+
+$("commissionForm").addEventListener("submit", saveCommission);
+
+/* Restore an existing login or display the login form. */
+
+client.auth.onAuthStateChange((event, session) => {
+  setTimeout(() => {
+    handleSession(session).catch(error => {
+      console.error("Session handling failed:", error);
+
+      message(
+        "loginMessage",
+        "We could not finish loading your account. Refresh the page and try again.",
+        "error"
+      );
+    });
+  }, 0);
+});
+
+(async function initialise() {
+  try {
+    const { data, error } = await client.auth.getSession();
+
+    if (error) throw error;
+
+    await handleSession(data.session);
+
+  } catch (error) {
+    console.error("Initialisation failed:", error);
+
+    message(
+      "loginMessage",
+      "The page could not connect to your session. Check your internet connection and refresh.",
+      "error"
+    );
+  }
+})();
+</script>
+
+</body>
+</html>
