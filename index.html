@@ -1,2249 +1,975 @@
-<!DOCTYPE html>
-<html lang="en">
+<!DOCTYPE html><html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="theme-color" content="#080b16">
-
-<title>RenzoNexus — One World. Endless Possibilities.</title>
-
-<meta name="description" content="Discover products, explore events, and connect with opportunities around the world on RenzoNexus.">
-
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
-
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-
-<style>
-:root {
-  --bg: #080b16;
-  --surface: #101629;
-  --surface2: #151e34;
-  --border: rgba(255,255,255,.10);
-  --text: #f4f7ff;
-  --muted: #9ca9c2;
-  --blue: #5c8dff;
-  --cyan: #47e5e5;
-  --purple: #9b7bff;
-  --radius: 20px;
-}
-
-* {
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
-  scroll-behavior: smooth;
-}
-
-body {
-  font-family: 'DM Sans', sans-serif;
-  background: var(--bg);
-  color: var(--text);
-  line-height: 1.65;
-  overflow-x: hidden;
-}
-
-a {
-  color: inherit;
-  text-decoration: none;
-}
-
-button, input, select, textarea {
-  font: inherit;
-}
-
-button, .btn {
-  cursor: pointer;
-}
-
-button:disabled {
-  opacity: .6;
-  cursor: wait;
-}
-
-.container {
-  width: min(1160px, 92%);
-  margin: auto;
-}
-
-.section {
-  padding: 85px 0;
-  scroll-margin-top: 85px;
-}
-
-.section-heading {
-  max-width: 650px;
-  margin-bottom: 34px;
-}
-
-.section-heading h2 {
-  font-family: 'Space Grotesk', sans-serif;
-  font-size: clamp(28px, 4vw, 42px);
-  line-height: 1.2;
-  margin: 10px 0 14px;
-}
-
-.section-heading p,
-.muted {
-  color: var(--muted);
-}
-
-.eyebrow {
-  display: inline-block;
-  color: var(--cyan);
-  font-size: 12px;
-  letter-spacing: 2px;
-  text-transform: uppercase;
-  font-weight: 700;
-}
-
-.gradient-text {
-  background: linear-gradient(100deg, var(--cyan), #8ba8ff, var(--purple));
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
-}
-
-.btn {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  border: 1px solid var(--border);
-  border-radius: 12px;
-  padding: 12px 19px;
-  color: white;
-  font-weight: 700;
-  font-size: 14px;
-  transition: .2s ease;
-  background: transparent;
-}
-
-.btn:hover {
-  transform: translateY(-2px);
-  border-color: var(--cyan);
-}
-
-.btn-primary {
-  background: linear-gradient(110deg, #497bff, #7456ef);
-  border: none;
-}
-
-.btn-primary:hover {
-  box-shadow: 0 8px 30px rgba(92,141,255,.28);
-}
-
-.btn-outline {
-  border-color: rgba(71,229,229,.45);
-}
-
-.btn-block {
-  width: 100%;
-}
-
-button:focus-visible,
-a:focus-visible,
-input:focus-visible,
-select:focus-visible,
-textarea:focus-visible {
-  outline: 2px solid var(--cyan);
-  outline-offset: 3px;
-}
-
-/* HEADER */
-
-header {
-  position: sticky;
-  top: 0;
-  z-index: 100;
-  background: rgba(8,11,22,.92);
-  backdrop-filter: blur(18px);
-  border-bottom: 1px solid var(--border);
-}
-
-.navbar {
-  min-height: 76px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 20px;
-}
-
-.logo {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  font-family: 'Space Grotesk', sans-serif;
-  font-weight: 700;
-  font-size: 21px;
-  white-space: nowrap;
-}
-
-.logo-mark {
-  display: grid;
-  place-items: center;
-  width: 37px;
-  height: 37px;
-  border-radius: 12px;
-  color: #07101a;
-  background: linear-gradient(135deg, var(--cyan), #7192ff);
-  font-size: 20px;
-}
-
-.nav-links {
-  display: flex;
-  align-items: center;
-  gap: 23px;
-}
-
-.nav-links a {
-  font-size: 13px;
-  color: var(--muted);
-  transition: color .2s;
-}
-
-.nav-links a:hover {
-  color: var(--cyan);
-}
-
-.nav-actions {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-
-.menu-toggle {
-  display: none;
-  color: white;
-  border: 1px solid var(--border);
-  background: var(--surface);
-  border-radius: 10px;
-  padding: 9px 12px;
-  font-size: 20px;
-}
-
-/* HERO */
-
-.hero {
-  padding: 90px 0 75px;
-  position: relative;
-  overflow: hidden;
-}
-
-.hero::before {
-  content: "";
-  position: absolute;
-  width: 550px;
-  height: 550px;
-  border-radius: 50%;
-  background: rgba(63,110,255,.12);
-  filter: blur(100px);
-  top: -180px;
-  right: -150px;
-  pointer-events: none;
-}
-
-.hero-grid {
-  display: grid;
-  grid-template-columns: 1.08fr .92fr;
-  gap: 55px;
-  align-items: center;
-  position: relative;
-}
-
-.hero h1 {
-  font-family: 'Space Grotesk', sans-serif;
-  font-size: clamp(43px, 6.3vw, 76px);
-  letter-spacing: -3px;
-  line-height: 1.07;
-  margin: 22px 0;
-}
-
-.hero-copy {
-  color: var(--muted);
-  max-width: 540px;
-  font-size: 16px;
-}
-
-.hero-actions {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 12px;
-  margin-top: 28px;
-}
-
-.hero-note {
-  font-size: 12px;
-  color: var(--muted);
-  margin-top: 18px;
-}
-
-.hero-art {
-  position: relative;
-  min-height: 390px;
-  border: 1px solid var(--border);
-  border-radius: 30px;
-  padding: 22px;
-  background:
-    radial-gradient(circle at 25% 20%, rgba(71,229,229,.16), transparent 35%),
-    radial-gradient(circle at 85% 80%, rgba(155,123,255,.20), transparent 40%),
-    linear-gradient(145deg, #141e36, #0c1020);
-  overflow: hidden;
-}
-
-.art-top {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  color: var(--muted);
-  font-size: 12px;
-}
-
-.live-dot {
-  display: inline-block;
-  width: 7px;
-  height: 7px;
-  background: var(--cyan);
-  border-radius: 50%;
-  margin-right: 6px;
-}
-
-.globe {
-  position: absolute;
-  width: 235px;
-  height: 235px;
-  border-radius: 50%;
-  top: 70px;
-  left: 50%;
-  transform: translateX(-50%);
-  background:
-    radial-gradient(circle at 35% 30%, rgba(71,229,229,.55), transparent 15%),
-    radial-gradient(circle at 65% 60%, rgba(92,141,255,.5), transparent 30%),
-    radial-gradient(circle at 35% 35%, #273f82, #10162d 68%);
-  box-shadow: 0 0 65px rgba(92,141,255,.25), inset -20px -20px 45px #070a16;
-  border: 1px solid rgba(113,179,255,.5);
-}
-
-.globe::before,
-.globe::after {
-  content: "";
-  position: absolute;
-  inset: 18px 50px;
-  border: 1px solid rgba(71,229,229,.45);
-  border-radius: 50%;
-}
-
-.globe::after {
-  inset: 0 76px;
-}
-
-.orbit {
-  position: absolute;
-  top: 92px;
-  left: 50%;
-  width: 310px;
-  height: 190px;
-  transform: translateX(-50%) rotate(-25deg);
-  border: 1px solid rgba(71,229,229,.5);
-  border-radius: 50%;
-}
-
-.orbit::after {
-  content: "";
-  position: absolute;
-  width: 11px;
-  height: 11px;
-  border-radius: 50%;
-  background: var(--cyan);
-  top: 19px;
-  left: 45px;
-  box-shadow: 0 0 20px var(--cyan);
-}
-
-.float-card {
-  position: absolute;
-  z-index: 2;
-  background: rgba(15,23,43,.94);
-  border: 1px solid var(--border);
-  padding: 12px 15px;
-  border-radius: 14px;
-  font-size: 12px;
-  box-shadow: 0 12px 40px rgba(0,0,0,.2);
-}
-
-.float-card strong {
-  display: block;
-  font-size: 14px;
-  margin-top: 3px;
-}
-
-.float-one {
-  top: 125px;
-  left: 15px;
-}
-
-.float-two {
-  bottom: 92px;
-  right: 15px;
-}
-
-.art-bottom {
-  position: absolute;
-  bottom: 20px;
-  left: 22px;
-  right: 22px;
-  display: flex;
-  justify-content: space-between;
-  color: var(--muted);
-  font-size: 12px;
-}
-
-/* STRIP */
-
-.feature-strip {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  border: 1px solid var(--border);
-  background: rgba(255,255,255,.025);
-  border-radius: 18px;
-  margin-top: 30px;
-}
-
-.feature-item {
-  padding: 22px;
-  text-align: center;
-}
-
-.feature-item + .feature-item {
-  border-left: 1px solid var(--border);
-}
-
-.feature-item strong {
-  display: block;
-  font-size: 15px;
-}
-
-.feature-item span {
-  font-size: 12px;
-  color: var(--muted);
-}
-
-/* DISCOVERY */
-
-.search-bar {
-  display: flex;
-  gap: 12px;
-  padding: 12px;
-  border: 1px solid var(--border);
-  border-radius: 17px;
-  background: var(--surface);
-  margin-bottom: 25px;
-}
-
-.search-bar input {
-  flex: 1;
-  min-width: 0;
-  border: 0;
-  outline: 0;
-  background: transparent;
-  color: white;
-  padding: 8px;
-}
-
-.search-bar input::placeholder {
-  color: #77839c;
-}
-
-.chips {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 9px;
-  margin-bottom: 25px;
-}
-
-.chip {
-  border: 1px solid var(--border);
-  background: transparent;
-  color: var(--muted);
-  border-radius: 100px;
-  padding: 8px 15px;
-  font-size: 12px;
-}
-
-.chip.active,
-.chip:hover {
-  color: var(--cyan);
-  border-color: var(--cyan);
-  background: rgba(71,229,229,.07);
-}
-
-.grid {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 20px;
-}
-
-.card {
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
-  overflow: hidden;
-  transition: transform .2s, border-color .2s;
-}
-
-.card:hover {
-  transform: translateY(-4px);
-  border-color: rgba(71,229,229,.4);
-}
-
-.card-art {
-  min-height: 165px;
-  display: grid;
-  place-items: center;
-  font-size: 55px;
-  position: relative;
-  overflow: hidden;
-}
-
-.card-art::after {
-  content: "";
-  position: absolute;
-  width: 180px;
-  height: 180px;
-  border: 1px solid rgba(255,255,255,.14);
-  border-radius: 50%;
-}
-
-.art-market {
-  background: linear-gradient(135deg, #182c50, #1a1740);
-}
-
-.art-event {
-  background: linear-gradient(135deg, #3a2050, #172d54);
-}
-
-.art-community {
-  background: linear-gradient(135deg, #153d46, #1a214c);
-}
-
-.art-creator {
-  background: linear-gradient(135deg, #49301c, #291d48);
-}
-
-.art-tech {
-  background: linear-gradient(135deg, #183f48, #151f3d);
-}
-
-.art-style {
-  background: linear-gradient(135deg, #4b2448, #22274d);
-}
-
-.card-body {
-  padding: 21px;
-}
-
-.card-tag {
-  display: inline-block;
-  color: var(--cyan);
-  font-size: 10px;
-  text-transform: uppercase;
-  letter-spacing: 1.3px;
-  font-weight: 700;
-  margin-bottom: 8px;
-}
-
-.card h3 {
-  font-family: 'Space Grotesk', sans-serif;
-  font-size: 19px;
-  margin-bottom: 8px;
-}
-
-.card p {
-  color: var(--muted);
-  font-size: 13px;
-  margin-bottom: 18px;
-}
-
-.card-footer {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 10px;
-  border-top: 1px solid var(--border);
-  padding-top: 15px;
-}
-
-.card-footer span {
-  color: var(--muted);
-  font-size: 11px;
-}
-
-/* EVENTS */
-
-.event-row {
-  display: grid;
-  grid-template-columns: 80px 1fr auto;
-  align-items: center;
-  gap: 22px;
-  padding: 23px;
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: 17px;
-  margin-bottom: 14px;
-}
-
-.event-date {
-  text-align: center;
-  background: var(--surface2);
-  border-radius: 12px;
-  padding: 10px 5px;
-}
-
-.event-date span {
-  display: block;
-  color: var(--cyan);
-  font-size: 11px;
-  font-weight: 700;
-}
-
-.event-date strong {
-  font-size: 25px;
-  font-family: 'Space Grotesk', sans-serif;
-}
-
-.event-info h3 {
-  font-size: 17px;
-  margin-bottom: 4px;
-}
-
-.event-info p {
-  color: var(--muted);
-  font-size: 12px;
-}
-
-/* SELL */
-
-.sell-panel {
-  border: 1px solid rgba(71,229,229,.2);
-  border-radius: 28px;
-  padding: 45px;
-  background:
-    radial-gradient(circle at 90% 10%, rgba(155,123,255,.14), transparent 35%),
-    linear-gradient(135deg, #101a30, #0d1222);
-  display: grid;
-  grid-template-columns: 1.2fr .8fr;
-  gap: 35px;
-  align-items: center;
-}
-
-.sell-panel h2 {
-  font-family: 'Space Grotesk', sans-serif;
-  font-size: clamp(28px, 4vw, 43px);
-  line-height: 1.2;
-  margin: 12px 0;
-}
-
-.sell-panel p {
-  color: var(--muted);
-  font-size: 14px;
-}
-
-.benefits {
-  display: grid;
-  gap: 14px;
-}
-
-.benefit {
-  display: flex;
-  align-items: flex-start;
-  gap: 12px;
-  padding: 15px;
-  border: 1px solid var(--border);
-  border-radius: 13px;
-  background: rgba(255,255,255,.025);
-}
-
-.benefit-icon {
-  color: var(--cyan);
-  font-size: 20px;
-}
-
-.benefit strong {
-  display: block;
-  font-size: 14px;
-}
-
-.benefit span {
-  color: var(--muted);
-  font-size: 12px;
-}
-
-/* ACCOUNT */
-
-.account-wrap {
-  display: grid;
-  grid-template-columns: .9fr 1.1fr;
-  gap: 40px;
-  align-items: start;
-}
-
-.account-intro h2 {
-  font-family: 'Space Grotesk', sans-serif;
-  font-size: clamp(30px, 4vw, 44px);
-  line-height: 1.15;
-  margin: 14px 0;
-}
-
-.account-intro p {
-  color: var(--muted);
-}
-
-.account-points {
-  display: grid;
-  gap: 12px;
-  margin-top: 25px;
-}
-
-.account-point {
-  color: #c7d3e9;
-  font-size: 14px;
-}
-
-.account-point span {
-  color: var(--cyan);
-  margin-right: 9px;
-}
-
-.auth-box {
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: 22px;
-  padding: 27px;
-}
-
-.auth-tabs {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 8px;
-  background: #090e1c;
-  border-radius: 12px;
-  padding: 5px;
-  margin-bottom: 23px;
-}
-
-.auth-tab {
-  border: 0;
-  background: transparent;
-  color: var(--muted);
-  border-radius: 9px;
-  padding: 10px;
-  font-weight: 700;
-}
-
-.auth-tab.active {
-  color: white;
-  background: var(--surface2);
-}
-
-.form-group {
-  margin-bottom: 15px;
-}
-
-.form-group label {
-  display: block;
-  font-size: 12px;
-  color: #c4cfe3;
-  margin-bottom: 7px;
-}
-
-.form-group input,
-.form-group select,
-.form-group textarea {
-  display: block;
-  width: 100%;
-  padding: 13px;
-  border: 1px solid var(--border);
-  border-radius: 11px;
-  color: white;
-  background: #0a1020;
-  outline: none;
-}
-
-.form-group input:focus,
-.form-group select:focus,
-.form-group textarea:focus {
-  border-color: var(--cyan);
-}
-
-.form-group input::placeholder,
-.form-group textarea::placeholder {
-  color: #77839c;
-}
-
-.form-group select option {
-  background: #101629;
-}
-
-.form-note {
-  color: var(--muted);
-  font-size: 11px;
-  margin-top: 14px;
-}
-
-.form-error {
-  color: #ff9b9b;
-  font-size: 12px;
-  margin: 10px 0;
-  overflow-wrap: anywhere;
-}
-
-.form-success {
-  color: var(--cyan);
-  font-size: 12px;
-  margin: 10px 0;
-  overflow-wrap: anywhere;
-}
-
-.text-button {
-  background: none;
-  border: 0;
-  color: var(--cyan);
-  font-size: 12px;
-  padding: 5px 0;
-}
-
-.auth-hidden {
-  display: none !important;
-}
-
-.account-status {
-  border: 1px solid var(--border);
-  border-radius: 15px;
-  padding: 20px;
-  margin-bottom: 18px;
-  background: #0b1222;
-}
-
-.account-status h3 {
-  font-size: 20px;
-  margin-bottom: 6px;
-}
-
-.account-status p {
-  color: var(--muted);
-  font-size: 13px;
-  overflow-wrap: anywhere;
-}
-
-.account-status .btn {
-  margin-top: 17px;
-}
-
-/* FOOTER */
-
-footer {
-  border-top: 1px solid var(--border);
-  padding: 40px 0 25px;
-}
-
-.footer-top {
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  gap: 30px;
-  flex-wrap: wrap;
-  padding-bottom: 28px;
-}
-
-.footer-description {
-  max-width: 340px;
-  color: var(--muted);
-  font-size: 13px;
-  margin-top: 13px;
-}
-
-.footer-links {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 18px;
-}
-
-.footer-links a {
-  color: var(--muted);
-  font-size: 12px;
-}
-
-.footer-links a:hover {
-  color: var(--cyan);
-}
-
-.footer-bottom {
-  border-top: 1px solid var(--border);
-  padding-top: 20px;
-  color: var(--muted);
-  font-size: 11px;
-  display: flex;
-  justify-content: space-between;
-  flex-wrap: wrap;
-  gap: 12px;
-}
-
-.toast {
-  position: fixed;
-  bottom: 20px;
-  left: 50%;
-  transform: translate(-50%, 150%);
-  opacity: 0;
-  z-index: 300;
-  background: #16243c;
-  border: 1px solid rgba(71,229,229,.35);
-  border-radius: 12px;
-  padding: 13px 18px;
-  width: max-content;
-  max-width: 90%;
-  font-size: 13px;
-  transition: .3s;
-}
-
-.toast.show {
-  transform: translate(-50%, 0);
-  opacity: 1;
-}
-
-.empty-state {
-  color: var(--muted);
-  text-align: center;
-  padding: 30px;
-  border: 1px dashed var(--border);
-  border-radius: 15px;
-  grid-column: 1 / -1;
-}
-
-@media (max-width: 950px) {
-  .nav-links {
-    gap: 12px;
-  }
-
-  .nav-links a {
-    font-size: 12px;
-  }
-
-  .hero-grid {
-    gap: 28px;
-  }
-
-  .grid {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-}
-
-@media (max-width: 760px) {
-  .navbar {
-    min-height: 68px;
-    flex-wrap: wrap;
-  }
-
-  .logo {
-    font-size: 18px;
-  }
-
-  .nav-actions .btn {
-    padding: 9px 12px;
-    font-size: 12px;
-  }
-
-  .menu-toggle {
-    display: block;
-  }
-
-  .nav-links {
-    display: none;
-    order: 3;
-    width: 100%;
-    padding: 15px 0 20px;
-    flex-direction: column;
-    align-items: stretch;
-    gap: 0;
-  }
-
-  .nav-links.open {
-    display: flex;
-  }
-
-  .nav-links a {
-    display: block;
-    padding: 12px 8px;
-    border-top: 1px solid var(--border);
-    font-size: 14px;
-  }
-
-  .hero {
-    padding: 55px 0 45px;
-  }
-
-  .hero-grid,
-  .account-wrap,
-  .sell-panel {
-    grid-template-columns: 1fr;
-  }
-
-  .hero h1 {
-    letter-spacing: -2px;
-  }
-
-  .hero-art {
-    min-height: 360px;
-  }
-
-  .section {
-    padding: 60px 0;
-  }
-
-  .sell-panel {
-    padding: 27px;
-  }
-
-  .event-row {
-    grid-template-columns: 65px 1fr;
-    gap: 13px;
-    padding: 16px;
-  }
-
-  .event-row > .btn {
-    grid-column: 1 / -1;
-    width: 100%;
-  }
-
-  .account-wrap {
-    gap: 25px;
-  }
-}
-
-@media (max-width: 480px) {
-  .grid {
-    grid-template-columns: 1fr;
-  }
-
-  .feature-item {
-    padding: 16px 6px;
-  }
-
-  .feature-item strong {
-    font-size: 12px;
-  }
-
-  .feature-item span {
-    font-size: 10px;
-  }
-
-  .hero-art {
-    min-height: 330px;
-  }
-
-  .globe {
-    width: 200px;
-    height: 200px;
-  }
-
-  .orbit {
-    width: 270px;
-  }
-
-  .float-card {
-    padding: 9px 11px;
-    font-size: 10px;
-  }
-
-  .float-card strong {
-    font-size: 12px;
-  }
-
-  .float-one {
-    left: 8px;
-  }
-
-  .float-two {
-    right: 8px;
-  }
-
-  .auth-box {
-    padding: 18px;
-  }
-
-  .search-bar {
-    padding: 8px;
-  }
-
-  .search-bar .btn {
-    padding: 10px;
-  }
-}
-</style>
-</head>
-
-<body>
-
-<header>
-  <div class="container navbar">
-
-    <a href="#home" class="logo" aria-label="RenzoNexus home">
-      <span class="logo-mark">R</span>
-      <span>Renzo<span class="gradient-text">Nexus</span></span>
-    </a>
-
-    <nav class="nav-links" id="mainNav" aria-label="Main navigation">
-      <a href="#discover">Discover</a>
-      <a href="#events">Events</a>
-      <a href="#merch">Merch</a>
-      <a href="#sell">Sell With Us</a>
-      <a href="#account">Account</a>
-    </nav>
-
-    <div class="nav-actions">
-      <a href="#account" class="btn btn-primary">Get Started ↗</a>
-      <button class="menu-toggle" id="menuToggle" aria-label="Open navigation" aria-expanded="false">☰</button>
-    </div>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#08111f">
+  <meta name="description" content="RenzoNexus — One World. Endless Possibilities. Discover products, events, and opportunities.">
+  <title>RenzoNexus — One World. Endless Possibilities.</title>  <style>
+    :root {
+      --bg: #08111f;
+      --panel: #101d30;
+      --panel2: #152740;
+      --text: #f4f7fb;
+      --muted: #a9b8ca;
+      --cyan: #58d9f4;
+      --blue: #648bff;
+      --gold: #f1c86b;
+      --green: #65dfa4;
+      --red: #ff8d98;
+      --border: rgba(255,255,255,.12);
+    }
+
+    * { box-sizing: border-box; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      margin: 0;
+      color: var(--text);
+      background:
+        radial-gradient(circle at 85% 0%, rgba(58,114,220,.18), transparent 28rem),
+        var(--bg);
+      font-family: Arial, Helvetica, sans-serif;
+      line-height: 1.6;
+    }
+
+    a { color: inherit; text-decoration: none; }
+    button, input, select { font: inherit; }
+    button { cursor: pointer; }
+
+    .container {
+      width: min(1120px, calc(100% - 32px));
+      margin: auto;
+    }
+
+    header {
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      background: rgba(8,17,31,.95);
+      border-bottom: 1px solid var(--border);
+      backdrop-filter: blur(15px);
+    }
+
+    .nav {
+      min-height: 76px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 18px;
+      flex-wrap: wrap;
+      padding: 12px 0;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 20px;
+      font-weight: 900;
+    }
+
+    .brand-icon {
+      width: 43px;
+      height: 43px;
+      display: grid;
+      place-items: center;
+      border-radius: 14px;
+      color: #07111e;
+      background: linear-gradient(135deg,var(--cyan),var(--blue));
+    }
+
+    .brand small {
+      display: block;
+      color: var(--muted);
+      font-size: 9px;
+      letter-spacing: 1.5px;
+    }
+
+    nav {
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 5px;
+    }
+
+    nav a {
+      color: var(--muted);
+      padding: 8px 10px;
+      border-radius: 9px;
+      font-size: 13px;
+      font-weight: bold;
+    }
+
+    nav a:hover {
+      color: white;
+      background: rgba(255,255,255,.07);
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 11px 16px;
+      border: 0;
+      border-radius: 11px;
+      color: #06121f;
+      background: linear-gradient(135deg,var(--cyan),#a0eafa);
+      font-weight: 800;
+    }
+
+    .btn.gold {
+      background: linear-gradient(135deg,var(--gold),#ffe7a5);
+    }
+
+    .btn.secondary {
+      color: var(--text);
+      background: var(--panel2);
+      border: 1px solid var(--border);
+    }
+
+    .btn.danger {
+      color: white;
+      background: #9b3545;
+    }
+
+    .hero { padding: 76px 0 48px; }
+
+    .hero-grid {
+      display: grid;
+      grid-template-columns: 1.2fr .8fr;
+      gap: 30px;
+      align-items: center;
+    }
+
+    .eyebrow {
+      display: inline-block;
+      color: var(--cyan);
+      border: 1px solid rgba(88,217,244,.3);
+      background: rgba(88,217,244,.06);
+      padding: 7px 12px;
+      border-radius: 30px;
+      font-size: 12px;
+      font-weight: bold;
+      letter-spacing: 1px;
+    }
+
+    h1 {
+      margin: 20px 0;
+      font-size: clamp(40px,6vw,70px);
+      line-height: 1.05;
+      letter-spacing: -2px;
+    }
+
+    .gradient {
+      color: var(--cyan);
+      background: linear-gradient(90deg,var(--cyan),#a9b9ff);
+      background-clip: text;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    p { color: var(--muted); }
+
+    .hero p { max-width: 620px; font-size: 17px; }
+
+    .actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-top: 24px;
+    }
+
+    .hero-card, .card {
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      background: linear-gradient(145deg,rgba(20,39,64,.95),rgba(12,25,42,.96));
+      padding: 24px;
+    }
+
+    .hero-card { padding: 30px; }
+
+    .hero-symbol {
+      font-size: 45px;
+      width: 80px;
+      height: 80px;
+      display: grid;
+      place-items: center;
+      border-radius: 24px;
+      background: rgba(88,217,244,.1);
+    }
+
+    section {
+      padding: 42px 0;
+      scroll-margin-top: 100px;
+    }
+
+    h2 { font-size: clamp(27px,4vw,38px); margin: 12px 0 8px; }
+    h3 { margin-top: 10px; }
+
+    .section-intro { margin-bottom: 22px; }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(3,1fr);
+      gap: 16px;
+    }
+
+    .icon {
+      font-size: 25px;
+      width: 49px;
+      height: 49px;
+      display: grid;
+      place-items: center;
+      border-radius: 14px;
+      background: rgba(88,217,244,.1);
+    }
+
+    .tag, .role-pill {
+      display: inline-block;
+      padding: 5px 10px;
+      border-radius: 20px;
+      border: 1px solid var(--border);
+      font-size: 12px;
+      color: var(--cyan);
+    }
+
+    .account-grid {
+      display: grid;
+      grid-template-columns: .8fr 1.2fr;
+      gap: 18px;
+      align-items: start;
+    }
+
+    .welcome {
+      border-color: rgba(241,200,107,.28);
+      background: linear-gradient(145deg,rgba(66,49,24,.35),var(--panel));
+    }
+
+    .forms-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+    }
+
+    label {
+      display: block;
+      margin: 12px 0 5px;
+      font-size: 13px;
+      font-weight: bold;
+      color: var(--muted);
+    }
+
+    input, select {
+      display: block;
+      width: 100%;
+      padding: 12px;
+      color: white;
+      background: #091626;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      outline: none;
+    }
+
+    input:focus, select:focus {
+      border-color: var(--cyan);
+    }
+
+    form button { margin-top: 15px; }
+
+    .message {
+      margin-top: 12px;
+      font-size: 13px;
+      overflow-wrap: anywhere;
+    }
+
+    .success { color: var(--green); }
+    .error { color: var(--red); }
+    .muted { color: var(--muted); }
+
+    .hidden { display: none !important; }
+
+    .dashboard-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 14px;
+    }
+
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(3,1fr);
+      gap: 14px;
+      margin-top: 20px;
+    }
+
+    .stat {
+      padding: 20px;
+      background: rgba(255,255,255,.035);
+      border: 1px solid var(--border);
+      border-radius: 15px;
+    }
+
+    .stat span { color: var(--muted); font-size: 13px; }
+    .stat strong { display: block; font-size: 30px; margin-top: 6px; }
+
+    .notice {
+      padding: 13px;
+      border: 1px solid rgba(241,200,107,.25);
+      border-radius: 11px;
+      color: #ead9ac;
+      background: rgba(241,200,107,.06);
+      font-size: 13px;
+      margin-top: 16px;
+    }
+
+    footer {
+      margin-top: 30px;
+      padding: 28px 0;
+      border-top: 1px solid var(--border);
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    @media(max-width:850px) {
+      .hero-grid, .account-grid { grid-template-columns: 1fr; }
+      .grid { grid-template-columns: 1fr 1fr; }
+    }
+
+    @media(max-width:600px) {
+      .nav { align-items: flex-start; }
+      nav { justify-content: flex-start; }
+      nav a { padding: 7px; font-size: 12px; }
+      .hero { padding-top: 45px; }
+      .grid, .forms-grid, .stats { grid-template-columns: 1fr; }
+      .card, .hero-card { padding: 20px; }
+    }
+  </style></head><body><header>
+  <div class="container nav">
+    <a class="brand" href="#home">
+      <span class="brand-icon">RN</span>
+      <span>RenzoNexus<small>ONE WORLD. ENDLESS POSSIBILITIES.</small></span>
+    </a><nav aria-label="Main navigation">
+  <a href="#home">Home</a>
+  <a href="#discover">Discover</a>
+  <a href="#events">Events</a>
+  <a href="#merch">Merch</a>
+  <a href="#sell">Sell With Us</a>
+  <a href="#account">Account</a>
+  <a id="adminNav" class="hidden" href="#admin">👑 Admin</a>
+</nav>
 
   </div>
-</header>
-
-<main>
-
-<!-- HERO -->
-
-<section class="hero" id="home">
-  <div class="container hero-grid">
-
-    <div>
-      <span class="eyebrow">A world of possibilities</span>
-
-      <h1>
-        One World.<br>
-        <span class="gradient-text">Endless Possibilities.</span>
-      </h1>
-
-      <p class="hero-copy">
-        Discover new products, explore experiences, connect with creators,
-        and uncover opportunities in one growing digital destination.
-        Welcome to RenzoNexus.
-      </p>
-
-      <div class="hero-actions">
-        <a href="#discover" class="btn btn-primary">Explore RenzoNexus ↗</a>
-        <a href="#sell" class="btn btn-outline">Build With Us</a>
-      </div>
-
-      <p class="hero-note">
-        Discover. Connect. Create. Grow.
-      </p>
-    </div>
-
-    <div class="hero-art" aria-label="Abstract digital globe illustration">
-
-      <div class="art-top">
-        <span>RENZONEXUS / WORLD</span>
-        <span><i class="live-dot"></i>Digital destination</span>
-      </div>
-
-      <div class="globe"></div>
-      <div class="orbit"></div>
-
-      <div class="float-card float-one">
-        Discover something new
-        <strong>Explore the world 🌍</strong>
-      </div>
-
-      <div class="float-card float-two">
-        Your next opportunity
-        <strong>Starts with a connection ✨</strong>
-      </div>
-
-      <div class="art-bottom">
-        <span>One platform</span>
-        <span>Many possibilities</span>
-      </div>
-
-    </div>
-
-  </div>
-
-  <div class="container">
-    <div class="feature-strip">
-      <div class="feature-item">
-        <strong>Discover</strong>
-        <span>Explore new possibilities</span>
-      </div>
-
-      <div class="feature-item">
-        <strong>Connect</strong>
-        <span>Find your community</span>
-      </div>
-
-      <div class="feature-item">
-        <strong>Create</strong>
-        <span>Bring ideas to life</span>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- DISCOVER -->
-
-<section class="section" id="discover">
-  <div class="container">
-
-    <div class="section-heading">
-      <span class="eyebrow">Your next discovery</span>
-      <h2>Explore the <span class="gradient-text">Nexus.</span></h2>
-      <p>
-        Browse the possibilities. From creative ideas and technology
-        to shopping concepts and community experiences.
-      </p>
-    </div>
-
-    <div class="search-bar">
-      <input
-        id="discoverySearch"
-        type="search"
-        placeholder="Search categories and ideas..."
-        aria-label="Search discovery cards"
-      >
-      <button class="btn btn-primary" id="searchButton">Search</button>
-    </div>
-
-    <div class="chips" aria-label="Filter discovery categories">
-      <button class="chip active" data-filter="all">Everything</button>
-      <button class="chip" data-filter="market">Marketplace</button>
-      <button class="chip" data-filter="event">Events</button>
-      <button class="chip" data-filter="creator">Creators</button>
-      <button class="chip" data-filter="tech">Technology</button>
-    </div>
-
-    <div class="grid" id="discoveryGrid">
-
-      <article class="card discovery-card" data-category="market">
-        <div class="card-art art-market">🛍️</div>
-        <div class="card-body">
-          <span class="card-tag">Marketplace concept</span>
-          <h3>Explore the Marketplace</h3>
-          <p>
-            Imagine discovering products, independent brands, and
-            interesting finds from different sellers.
-          </p>
-          <div class="card-footer">
-            <span>Sample concept</span>
-            <a href="#merch" class="btn">Explore ↗</a>
-          </div>
+</header><main>
+  <section class="hero" id="home">
+    <div class="container hero-grid">
+      <div>
+        <span class="eyebrow">✦ DISCOVER WHAT CONNECTS US</span>
+        <h1>One World.<br><span class="gradient">Endless Possibilities.</span></h1>
+        <p>Discover products, explore events, and connect with new opportunities in one growing digital space for people, creators, sellers, and communities.</p>
+        <div class="actions">
+          <a class="btn" href="#discover">Explore RenzoNexus →</a>
+          <a class="btn secondary" href="#sell">Join as a Seller</a>
         </div>
-      </article>
-
-      <article class="card discovery-card" data-category="event">
-        <div class="card-art art-event">🎟️</div>
-        <div class="card-body">
-          <span class="card-tag">Experiences</span>
-          <h3>Events & Experiences</h3>
-          <p>
-            Discover the idea of a central destination for events,
-            gatherings, and memorable experiences.
-          </p>
-          <div class="card-footer">
-            <span>Sample concept</span>
-            <a href="#events" class="btn">Explore ↗</a>
-          </div>
-        </div>
-      </article>
-
-      <article class="card discovery-card" data-category="creator">
-        <div class="card-art art-creator">🎨</div>
-        <div class="card-body">
-          <span class="card-tag">Creative world</span>
-          <h3>Creators & Ideas</h3>
-          <p>
-            A space envisioned for talented people to showcase
-            ideas, creative work, and future projects.
-          </p>
-          <div class="card-footer">
-            <span>Community concept</span>
-            <a href="#sell" class="btn">Learn more ↗</a>
-          </div>
-        </div>
-      </article>
-
-      <article class="card discovery-card" data-category="tech">
-        <div class="card-art art-tech">💻</div>
-        <div class="card-body">
-          <span class="card-tag">Digital innovation</span>
-          <h3>Technology & Innovation</h3>
-          <p>
-            Explore ideas around digital tools, technology,
-            entrepreneurship, and online opportunities.
-          </p>
-          <div class="card-footer">
-            <span>Idea showcase</span>
-            <a href="#sell" class="btn">Explore ↗</a>
-          </div>
-        </div>
-      </article>
-
-      <article class="card discovery-card" data-category="creator">
-        <div class="card-art art-community">🌐</div>
-        <div class="card-body">
-          <span class="card-tag">Community</span>
-          <h3>Connect With People</h3>
-          <p>
-            Discover the vision of a connected community where
-            people and ideas can meet.
-          </p>
-          <div class="card-footer">
-            <span>Community concept</span>
-            <a href="#account" class="btn">Join ↗</a>
-          </div>
-        </div>
-      </article>
-
-      <article class="card discovery-card" data-category="market">
-        <div class="card-art art-style">✨</div>
-        <div class="card-body">
-          <span class="card-tag">Style & lifestyle</span>
-          <h3>Style & Lifestyle</h3>
-          <p>
-            A proposed destination for fashion, lifestyle products,
-            accessories, and emerging brands.
-          </p>
-          <div class="card-footer">
-            <span>Sample concept</span>
-            <a href="#merch" class="btn">Explore ↗</a>
-          </div>
-        </div>
-      </article>
-
-    </div>
-
-    <p class="form-note" style="margin-top:18px">
-      These cards demonstrate the platform's vision. They are not live listings.
-    </p>
-
-  </div>
-</section>
-
-<!-- EVENTS -->
-
-<section class="section" id="events" style="background:rgba(255,255,255,.018)">
-  <div class="container">
-
-    <div class="section-heading">
-      <span class="eyebrow">Experiences & discovery</span>
-      <h2>Explore the world of <span class="gradient-text">events.</span></h2>
-      <p>
-        A preview of how event discovery could work as RenzoNexus develops.
-      </p>
-    </div>
-
-    <div class="event-row">
-      <div class="event-date">
-        <span>EVENT</span>
-        <strong>01</strong>
-      </div>
-      <div class="event-info">
-        <h3>Music & Live Experiences</h3>
-        <p>Concerts, performances, and live entertainment.</p>
-      </div>
-      <a href="#account" class="btn">Get Updates ↗</a>
-    </div>
-
-    <div class="event-row">
-      <div class="event-date">
-        <span>EVENT</span>
-        <strong>02</strong>
-      </div>
-      <div class="event-info">
-        <h3>Business & Networking</h3>
-        <p>Ideas, entrepreneurship, and professional connections.</p>
-      </div>
-      <a href="#account" class="btn">Get Updates ↗</a>
-    </div>
-
-    <div class="event-row">
-      <div class="event-date">
-        <span>EVENT</span>
-        <strong>03</strong>
-      </div>
-      <div class="event-info">
-        <h3>Community & Culture</h3>
-        <p>Creative gatherings, cultural activities, and community events.</p>
-      </div>
-      <a href="#account" class="btn">Get Updates ↗</a>
-    </div>
-
-    <p class="form-note">
-      These are example categories, not confirmed events. Event booking and ticket sales are not enabled.
-    </p>
-
-  </div>
-</section>
-
-<!-- MERCH -->
-
-<section class="section" id="merch">
-  <div class="container">
-
-    <div class="section-heading">
-      <span class="eyebrow">Products & brands</span>
-      <h2>Discover the next <span class="gradient-text">big thing.</span></h2>
-      <p>
-        RenzoNexus is designed with room for product discovery,
-        independent brands, and future merchandise.
-      </p>
-    </div>
-
+      </div>  <div class="hero-card">
+    <div class="hero-symbol">🌐</div>
+    <h3>Your world, connected.</h3>
+    <p>Discovery, commerce, events, and opportunities—together in one place.</p>
     <div class="grid">
-
-      <article class="card">
-        <div class="card-art art-tech">🎧</div>
-        <div class="card-body">
-          <span class="card-tag">Sample product</span>
-          <h3>Tech & Accessories</h3>
-          <p>
-            A possible category for technology accessories
-            and useful everyday gadgets.
-          </p>
-          <a href="#account" class="btn btn-outline btn-block">Coming in the future</a>
-        </div>
-      </article>
-
-      <article class="card">
-        <div class="card-art art-style">👕</div>
-        <div class="card-body">
-          <span class="card-tag">Sample product</span>
-          <h3>Fashion & Apparel</h3>
-          <p>
-            A possible destination for clothing, personal style,
-            and emerging fashion brands.
-          </p>
-          <a href="#account" class="btn btn-outline btn-block">Coming in the future</a>
-        </div>
-      </article>
-
-      <article class="card">
-        <div class="card-art art-market">🎒</div>
-        <div class="card-body">
-          <span class="card-tag">Sample product</span>
-          <h3>Everyday Essentials</h3>
-          <p>
-            A future category for accessories, lifestyle goods,
-            and everyday essentials.
-          </p>
-          <a href="#account" class="btn btn-outline btn-block">Coming in the future</a>
-        </div>
-      </article>
-
+      <div><strong>🛍️ Marketplace</strong><br><small class="muted">Discover products</small></div>
+      <div><strong>🎟️ Events</strong><br><small class="muted">Find experiences</small></div>
+      <div><strong>🤝 Community</strong><br><small class="muted">Build connections</small></div>
     </div>
-
-    <p class="form-note" style="margin-top:18px">
-      No real products are currently offered for purchase through these sample cards.
-    </p>
-
   </div>
-</section>
+</div>
 
-<!-- SELL WITH US -->
-
-<section class="section" id="sell">
-  <div class="container">
-
-    <div class="sell-panel">
-
-      <div>
-        <span class="eyebrow">Build the future with us</span>
-        <h2>Your ideas deserve a <span class="gradient-text">bigger world.</span></h2>
-        <p>
-          Are you a seller, event organizer, creator, or entrepreneur?
-          RenzoNexus is being developed with a vision of connecting
-          people, products, and opportunities in one place.
-        </p>
-
-        <div class="hero-actions">
-          <a href="#account" class="btn btn-primary">Create an Account ↗</a>
-          <a href="mailto:renzonexus@gmail.com?subject=RenzoNexus%20Partnership%20Enquiry" class="btn btn-outline">Email an Enquiry</a>
-        </div>
-
-        <p class="form-note">
-          Replace the example email above with your verified business email before launch.
-        </p>
-      </div>
-
-      <div class="benefits">
-
-        <div class="benefit">
-          <div class="benefit-icon">✦</div>
-          <div>
-            <strong>For Sellers</strong>
-            <span>Help shape a future marketplace.</span>
-          </div>
-        </div>
-
-        <div class="benefit">
-          <div class="benefit-icon">◎</div>
-          <div>
-            <strong>For Organizers</strong>
-            <span>Explore future event-discovery opportunities.</span>
-          </div>
-        </div>
-
-        <div class="benefit">
-          <div class="benefit-icon">↗</div>
-          <div>
-            <strong>For Creators</strong>
-            <span>Bring new ideas and collaborations forward.</span>
-          </div>
-        </div>
-
-      </div>
-
-    </div>
-
+  </section>  <section id="discover">
+    <div class="container">
+      <span class="eyebrow">EXPLORE</span>
+      <h2>Discover RenzoNexus</h2>
+      <p class="section-intro">Explore the opportunities that interest you.</p>  <div class="grid">
+    <article class="card">
+      <div class="icon">🛍️</div>
+      <h3>Marketplace</h3>
+      <p>Discover products and independent sellers as the marketplace grows.</p>
+      <span class="tag">Shopping</span>
+    </article>
+    <article class="card">
+      <div class="icon">🎟️</div>
+      <h3>Events & Experiences</h3>
+      <p>Find events and experiences shared by event organisers.</p>
+      <span class="tag">Events</span>
+    </article>
+    <article class="card">
+      <div class="icon">🚀</div>
+      <h3>Opportunities</h3>
+      <p>Make room for collaboration, new ideas, and growth.</p>
+      <span class="tag">Community</span>
+    </article>
   </div>
-</section>
+</div>
 
-<!-- ACCOUNT -->
-
-<section class="section" id="account" style="background:rgba(255,255,255,.018)">
-  <div class="container account-wrap">
-
-    <div class="account-intro">
-      <span class="eyebrow">Your journey starts here</span>
-
-      <h2>Welcome to <span class="gradient-text">your Nexus.</span></h2>
-
-      <p>
-        Create your account or sign in to begin your RenzoNexus journey.
-        Authentication is powered by Supabase.
-      </p>
-
-      <div class="account-points">
-        <div class="account-point"><span>✓</span> Create an account with your email.</div>
-        <div class="account-point"><span>✓</span> Sign in securely with your password.</div>
-        <div class="account-point"><span>✓</span> Request a password reset by email.</div>
-        <div class="account-point"><span>✓</span> Sign out when you're finished.</div>
+  </section>  <section id="events">
+    <div class="container">
+      <span class="eyebrow">WHAT'S HAPPENING</span>
+      <h2>Events</h2>
+      <div class="card">
+        <div class="icon">📅</div>
+        <h3>Discover upcoming experiences</h3>
+        <p>Event publishing and public listings still need to be connected. Event organisers can express interest through the section below.</p>
+        <a class="btn secondary" href="#sell">Become an Organiser</a>
       </div>
+    </div>
+  </section>  <section id="merch">
+    <div class="container">
+      <span class="eyebrow">SHOP & DISCOVER</span>
+      <h2>Marketplace & Merchandise</h2>
+      <div class="grid">
+        <article class="card">
+          <div class="icon">✨</div>
+          <h3>Featured products</h3>
+          <p>Product listings can be connected here as the marketplace database is developed.</p>
+        </article>
+        <article class="card">
+          <div class="icon">🏷️</div>
+          <h3>Independent sellers</h3>
+          <p>Support businesses and creators as the platform grows.</p>
+        </article>
+        <article class="card">
+          <div class="icon">🔒</div>
+          <h3>Safer shopping</h3>
+          <p>Payment processing must be configured before real purchases are offered.</p>
+        </article>
+      </div>
+    </div>
+  </section>  <section id="sell">
+    <div class="container">
+      <span class="eyebrow">BUILD WITH US</span>
+      <h2>Sell or Organise with RenzoNexus</h2>
+      <div class="grid">
+        <article class="card">
+          <div class="icon">🛍️</div>
+          <h3>Seller programme</h3>
+          <p>For businesses and individuals interested in selling products.</p>
+          <button class="btn secondary choose-type" data-type="seller">Apply to Sell</button>
+        </article>
+        <article class="card">
+          <div class="icon">🎟️</div>
+          <h3>Event organiser programme</h3>
+          <p>For people who want to publish events and experiences.</p>
+          <button class="btn secondary choose-type" data-type="organiser">Apply to Organise</button>
+        </article>
+        <article class="card">
+          <div class="icon">🤝</div>
+          <h3>Grow together</h3>
+          <p>Join the community as RenzoNexus expands.</p>
+          <a class="btn secondary" href="#account">Create an Account</a>
+        </article>
+      </div>  <div class="card" style="margin-top:18px">
+    <h3>Application interest</h3>
+    <p>This is a front-end form only. It does not submit applications to Supabase yet.</p>
+    <form id="interestForm">
+      <label for="interestName">Full name</label>
+      <input id="interestName" required maxlength="100" placeholder="Your full name">
 
-      <p class="form-note">
-        An account does not yet provide seller tools, event booking,
-        purchases, or a public community profile.
-      </p>
+      <label for="interestEmail">Email address</label>
+      <input id="interestEmail" type="email" required placeholder="you@example.com">
+
+      <label for="interestType">Application type</label>
+      <select id="interestType" required>
+        <option value="">Choose one</option>
+        <option value="seller">Seller</option>
+        <option value="organiser">Event organiser</option>
+      </select>
+
+      <button class="btn" type="submit">Check Application Setup</button>
+      <div id="interestMessage" class="message" role="status"></div>
+    </form>
+  </div>
+</div>
+
+  </section>  <section id="account">
+    <div class="container">
+      <span class="eyebrow">YOUR RENZONEXUS</span>
+      <h2>Account</h2>
+      <p>Sign in or create an account to join the platform.</p>  <div class="account-grid">
+    <div class="card welcome">
+      <div class="icon">👤</div>
+      <h3 id="welcomeName">Welcome to RenzoNexus</h3>
+      <p id="welcomeEmail">Sign in to view your account.</p>
+      <span id="roleBadge" class="role-pill">Guest</span>
+      <p id="verificationStatus" class="message"></p>
+
+      <button id="signOutButton" class="btn secondary hidden" type="button">Sign Out</button>
+
+      <div id="adminShortcut" class="hidden" style="margin-top:15px">
+        <a class="btn gold" href="#admin">Open Admin Dashboard →</a>
+      </div>
     </div>
 
-    <div class="auth-box">
-
+    <div class="card">
       <div id="authForms">
+        <div class="forms-grid">
+          <div>
+            <h3>Sign In</h3>
+            <form id="loginForm">
+              <label for="loginEmail">Email</label>
+              <input id="loginEmail" type="email" autocomplete="email" required placeholder="you@example.com">
 
-        <div class="auth-tabs">
-          <button class="auth-tab active" id="loginTab" type="button">Sign In</button>
-          <button class="auth-tab" id="signupTab" type="button">Create Account</button>
+              <label for="loginPassword">Password</label>
+              <input id="loginPassword" type="password" autocomplete="current-password" required placeholder="Your password">
+
+              <button class="btn" type="submit">Sign In</button>
+              <button id="resetButton" class="btn secondary" type="button">Forgot Password?</button>
+            </form>
+          </div>
+
+          <div>
+            <h3>Create Account</h3>
+            <form id="signupForm">
+              <label for="signupName">Display name</label>
+              <input id="signupName" required maxlength="60" autocomplete="nickname" placeholder="Your display name">
+
+              <label for="signupEmail">Email</label>
+              <input id="signupEmail" type="email" required autocomplete="email" placeholder="you@example.com">
+
+              <label for="signupPassword">Password (8+ characters)</label>
+              <input id="signupPassword" type="password" minlength="8" required autocomplete="new-password" placeholder="Create a password">
+
+              <button class="btn" type="submit">Create Account</button>
+            </form>
+          </div>
         </div>
-
-        <form id="loginForm">
-
-          <div class="form-group">
-            <label for="loginEmail">Email address</label>
-            <input id="loginEmail" type="email" autocomplete="email" placeholder="you@example.com" required>
-          </div>
-
-          <div class="form-group">
-            <label for="loginPassword">Password</label>
-            <input id="loginPassword" type="password" autocomplete="current-password" placeholder="Enter your password" required>
-          </div>
-
-          <button class="text-button" type="button" id="forgotPassword">
-            Forgot your password?
-          </button>
-
-          <p id="loginMessage" class="form-error" aria-live="polite"></p>
-
-          <button type="submit" class="btn btn-primary btn-block" id="loginSubmit">
-            Sign In →
-          </button>
-
-          <p class="form-note">
-            Use the email address and password registered to your account.
-          </p>
-
-        </form>
-
-        <form id="signupForm" class="auth-hidden">
-
-          <div class="form-group">
-            <label for="signupName">Display name</label>
-            <input id="signupName" type="text" autocomplete="nickname" placeholder="What should we call you?" maxlength="60" required>
-          </div>
-
-          <div class="form-group">
-            <label for="signupEmail">Email address</label>
-            <input id="signupEmail" type="email" autocomplete="email" placeholder="you@example.com" required>
-          </div>
-
-          <div class="form-group">
-            <label for="signupPassword">Create password</label>
-            <input id="signupPassword" type="password" autocomplete="new-password" minlength="8" placeholder="At least 8 characters" required>
-          </div>
-
-          <div class="form-group">
-            <label for="signupConfirm">Confirm password</label>
-            <input id="signupConfirm" type="password" autocomplete="new-password" minlength="8" placeholder="Enter the password again" required>
-          </div>
-
-          <p id="signupMessage" class="form-error" aria-live="polite"></p>
-
-          <button type="submit" class="btn btn-primary btn-block" id="signupSubmit">
-            Create My Account →
-          </button>
-
-          <p class="form-note">
-            Use an email address you can access. Email verification may be required.
-          </p>
-
-        </form>
-
-        <div id="resetForm" class="auth-hidden">
-
-          <h3 style="margin-bottom:8px">Reset your password</h3>
-
-          <p class="muted" style="font-size:13px;margin-bottom:18px">
-            Enter your email address and we'll request a password-reset email.
-          </p>
-
-          <div class="form-group">
-            <label for="resetEmail">Email address</label>
-            <input id="resetEmail" type="email" autocomplete="email" placeholder="you@example.com" required>
-          </div>
-
-          <p id="resetMessage" class="form-error" aria-live="polite"></p>
-
-          <button type="button" class="btn btn-primary btn-block" id="resetSubmit">
-            Send Reset Email
-          </button>
-
-          <button type="button" class="text-button" id="backToLogin">
-            ← Back to sign in
-          </button>
-
-        </div>
-
       </div>
 
-      <div id="signedInPanel" class="auth-hidden">
+      <div id="authMessage" class="message" role="status" aria-live="polite"></div>
+    </div>
+  </div>
+</div>
 
-        <div class="account-status">
-          <span class="eyebrow">Account connected</span>
-          <h3 id="welcomeName">Welcome!</h3>
-          <p id="welcomeEmail"></p>
-          <p id="verificationStatus" style="margin-top:10px"></p>
-          <button id="logoutButton" class="btn btn-outline">Sign Out</button>
+  </section>  <section id="admin" class="hidden">
+    <div class="container">
+      <div class="dashboard-top">
+        <div>
+          <span class="eyebrow">RESTRICTED AREA</span>
+          <h2>RenzoNexus Admin Dashboard</h2>
+          <p>Account: <strong id="adminEmail"></strong></p>
+          <p>Role: <strong id="adminRole"></strong></p>
         </div>
+        <span class="role-pill">✓ Admin role verified</span>
+      </div>  <div class="card">
+    <h3>Dashboard Overview</h3>
+    <p>Statistics appear only when the signed-in account has permission to read the corresponding table.</p>
 
-        <p class="muted" style="font-size:13px">
-          You're signed in to RenzoNexus. More account features can be added as the platform develops.
-        </p>
-
-        <p id="logoutMessage" class="form-error" aria-live="polite"></p>
-
+    <div class="stats">
+      <div class="stat">
+        <span>Profiles</span>
+        <strong id="profileCount">—</strong>
       </div>
-
-      <p id="authStatus" class="form-success" aria-live="polite"></p>
-
+      <div class="stat">
+        <span>Seller applications</span>
+        <strong id="sellerCount">—</strong>
+      </div>
+      <div class="stat">
+        <span>Organiser applications</span>
+        <strong id="organiserCount">—</strong>
+      </div>
     </div>
 
+    <div id="dashboardMessage" class="notice" role="status">
+      Loading permitted dashboard data…
+    </div>
   </div>
-</section>
 
-</main>
+  <div class="grid" style="margin-top:18px">
+    <article class="card">
+      <div class="icon">👥</div>
+      <h3>Member Management</h3>
+      <p>Member-management actions require additional secure database policies.</p>
+      <span class="tag">Setup required</span>
+    </article>
+    <article class="card">
+      <div class="icon">🛍️</div>
+      <h3>Seller Applications</h3>
+      <p>Review tools need the exact table schema and permissions before activation.</p>
+      <span class="tag">Setup required</span>
+    </article>
+    <article class="card">
+      <div class="icon">🎟️</div>
+      <h3>Organiser Applications</h3>
+      <p>Review and approval workflows will be added after database access is configured.</p>
+      <span class="tag">Setup required</span>
+    </article>
+  </div>
 
-<!-- FOOTER -->
+  <div class="notice">
+    Security: showing this dashboard is not enough to secure administrative actions. Database policies must protect each action. Never put a Supabase service-role secret in this file.
+  </div>
+</div>
 
-<footer>
+  </section>
+</main><footer>
   <div class="container">
-
-    <div class="footer-top">
-
-      <div>
-        <a href="#home" class="logo">
-          <span class="logo-mark">R</span>
-          <span>Renzo<span class="gradient-text">Nexus</span></span>
-        </a>
-
-        <p class="footer-description">
-          One World. Endless Possibilities.
-          A growing vision for discovery, connection, and opportunity.
-        </p>
-      </div>
-
-      <div class="footer-links">
-        <a href="#home">Home</a>
-        <a href="#discover">Discover</a>
-        <a href="#events">Events</a>
-        <a href="#merch">Merch</a>
-        <a href="#sell">Sell With Us</a>
-        <a href="#account">Account</a>
-      </div>
-
-    </div>
-
-    <div class="footer-bottom">
-      <span>© <span id="year"></span> RenzoNexus. All rights reserved.</span>
-      <span>Built with vision by Big Renzo.</span>
-    </div>
-
+    <strong>RenzoNexus</strong> — One World. Endless Possibilities.
+    <br>© <span id="year"></span> RenzoNexus.
   </div>
-</footer>
+</footer><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script>
+(() => {
+  "use strict";
 
-<div class="toast" id="toast" role="status" aria-live="polite"></div>
+  // Public browser credentials only. Never use a service-role secret here.
+  const SUPABASE_URL = "https://anclwctvvillzpatigbr.supabase.co";
+  const SUPABASE_PUBLISHABLE_KEY = "sb_publishable_t9TJatPdXprnb5gkrkINtQ_GColh4fM";
 
-<script>
-/* ========================================
-   RENZONEXUS CONFIGURATION
-======================================== */
+  const $ = (id) => document.getElementById(id);
+  $("year").textContent = new Date().getFullYear();
 
-/*
-  These are the project's existing Supabase
-  project URL and publishable browser key.
+  const clientLibrary = window.supabase;
 
-  Never put a Supabase service_role or secret
-  key in public website code.
-*/
-
-const SUPABASE_URL = "https://anclwctvvillzpatigbr.supabase.co";
-
-const SUPABASE_PUBLISHABLE_KEY =
-  "sb_publishable_t9TJatPdXprnb5gkrkINtQ_GColh4fM";
-
-let supabaseClient = null;
-let supabaseReady = false;
-
-/* ========================================
-   HELPERS
-======================================== */
-
-const $ = (id) => document.getElementById(id);
-
-function showToast(message) {
-  const toast = $("toast");
-  toast.textContent = message;
-  toast.classList.add("show");
-
-  clearTimeout(showToast.timer);
-
-  showToast.timer = setTimeout(() => {
-    toast.classList.remove("show");
-  }, 3500);
-}
-
-function setMessage(id, message, type = "error") {
-  const element = $(id);
-  if (!element) return;
-
-  element.textContent = message;
-  element.className = type === "success"
-    ? "form-success"
-    : "form-error";
-}
-
-function clearMessage(id) {
-  setMessage(id, "");
-}
-
-function setBusy(buttonId, busy, busyText, normalText) {
-  const button = $(buttonId);
-
-  button.disabled = busy;
-  button.textContent = busy ? busyText : normalText;
-}
-
-function friendlyError(error) {
-  const message = error && error.message
-    ? error.message
-    : "Something went wrong. Please try again.";
-
-  if (/invalid login credentials/i.test(message)) {
-    return "Email or password is incorrect. Please check and try again.";
-  }
-
-  if (/email not confirmed/i.test(message)) {
-    return "Please verify your email address before signing in.";
-  }
-
-  if (/user already registered/i.test(message)) {
-    return "An account may already exist for this email. Try signing in.";
-  }
-
-  if (/password should be at least/i.test(message)) {
-    return "Your password does not meet the required length.";
-  }
-
-  if (/rate limit/i.test(message)) {
-    return "Too many attempts. Please wait before trying again.";
-  }
-
-  return message;
-}
-
-/* ========================================
-   MOBILE NAVIGATION
-======================================== */
-
-const menuToggle = $("menuToggle");
-const mainNav = $("mainNav");
-
-menuToggle.addEventListener("click", () => {
-  const isOpen = mainNav.classList.toggle("open");
-
-  menuToggle.setAttribute("aria-expanded", String(isOpen));
-  menuToggle.setAttribute(
-    "aria-label",
-    isOpen ? "Close navigation" : "Open navigation"
-  );
-
-  menuToggle.textContent = isOpen ? "✕" : "☰";
-});
-
-mainNav.querySelectorAll("a").forEach(link => {
-  link.addEventListener("click", () => {
-    mainNav.classList.remove("open");
-    menuToggle.setAttribute("aria-expanded", "false");
-    menuToggle.setAttribute("aria-label", "Open navigation");
-    menuToggle.textContent = "☰";
-  });
-});
-
-/* ========================================
-   DISCOVERY SEARCH AND FILTERS
-======================================== */
-
-let currentFilter = "all";
-
-function filterCards() {
-  const search = $("discoverySearch").value
-    .trim()
-    .toLowerCase();
-
-  const cards = document.querySelectorAll(".discovery-card");
-  let visibleCount = 0;
-
-  cards.forEach(card => {
-    const category = card.dataset.category;
-    const text = card.textContent.toLowerCase();
-
-    const matchesCategory =
-      currentFilter === "all" || category === currentFilter;
-
-    const matchesSearch = text.includes(search);
-
-    const visible = matchesCategory && matchesSearch;
-
-    card.style.display = visible ? "" : "none";
-
-    if (visible) visibleCount++;
-  });
-
-  let emptyState = $("emptySearchState");
-
-  if (!emptyState) {
-    emptyState = document.createElement("div");
-    emptyState.id = "emptySearchState";
-    emptyState.className = "empty-state";
-    emptyState.textContent = "No matching categories found.";
-    $("discoveryGrid").appendChild(emptyState);
-  }
-
-  emptyState.style.display = visibleCount === 0 ? "block" : "none";
-}
-
-document.querySelectorAll("[data-filter]").forEach(button => {
-  button.addEventListener("click", () => {
-    document.querySelectorAll("[data-filter]").forEach(chip => {
-      chip.classList.remove("active");
-    });
-
-    button.classList.add("active");
-    currentFilter = button.dataset.filter;
-
-    filterCards();
-  });
-});
-
-$("searchButton").addEventListener("click", filterCards);
-
-$("discoverySearch").addEventListener("input", filterCards);
-
-$("discoverySearch").addEventListener("keydown", event => {
-  if (event.key === "Enter") {
-    event.preventDefault();
-    filterCards();
-  }
-});
-
-/* ========================================
-   ACCOUNT TABS
-======================================== */
-
-function showAuthView(view) {
-  $("loginForm").classList.toggle("auth-hidden", view !== "login");
-  $("signupForm").classList.toggle("auth-hidden", view !== "signup");
-  $("resetForm").classList.toggle("auth-hidden", view !== "reset");
-
-  $("loginTab").classList.toggle("active", view === "login");
-  $("signupTab").classList.toggle("active", view === "signup");
-
-  clearMessage("loginMessage");
-  clearMessage("signupMessage");
-  clearMessage("resetMessage");
-  clearMessage("authStatus");
-}
-
-$("loginTab").addEventListener("click", () => {
-  showAuthView("login");
-});
-
-$("signupTab").addEventListener("click", () => {
-  showAuthView("signup");
-});
-
-$("forgotPassword").addEventListener("click", () => {
-  $("resetEmail").value = $("loginEmail").value;
-  showAuthView("reset");
-});
-
-$("backToLogin").addEventListener("click", () => {
-  showAuthView("login");
-});
-
-/* ========================================
-   SUPABASE INITIALIZATION
-======================================== */
-
-function initializeSupabase() {
-  if (!window.supabase || !window.supabase.createClient) {
-    $("authStatus").textContent =
-      "Authentication could not load. Check your internet connection and refresh the page.";
-    $("authStatus").className = "form-error";
+  if (!clientLibrary || !clientLibrary.createClient) {
+    $("authMessage").textContent =
+      "The Supabase library could not load. Check your connection and reload the page.";
+    $("authMessage").className = "message error";
     return;
   }
 
-  try {
-    supabaseClient = window.supabase.createClient(
-      SUPABASE_URL,
-      SUPABASE_PUBLISHABLE_KEY
-    );
+  const db = clientLibrary.createClient(
+    SUPABASE_URL,
+    SUPABASE_PUBLISHABLE_KEY
+  );
 
-    supabaseReady = true;
+  let activeSession = null;
+  let sessionVersion = 0;
 
-    /*
-      onAuthStateChange handles login, logout,
-      email verification callbacks, and session changes.
-    */
+  function message(id, text, type = "") {
+    const element = $(id);
+    element.textContent = text || "";
+    element.className = "message " + type;
+  }
 
-    supabaseClient.auth.onAuthStateChange((event, session) => {
-      updateAccountUI(session);
+  function hideAdmin() {
+    $("adminNav").classList.add("hidden");
+    $("adminShortcut").classList.add("hidden");
+    $("admin").classList.add("hidden");
+  }
 
-      if (event === "SIGNED_IN") {
-        showToast("You're signed in to RenzoNexus.");
+  function renderAccount(session) {
+    const user = session?.user;
+    const signedIn = Boolean(user);
+
+    $("authForms").classList.toggle("hidden", signedIn);
+    $("signOutButton").classList.toggle("hidden", !signedIn);
+
+    $("welcomeName").textContent = signedIn
+      ? "Welcome, " + (
+          user.user_metadata?.display_name ||
+          user.user_metadata?.full_name ||
+          user.email ||
+          "RenzoNexus Member"
+        )
+      : "Welcome to RenzoNexus";
+
+    $("welcomeEmail").textContent = signedIn
+      ? (user.email || "")
+      : "Sign in to view your account.";
+
+    $("roleBadge").textContent = signedIn ? "Member account" : "Guest";
+
+    $("verificationStatus").textContent = signedIn
+      ? (user.email_confirmed_at
+          ? "Email status: verified"
+          : "Email status: awaiting verification, if required by your settings.")
+      : "";
+
+    hideAdmin();
+  }
+
+  async function loadProfileName(session, version) {
+    if (!session?.user) return;
+
+    try {
+      const { data, error } = await db
+        .from("profiles")
+        .select("display_name")
+        .eq("id", session.user.id)
+        .maybeSingle();
+
+      if (version !== sessionVersion) return;
+
+      if (!error && data?.display_name?.trim()) {
+        $("welcomeName").textContent =
+          "Welcome, " + data.display_name.trim();
       }
+    } catch (error) {
+      console.warn("Profile display name could not be loaded.", error);
+    }
+  }
 
-      if (event === "SIGNED_OUT") {
-        showToast("You've signed out.");
+  async function countTable(tableName) {
+    const { count, error } = await db
+      .from(tableName)
+      .select("*", { count: "exact", head: true });
+
+    if (error) throw error;
+    return count ?? 0;
+  }
+
+  async function countFirstAvailable(tableNames) {
+    let lastError;
+
+    for (const tableName of tableNames) {
+      try {
+        return await countTable(tableName);
+      } catch (error) {
+        lastError = error;
       }
+    }
+
+    throw lastError || new Error("No accessible table found.");
+  }
+
+  async function loadDashboard(version) {
+    const results = await Promise.allSettled([
+      countTable("profiles"),
+      countFirstAvailable([
+        "seller_applications",
+        "seller applications"
+      ]),
+      countFirstAvailable([
+        "organiser_applications",
+        "organizer_applications",
+        "organiser applications",
+        "organizer applications"
+      ])
+    ]);
+
+    if (version !== sessionVersion) return;
+
+    const targets = [
+      "profileCount",
+      "sellerCount",
+      "organiserCount"
+    ];
+
+    results.forEach((result, index) => {
+      $(targets[index]).textContent =
+        result.status === "fulfilled"
+          ? String(result.value)
+          : "—";
     });
 
-    supabaseClient.auth.getSession().then(({ data, error }) => {
+    const hasFailures = results.some(
+      result => result.status === "rejected"
+    );
+
+    $("dashboardMessage").textContent = hasFailures
+      ? "Some statistics are unavailable. The table name or Row Level Security policies may need adjustment. No missing data has been assumed to be zero."
+      : "Dashboard counts loaded. Application review and management actions still need their own secure database policies.";
+  }
+
+  async function checkAdministrator(session, version) {
+    if (!session?.user) return;
+
+    try {
+      const { data, error } = await db
+        .from("admin_users")
+        .select("role")
+        .eq("user_id", session.user.id)
+        .maybeSingle();
+
+      if (version !== sessionVersion) return;
+
       if (error) {
-        $("authStatus").textContent =
-          "We couldn't check your session. Please refresh the page.";
-        $("authStatus").className = "form-error";
+        console.error("Admin role check failed:", error.message);
         return;
       }
 
-      updateAccountUI(data.session);
-    });
-
-  } catch (error) {
-    $("authStatus").textContent =
-      "Authentication setup failed. Please check the Supabase configuration.";
-    $("authStatus").className = "form-error";
-  }
-}
-
-/* ========================================
-   ACCOUNT DISPLAY
-======================================== */
-
-function updateAccountUI(session) {
-  const isSignedIn = Boolean(session && session.user);
-
-  $("authForms").classList.toggle("auth-hidden", isSignedIn);
-  $("signedInPanel").classList.toggle("auth-hidden", !isSignedIn);
-
-  if (!isSignedIn) return;
-
-  const user = session.user;
-
-  const metadata = user.user_metadata || {};
-
-  const displayName =
-    metadata.display_name ||
-    metadata.full_name ||
-    user.email ||
-    "RenzoNexus Member";
-
-  $("welcomeName").textContent = "Welcome, " + displayName;
-  $("welcomeEmail").textContent = user.email || "";
-
-  if (user.email_confirmed_at) {
-    $("verificationStatus").textContent =
-      "Email status: verified";
-    $("verificationStatus").className = "form-success";
-  } else {
-    $("verificationStatus").textContent =
-      "Email status: awaiting verification, if required by your settings.";
-    $("verificationStatus").className = "form-note";
-  }
-}
-
-/* ========================================
-   SIGN UP
-======================================== */
-
-$("signupForm").addEventListener("submit", async event => {
-  event.preventDefault();
-
-  clearMessage("signupMessage");
-
-  if (!supabaseReady) {
-    setMessage(
-      "signupMessage",
-      "Authentication is not ready. Check your internet connection and refresh."
-    );
-    return;
-  }
-
-  const displayName = $("signupName").value.trim();
-  const email = $("signupEmail").value.trim();
-  const password = $("signupPassword").value;
-  const confirmPassword = $("signupConfirm").value;
-
-  if (!displayName) {
-    setMessage("signupMessage", "Please enter your display name.");
-    return;
-  }
-
-  if (password.length < 8) {
-    setMessage(
-      "signupMessage",
-      "Your password must contain at least 8 characters."
-    );
-    return;
-  }
-
-  if (password !== confirmPassword) {
-    setMessage("signupMessage", "Your passwords do not match.");
-    return;
-  }
-
-  setBusy(
-    "signupSubmit",
-    true,
-    "Creating account...",
-    "Create My Account →"
-  );
-
-  try {
-    const { data, error } = await supabaseClient.auth.signUp({
-      email,
-      password,
-      options: {
-        data: {
-          display_name: displayName
-        },
-        emailRedirectTo: window.location.origin +
-          window.location.pathname +
-          "#account"
+      if (!data || !["super_admin", "admin"].includes(data.role)) {
+        return;
       }
-    });
 
-    if (error) throw error;
+      $("adminNav").classList.remove("hidden");
+      $("adminShortcut").classList.remove("hidden");
+      $("admin").classList.remove("hidden");
 
-    if (data.session) {
-      setMessage(
-        "signupMessage",
-        "Your account has been created successfully.",
-        "success"
-      );
+      const roleName = data.role === "super_admin"
+        ? "Founder / Super Admin"
+        : "Administrator";
 
-      $("signupForm").reset();
-      updateAccountUI(data.session);
+      $("roleBadge").textContent = roleName;
+      $("adminEmail").textContent = session.user.email || "";
+      $("adminRole").textContent = roleName;
 
-    } else {
-      setMessage(
-        "signupMessage",
-        "Your sign-up request was received. Check your email for a verification link if email confirmation is enabled. You may then sign in.",
-        "success"
-      );
+      await loadDashboard(version);
+    } catch (error) {
+      console.error("Administrator check failed.", error);
+    }
+  }
 
-      $("signupPassword").value = "";
-      $("signupConfirm").value = "";
+  async function refreshSession(session) {
+    activeSession = session || null;
+    const version = ++sessionVersion;
+
+    renderAccount(session);
+
+    if (!session?.user) return;
+
+    await loadProfileName(session, version);
+
+    // Check the role after rendering the immediate account UI.
+    await checkAdministrator(session, version);
+  }
+
+  $("signupForm").addEventListener("submit", async event => {
+    event.preventDefault();
+
+    const displayName = $("signupName").value.trim();
+    const email = $("signupEmail").value.trim();
+    const password = $("signupPassword").value;
+
+    if (!displayName) {
+      return message("authMessage", "Please enter a display name.", "error");
     }
 
-  } catch (error) {
-    setMessage("signupMessage", friendlyError(error));
-  } finally {
-    setBusy(
-      "signupSubmit",
-      false,
-      "Creating account...",
-      "Create My Account →"
-    );
-  }
-});
+    if (password.length < 8) {
+      return message("authMessage", "Use a password with at least 8 characters.", "error");
+    }
 
-/* ========================================
-   SIGN IN
-======================================== */
+    message("authMessage", "Creating your account…");
 
-$("loginForm").addEventListener("submit", async event => {
-  event.preventDefault();
-
-  clearMessage("loginMessage");
-
-  if (!supabaseReady) {
-    setMessage(
-      "loginMessage",
-      "Authentication is not ready. Refresh the page and try again."
-    );
-    return;
-  }
-
-  const email = $("loginEmail").value.trim();
-  const password = $("loginPassword").value;
-
-  setBusy(
-    "loginSubmit",
-    true,
-    "Signing in...",
-    "Sign In →"
-  );
-
-  try {
-    const { data, error } =
-      await supabaseClient.auth.signInWithPassword({
+    try {
+      const { data, error } = await db.auth.signUp({
         email,
-        password
+        password,
+        options: {
+          data: {
+            display_name: displayName,
+            full_name: displayName
+          },
+          emailRedirectTo:
+            window.location.origin + window.location.pathname
+        }
       });
 
-    if (error) throw error;
+      if (error) {
+        return message("authMessage", error.message, "error");
+      }
 
-    updateAccountUI(data.session);
+      if (data.session) {
+        await refreshSession(data.session);
+        message("authMessage", "Your account has been created and you are signed in.", "success");
+      } else {
+        message(
+          "authMessage",
+          "Registration received. Check your email for verification if required by your Supabase settings.",
+          "success"
+        );
+      }
 
-    $("loginForm").reset();
+      $("signupPassword").value = "";
+    } catch (error) {
+      message("authMessage", "Registration failed. Please try again.", "error");
+    }
+  });
 
-    setMessage(
-      "authStatus",
-      "Welcome back! You're signed in.",
-      "success"
-    );
+  $("loginForm").addEventListener("submit", async event => {
+    event.preventDefault();
 
-  } catch (error) {
-    setMessage("loginMessage", friendlyError(error));
-  } finally {
-    setBusy(
-      "loginSubmit",
-      false,
-      "Signing in...",
-      "Sign In →"
-    );
-  }
-});
+    message("authMessage", "Signing in…");
 
-/* ========================================
-   PASSWORD RESET
-======================================== */
-
-$("resetSubmit").addEventListener("click", async () => {
-  clearMessage("resetMessage");
-
-  if (!supabaseReady) {
-    setMessage(
-      "resetMessage",
-      "Authentication is not ready. Please refresh the page."
-    );
-    return;
-  }
-
-  const email = $("resetEmail").value.trim();
-
-  if (!email) {
-    setMessage("resetMessage", "Please enter your email address.");
-    return;
-  }
-
-  $("resetSubmit").disabled = true;
-  $("resetSubmit").textContent = "Sending...";
-
-  try {
-    const redirectTo =
-      window.location.origin +
-      window.location.pathname +
-      "#account";
-
-    const { error } =
-      await supabaseClient.auth.resetPasswordForEmail(email, {
-        redirectTo
+    try {
+      const { data, error } = await db.auth.signInWithPassword({
+        email: $("loginEmail").value.trim(),
+        password: $("loginPassword").value
       });
 
-    if (error) throw error;
+      if (error) {
+        return message("authMessage", error.message, "error");
+      }
 
-    setMessage(
-      "resetMessage",
-      "If the request was accepted, check your inbox for a password-reset email.",
-      "success"
+      await refreshSession(data.session);
+      message("authMessage", "You are signed in.", "success");
+      $("loginPassword").value = "";
+    } catch (error) {
+      message("authMessage", "Sign-in failed. Please try again.", "error");
+    }
+  });
+
+  $("resetButton").addEventListener("click", async () => {
+    const email = $("loginEmail").value.trim();
+
+    if (!email) {
+      return message(
+        "authMessage",
+        "Enter your email in the sign-in email field first.",
+        "error"
+      );
+    }
+
+    message("authMessage", "Sending password reset instructions…");
+
+    try {
+      const { error } = await db.auth.resetPasswordForEmail(email, {
+        redirectTo: window.location.origin + window.location.pathname
+      });
+
+      if (error) {
+        return message("authMessage", error.message, "error");
+      }
+
+      message(
+        "authMessage",
+        "If this email is registered, password reset instructions will be sent.",
+        "success"
+      );
+    } catch (error) {
+      message("authMessage", "Could not request a password reset.", "error");
+    }
+  });
+
+  $("signOutButton").addEventListener("click", async () => {
+    message("authMessage", "Signing out…");
+
+    const { error } = await db.auth.signOut();
+
+    if (error) {
+      return message("authMessage", error.message, "error");
+    }
+
+    await refreshSession(null);
+    message("authMessage", "You have signed out.", "success");
+  });
+
+  document.querySelectorAll(".choose-type").forEach(button => {
+    button.addEventListener("click", () => {
+      $("interestType").value = button.dataset.type;
+      $("interestForm").scrollIntoView({ behavior: "smooth" });
+    });
+  });
+
+  $("interestForm").addEventListener("submit", event => {
+    event.preventDefault();
+
+    message(
+      "interestMessage",
+      "This form is a prototype and does not save applications yet. We will connect it to the existing Supabase application tables next."
     );
+  });
 
-  } catch (error) {
-    setMessage("resetMessage", friendlyError(error));
-  } finally {
-    $("resetSubmit").disabled = false;
-    $("resetSubmit").textContent = "Send Reset Email";
-  }
-});
+  db.auth.onAuthStateChange((event, session) => {
+    // Defer database queries until after the auth callback has returned.
+    window.setTimeout(() => refreshSession(session), 0);
+  });
 
-/* ========================================
-   SIGN OUT
-======================================== */
+  db.auth.getSession().then(({ data, error }) => {
+    if (error) {
+      message("authMessage", error.message, "error");
+      return;
+    }
 
-$("logoutButton").addEventListener("click", async () => {
-  $("logoutButton").disabled = true;
-  $("logoutMessage").textContent = "";
-
-  try {
-    const { error } = await supabaseClient.auth.signOut();
-
-    if (error) throw error;
-
-    updateAccountUI(null);
-
-  } catch (error) {
-    $("logoutMessage").textContent = friendlyError(error);
-  } finally {
-    $("logoutButton").disabled = false;
-  }
-});
-
-/* ========================================
-   PAGE STARTUP
-======================================== */
-
-$("year").textContent = new Date().getFullYear();
-
-initializeSupabase();
-</script>
-
-</body>
+    refreshSession(data.session);
+  });
+})();
+</script></body>
 </html>
