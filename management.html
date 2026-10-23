@@ -1,648 +1,458 @@
-<!DOCTYPE html>
-<html lang="en">
+<!DOCTYPE html><html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="theme-color" content="#080d1b">
 <meta name="description" content="RenzoNexus Founder Management Dashboard">
-
-<title>RenzoNexus | Founder Management</title>
-
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-
-<style>
+<title>RenzoNexus | Founder Management</title><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><style>
 :root {
-  --bg: #080d1b;
-  --panel: #10182b;
-  --panel2: #151f35;
-  --text: #eef3ff;
-  --muted: #9aa8c4;
-  --blue: #66a6ff;
-  --cyan: #65e6ff;
-  --purple: #9a83ff;
-  --gold: #e9c77b;
-  --border: rgba(255,255,255,.10);
-  --green: #5de2a3;
-  --red: #ff8585;
+  --bg:#080d1b;
+  --panel:#10182b;
+  --panel2:#151f35;
+  --text:#eef3ff;
+  --muted:#9aa8c4;
+  --blue:#66a6ff;
+  --cyan:#65e6ff;
+  --purple:#9a83ff;
+  --gold:#e9c77b;
+  --border:rgba(255,255,255,.10);
+  --green:#5de2a3;
+  --red:#ff8585;
 }
-
-* {
-  box-sizing: border-box;
-}
-
+* {box-sizing:border-box}
 body {
-  margin: 0;
-  background: var(--bg);
-  color: var(--text);
-  font-family: Arial, sans-serif;
-  line-height: 1.5;
+  margin:0;
+  background:var(--bg);
+  color:var(--text);
+  font-family:Arial,sans-serif;
+  line-height:1.5;
 }
-
-button, input, select {
-  font: inherit;
-}
-
-button {
-  cursor: pointer;
-}
-
-button:disabled {
-  cursor: not-allowed;
-  opacity: .55;
-}
-
-a {
-  color: var(--cyan);
-}
-
+button,input,select,textarea {font:inherit}
+button {cursor:pointer}
+button:disabled {cursor:not-allowed;opacity:.55}
+a {color:var(--cyan)}
 header {
-  padding: 20px;
-  border-bottom: 1px solid var(--border);
-  background: rgba(8,13,27,.96);
-  position: sticky;
-  top: 0;
-  z-index: 5;
+  padding:20px;
+  border-bottom:1px solid var(--border);
+  background:rgba(8,13,27,.96);
+  position:sticky;
+  top:0;
+  z-index:5;
 }
-
 .header-inner {
-  max-width: 1400px;
-  margin: auto;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 14px;
-  flex-wrap: wrap;
+  max-width:1400px;
+  margin:auto;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:14px;
+  flex-wrap:wrap;
 }
-
-.brand {
-  font-size: 21px;
-  font-weight: 800;
-  letter-spacing: .3px;
-}
-
-.brand span {
-  color: var(--cyan);
-}
-
-.tagline {
-  color: var(--muted);
-  font-size: 12px;
-}
-
-main {
-  max-width: 1400px;
-  margin: auto;
-  padding: 24px 16px 60px;
-}
-
-h1 {
-  font-size: clamp(25px, 4vw, 38px);
-  margin: 0 0 6px;
-}
-
-h2 {
-  font-size: 20px;
-  margin-top: 0;
-}
-
-p {
-  color: var(--muted);
-}
-
+.brand {font-size:21px;font-weight:800;letter-spacing:.3px}
+.brand span {color:var(--cyan)}
+.tagline {color:var(--muted);font-size:12px}
+main {max-width:1400px;margin:auto;padding:24px 16px 60px}
+h1 {font-size:clamp(25px,4vw,38px);margin:0 0 6px}
+h2 {font-size:20px;margin-top:0}
+p {color:var(--muted)}
 .panel {
-  background: var(--panel);
-  border: 1px solid var(--border);
-  border-radius: 18px;
-  padding: 20px;
-  margin: 20px 0;
-  min-width: 0;
+  background:var(--panel);
+  border:1px solid var(--border);
+  border-radius:18px;
+  padding:20px;
+  margin:20px 0;
+  min-width:0;
 }
-
 .grid {
-  display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: 14px;
-  margin: 24px 0;
+  display:grid;
+  grid-template-columns:repeat(4,minmax(0,1fr));
+  gap:14px;
+  margin:24px 0;
 }
-
 .stat {
-  background: var(--panel);
-  border: 1px solid var(--border);
-  border-radius: 15px;
-  padding: 18px;
+  background:var(--panel);
+  border:1px solid var(--border);
+  border-radius:15px;
+  padding:18px;
 }
-
-.stat-label {
-  font-size: 13px;
-  color: var(--muted);
-}
-
+.stat-label {font-size:13px;color:var(--muted)}
 .stat-value {
-  font-size: 27px;
-  font-weight: 800;
-  margin-top: 8px;
-  overflow-wrap: anywhere;
+  font-size:27px;
+  font-weight:800;
+  margin-top:8px;
+  overflow-wrap:anywhere;
 }
-
 label {
-  display: block;
-  font-size: 13px;
-  color: var(--muted);
-  margin: 12px 0 5px;
+  display:block;
+  font-size:13px;
+  color:var(--muted);
+  margin:12px 0 5px;
 }
-
-input, select {
-  width: 100%;
-  padding: 12px;
-  border-radius: 10px;
-  border: 1px solid var(--border);
-  background: #080f20;
-  color: var(--text);
-  min-width: 0;
+input,select,textarea {
+  width:100%;
+  padding:12px;
+  border-radius:10px;
+  border:1px solid var(--border);
+  background:#080f20;
+  color:var(--text);
+  min-width:0;
 }
-
-button, .button {
-  border: 0;
-  border-radius: 10px;
-  padding: 11px 15px;
-  background: linear-gradient(110deg, var(--blue), var(--purple));
-  color: #07101f;
-  font-weight: 800;
+textarea {min-height:85px;resize:vertical}
+button,.button {
+  border:0;
+  border-radius:10px;
+  padding:11px 15px;
+  background:linear-gradient(110deg,var(--blue),var(--purple));
+  color:#07101f;
+  font-weight:800;
 }
-
 button.secondary {
-  background: var(--panel2);
-  color: var(--text);
-  border: 1px solid var(--border);
+  background:var(--panel2);
+  color:var(--text);
+  border:1px solid var(--border);
 }
-
-button.gold {
-  background: var(--gold);
-}
-
+button.gold {background:var(--gold)}
 button.danger {
-  background: #49242d;
-  color: #ffdce0;
-  border: 1px solid #713640;
+  background:#49242d;
+  color:#ffdce0;
+  border:1px solid #713640;
 }
-
-.actions {
-  display: flex;
-  gap: 8px;
-  flex-wrap: wrap;
-  margin-top: 14px;
+button.approve {
+  background:#123c30;
+  color:#8dffd0;
+  border:1px solid #24674e;
 }
-
+.actions {display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}
 .message {
-  margin-top: 12px;
-  font-size: 14px;
-  overflow-wrap: anywhere;
+  margin-top:12px;
+  font-size:14px;
+  overflow-wrap:anywhere;
 }
-
-.message.error {
-  color: var(--red);
-}
-
-.message.success {
-  color: var(--green);
-}
-
-.hidden {
-  display: none !important;
-}
-
-.muted {
-  color: var(--muted);
-}
-
+.message.error {color:var(--red)}
+.message.success {color:var(--green)}
+.hidden {display:none!important}
+.muted {color:var(--muted)}
 .table-wrap {
-  overflow-x: auto;
-  width: 100%;
-  border: 1px solid var(--border);
-  border-radius: 12px;
+  overflow-x:auto;
+  width:100%;
+  border:1px solid var(--border);
+  border-radius:12px;
 }
-
 table {
-  width: 100%;
-  min-width: 900px;
-  border-collapse: collapse;
-  font-size: 13px;
+  width:100%;
+  min-width:900px;
+  border-collapse:collapse;
+  font-size:13px;
 }
-
-th, td {
-  padding: 12px;
-  text-align: left;
-  vertical-align: top;
-  border-bottom: 1px solid var(--border);
+th,td {
+  padding:12px;
+  text-align:left;
+  vertical-align:top;
+  border-bottom:1px solid var(--border);
 }
-
-th {
-  background: var(--panel2);
-  color: var(--cyan);
-  white-space: nowrap;
-}
-
-td {
-  overflow-wrap: anywhere;
-}
-
-tr:last-child td {
-  border-bottom: 0;
-}
-
+th {background:var(--panel2);color:var(--cyan);white-space:nowrap}
+td {overflow-wrap:anywhere}
+tr:last-child td {border-bottom:0}
 .badge {
-  display: inline-block;
-  border-radius: 20px;
-  padding: 4px 8px;
-  font-size: 11px;
-  background: #24304b;
-  color: var(--text);
+  display:inline-block;
+  border-radius:20px;
+  padding:4px 8px;
+  font-size:11px;
+  background:#24304b;
+  color:var(--text);
 }
-
-.badge.paid,
-.badge.completed,
-.badge.approved,
-.badge.active {
-  background: #123c30;
-  color: #8dffd0;
+.badge.paid,.badge.completed,.badge.approved,.badge.active {
+  background:#123c30;
+  color:#8dffd0;
 }
-
-.badge.failed,
-.badge.cancelled,
-.badge.refunded,
-.badge.inactive {
-  background: #48232d;
-  color: #ffb6bf;
+.badge.failed,.badge.cancelled,.badge.refunded,.badge.inactive,.badge.rejected {
+  background:#48232d;
+  color:#ffb6bf;
 }
-
-.badge.awaiting_payment,
-.badge.pending_payment,
-.badge.payment_verification,
-.badge.pending {
-  background: #45391c;
-  color: #ffe09a;
+.badge.awaiting_payment,.badge.pending_payment,
+.badge.payment_verification,.badge.pending {
+  background:#45391c;
+  color:#ffe09a;
 }
-
-.order-controls {
-  min-width: 170px;
-}
-
-.order-controls select {
-  margin-bottom: 7px;
-}
-
-.auth-box {
-  max-width: 440px;
-  margin: 40px auto;
-}
-
-.small {
-  font-size: 12px;
-}
-
+.order-controls {min-width:170px}
+.order-controls select {margin-bottom:7px}
+.auth-box {max-width:440px;margin:40px auto}
+.small {font-size:12px}
 .section-heading {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 12px;
-  flex-wrap: wrap;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:12px;
+  flex-wrap:wrap;
 }
-
 .commission-form {
-  display: grid;
-  grid-template-columns: 2fr 1fr auto;
-  gap: 12px;
-  align-items: end;
+  display:grid;
+  grid-template-columns:2fr 1fr auto;
+  gap:12px;
+  align-items:end;
 }
-
 .notice {
-  border-left: 3px solid var(--gold);
-  padding: 10px 14px;
-  background: rgba(233,199,123,.07);
-  border-radius: 0 10px 10px 0;
-  color: var(--muted);
-  font-size: 13px;
+  border-left:3px solid var(--gold);
+  padding:10px 14px;
+  background:rgba(233,199,123,.07);
+  border-radius:0 10px 10px 0;
+  color:var(--muted);
+  font-size:13px;
 }
-
+.review-box {min-width:220px}
+.review-box textarea {margin-bottom:8px}
+.review-actions {display:flex;gap:7px;flex-wrap:wrap}
+.review-actions button {flex:1}
 footer {
-  text-align: center;
-  padding: 25px;
-  border-top: 1px solid var(--border);
-  color: var(--muted);
-  font-size: 12px;
+  text-align:center;
+  padding:25px;
+  border-top:1px solid var(--border);
+  color:var(--muted);
+  font-size:12px;
 }
-
-@media (max-width: 800px) {
-  .grid {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-
-  .commission-form {
-    grid-template-columns: 1fr;
-  }
-
-  .panel {
-    padding: 15px;
-  }
+@media(max-width:800px) {
+  .grid {grid-template-columns:repeat(2,minmax(0,1fr))}
+  .commission-form {grid-template-columns:1fr}
+  .panel {padding:15px}
 }
-
-@media (max-width: 380px) {
-  .grid {
-    grid-template-columns: 1fr;
-  }
+@media(max-width:380px) {
+  .grid {grid-template-columns:1fr}
 }
-</style>
-</head>
-
-<body>
-
+</style></head><body>
 <header>
   <div class="header-inner">
     <div>
       <div class="brand">Renzo<span>Nexus</span></div>
       <div class="tagline">One World. Endless Possibilities.</div>
     </div>
-
     <div id="userArea" class="hidden">
       <span id="signedInEmail" class="small"></span>
-      <button id="logoutButton" class="secondary" type="button">
-        Sign Out
-      </button>
+      <button id="logoutButton" class="secondary" type="button">Sign Out</button>
     </div>
   </div>
-</header>
-
-<main>
-
+</header><main>
   <section id="loginPanel" class="panel auth-box">
     <h1>Founder Management</h1>
-
     <p>Sign in with your existing RenzoNexus administrator account.</p>
-
     <form id="loginForm">
       <label for="email">Administrator email</label>
-      <input
-        id="email"
-        type="email"
-        autocomplete="username"
-        required
-        maxlength="254"
-        placeholder="Enter your admin email"
-      >
+      <input id="email" type="email" autocomplete="username"
+        required maxlength="254" placeholder="Enter your admin email">  <label for="password">Password</label>
+  <input id="password" type="password" autocomplete="current-password"
+    required placeholder="Enter your password">
 
-      <label for="password">Password</label>
-      <input
-        id="password"
-        type="password"
-        autocomplete="current-password"
-        required
-        placeholder="Enter your password"
-      >
+  <div class="actions">
+    <button id="loginButton" type="submit">Sign In</button>
+  </div>
+  <p id="loginMessage" class="message" role="status"></p>
+</form>
+<p class="small">Access is limited to authorised RenzoNexus administrators.</p>
 
-      <div class="actions">
-        <button id="loginButton" type="submit">Sign In</button>
-      </div>
-
-      <p id="loginMessage" class="message" role="status"></p>
-    </form>
-
-    <p class="small">
-      Access is limited to administrator accounts authorised in Supabase.
-    </p>
-  </section>
-
-  <section id="deniedPanel" class="panel hidden">
+  </section>  <section id="deniedPanel" class="panel hidden">
     <h2>Administrator Access Required</h2>
     <p>This account is not authorised to access Founder Management.</p>
-    <button id="deniedLogoutButton" class="secondary" type="button">
-      Sign Out
-    </button>
-  </section>
+    <button id="deniedLogoutButton" class="secondary" type="button">Sign Out</button>
+  </section>  <section id="dashboard" class="hidden">
+    <h1>Founder Dashboard 👑</h1>
+    <p>Central management for orders, applications, commissions and payouts.</p><div class="grid">
+  <div class="stat">
+    <div class="stat-label">Total Orders</div>
+    <div class="stat-value" id="totalOrders">0</div>
+  </div>
+  <div class="stat">
+    <div class="stat-label">Verified Payments</div>
+    <div class="stat-value" id="paidOrders">0</div>
+  </div>
+  <div class="stat">
+    <div class="stat-label">Awaiting Payment</div>
+    <div class="stat-value" id="awaitingOrders">0</div>
+  </div>
+  <div class="stat">
+    <div class="stat-label">Orders Awaiting Review</div>
+    <div class="stat-value" id="reviewOrders">0</div>
+  </div>
+</div>
 
-  <section id="dashboard" class="hidden">
-
+<!-- ORDER MANAGEMENT -->
+<section class="panel">
+  <div class="section-heading">
     <div>
-      <h1>Founder Dashboard 👑</h1>
-      <p>Central management for orders, payments, commissions and payouts.</p>
+      <h2>Central Order Management</h2>
+      <p class="small">View orders from RenzoNexus, sellers and organisers.</p>
     </div>
+    <button id="refreshOrders" class="secondary" type="button">Refresh Orders</button>
+  </div>
 
-    <div class="grid">
-      <div class="stat">
-        <div class="stat-label">Total Orders</div>
-        <div class="stat-value" id="totalOrders">0</div>
-      </div>
+  <div class="notice">
+    Only payments verified by a trusted payment backend should be marked as paid.
+    This dashboard does not itself verify real payment transactions.
+  </div>
 
-      <div class="stat">
-        <div class="stat-label">Verified Payments</div>
-        <div class="stat-value" id="paidOrders">0</div>
-      </div>
+  <label for="orderSearch">Search orders</label>
+  <input id="orderSearch" type="search"
+    placeholder="Search reference, customer or email">
 
-      <div class="stat">
-        <div class="stat-label">Awaiting Payment</div>
-        <div class="stat-value" id="awaitingOrders">0</div>
-      </div>
+  <label for="orderFilter">Filter orders</label>
+  <select id="orderFilter">
+    <option value="">All orders</option>
+    <option value="pending_payment">Pending payment</option>
+    <option value="payment_verification">Payment verification</option>
+    <option value="paid">Paid</option>
+    <option value="submitted_to_management">Submitted to management</option>
+    <option value="under_review">Under review</option>
+    <option value="approved">Approved</option>
+    <option value="processing">Processing</option>
+    <option value="completed">Completed</option>
+    <option value="cancelled">Cancelled</option>
+    <option value="refunded">Refunded</option>
+  </select>
 
-      <div class="stat">
-        <div class="stat-label">Awaiting Review</div>
-        <div class="stat-value" id="reviewOrders">0</div>
-      </div>
+  <p id="ordersMessage" class="message" role="status"></p>
+
+  <div class="table-wrap">
+    <table>
+      <thead><tr>
+        <th>Order</th><th>Customer</th><th>Total</th>
+        <th>Payment</th><th>Order Status</th><th>Management Action</th>
+      </tr></thead>
+      <tbody id="ordersBody">
+        <tr><td colspan="6">Sign in to load orders.</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<!-- SELLER APPLICATIONS -->
+<section class="panel">
+  <div class="section-heading">
+    <div>
+      <h2>🛍️ Seller Applications</h2>
+      <p class="small">Review businesses applying to sell products on RenzoNexus.</p>
     </div>
+    <button id="refreshSellerApplications" class="secondary" type="button">
+      Refresh Sellers
+    </button>
+  </div>
+  <p id="sellerApplicationsMessage" class="message" role="status"></p>
+  <div class="table-wrap">
+    <table>
+      <thead><tr>
+        <th>Business</th><th>Business Type</th><th>Country</th>
+        <th>Description</th><th>Status</th><th>Review Application</th>
+      </tr></thead>
+      <tbody id="sellerApplicationsBody">
+        <tr><td colspan="6">Sign in to load applications.</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
 
-    <section class="panel">
-      <div class="section-heading">
-        <div>
-          <h2>Central Order Management</h2>
-          <p class="small">
-            View orders from RenzoNexus, sellers and organisers.
-          </p>
-        </div>
+<!-- ORGANISER APPLICATIONS -->
+<section class="panel">
+  <div class="section-heading">
+    <div>
+      <h2>🎟️ Organiser Applications</h2>
+      <p class="small">Review people applying to organise events on RenzoNexus.</p>
+    </div>
+    <button id="refreshOrganiserApplications" class="secondary" type="button">
+      Refresh Organisers
+    </button>
+  </div>
+  <p id="organiserApplicationsMessage" class="message" role="status"></p>
+  <div class="table-wrap">
+    <table>
+      <thead><tr>
+        <th>Organisation</th><th>Organiser Type</th><th>Country</th>
+        <th>Description</th><th>Status</th><th>Review Application</th>
+      </tr></thead>
+      <tbody id="organiserApplicationsBody">
+        <tr><td colspan="6">Sign in to load applications.</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
 
-        <button id="refreshOrders" class="secondary" type="button">
-          Refresh Orders
-        </button>
-      </div>
+<!-- COMMISSION MANAGEMENT -->
+<section class="panel">
+  <div class="section-heading">
+    <div>
+      <h2>Commission Settings</h2>
+      <p class="small">Set the commission percentage for each category.</p>
+    </div>
+    <button id="refreshCommissions" class="secondary" type="button">Refresh</button>
+  </div>
 
-      <div class="notice">
-        Only payments verified by the trusted payment backend should be
-        marked as paid. Approve orders for processing only after payment
-        verification and the necessary management checks.
-      </div>
+  <form id="commissionForm" class="commission-form">
+    <div>
+      <label for="commissionCategory">Category</label>
+      <input id="commissionCategory" required maxlength="100"
+        placeholder="Example: Clothing">
+    </div>
+    <div>
+      <label for="commissionRate">Commission (%)</label>
+      <input id="commissionRate" type="number" min="0" max="100"
+        step="0.01" required placeholder="10">
+    </div>
+    <button type="submit">Save Commission</button>
+  </form>
 
-      <label for="orderSearch">Search orders</label>
-      <input
-        id="orderSearch"
-        type="search"
-        placeholder="Search reference, customer or email"
-      >
+  <p id="commissionMessage" class="message" role="status"></p>
 
-      <label for="orderFilter">Filter orders</label>
-      <select id="orderFilter">
-        <option value="">All orders</option>
-        <option value="pending_payment">Pending payment</option>
-        <option value="payment_verification">Payment verification</option>
-        <option value="paid">Paid</option>
-        <option value="submitted_to_management">Submitted to management</option>
-        <option value="under_review">Under review</option>
-        <option value="approved">Approved</option>
-        <option value="processing">Processing</option>
-        <option value="completed">Completed</option>
-        <option value="cancelled">Cancelled</option>
-        <option value="refunded">Refunded</option>
-      </select>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Category</th><th>Commission</th><th>Status</th><th>Action</th></tr></thead>
+      <tbody id="commissionsBody">
+        <tr><td colspan="4">No commission rules loaded.</td></tr>
+      </tbody>
+    </table>
+  </div>
 
-      <p id="ordersMessage" class="message" role="status"></p>
+  <p class="small">
+    Commission settings are not yet connected to an automatic checkout calculation.
+    Existing orders should retain the terms agreed for those transactions.
+  </p>
+</section>
 
-      <div class="table-wrap">
-        <table>
-          <thead>
-            <tr>
-              <th>Order</th>
-              <th>Customer</th>
-              <th>Total</th>
-              <th>Payment</th>
-              <th>Order Status</th>
-              <th>Management Action</th>
-            </tr>
-          </thead>
-
-          <tbody id="ordersBody">
-            <tr>
-              <td colspan="6">Sign in to load orders.</td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-    </section>
-
-    <section class="panel">
-      <div class="section-heading">
-        <div>
-          <h2>Commission Settings</h2>
-          <p class="small">
-            Set the commission percentage for each category.
-          </p>
-        </div>
-
-        <button id="refreshCommissions" class="secondary" type="button">
-          Refresh
-        </button>
-      </div>
-
-      <form id="commissionForm" class="commission-form">
-        <div>
-          <label for="commissionCategory">Category</label>
-          <input
-            id="commissionCategory"
-            required
-            maxlength="100"
-            placeholder="Example: Clothing"
-          >
-        </div>
-
-        <div>
-          <label for="commissionRate">Commission (%)</label>
-          <input
-            id="commissionRate"
-            type="number"
-            min="0"
-            max="100"
-            step="0.01"
-            required
-            placeholder="10"
-          >
-        </div>
-
-        <button type="submit">Save Commission</button>
-      </form>
-
-      <p id="commissionMessage" class="message" role="status"></p>
-
-      <div class="table-wrap">
-        <table>
-          <thead>
-            <tr>
-              <th>Category</th>
-              <th>Commission</th>
-              <th>Status</th>
-              <th>Action</th>
-            </tr>
-          </thead>
-
-          <tbody id="commissionsBody">
-            <tr>
-              <td colspan="4">No commission rules loaded.</td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-
-      <p class="small">
-        Commission changes apply to future calculations only. Existing order
-        amounts must retain the commission agreed for those transactions.
-      </p>
-    </section>
-
-    <section class="panel">
-      <h2>Seller & Organiser Payouts</h2>
-
-      <p>
-        Payout records will appear here when they have been created.
-        A payout must not be marked as paid until the transfer is confirmed.
-      </p>
-
-      <div class="notice">
-        The next development stage will connect seller and organiser
-        balances, payout approvals and transaction references to this dashboard.
-      </div>
-    </section>
+<!-- PAYOUTS -->
+<section class="panel">
+  <h2>Seller & Organiser Payouts</h2>
+  <p>Payout records will appear here when they have been created.</p>
+  <div class="notice">
+    Seller balances, payout approvals and transfer verification still need a
+    secure payment backend before real payouts can be processed.
+  </div>
+</section>
 
   </section>
-
-</main>
-
-<footer>
-  RenzoNexus — One World. Endless Possibilities.
-</footer>
-
-<script>
+</main><footer>RenzoNexus — One World. Endless Possibilities.</footer><script>
 "use strict";
 
-/*
- * RenzoNexus Founder Management.
- * Never put a Supabase service-role key or payment secret in this file.
- */
-
-const SUPABASE_URL =
-  "https://anclwctvvillzpatigbr.supabase.co";
-
-const SUPABASE_PUBLISHABLE_KEY =
-  "sb_publishable_t9TJatPdXprnb5gkrkINtQ_GColh4fM";
+/* Never put a Supabase service-role key or payment secret in frontend code. */
+const SUPABASE_URL = "https://anclwctvvillzpatigbr.supabase.co";
+const SUPABASE_PUBLISHABLE_KEY = "sb_publishable_t9TJatPdXprnb5gkrkINtQ_GColh4fM";
 
 const client = window.supabase.createClient(
   SUPABASE_URL,
   SUPABASE_PUBLISHABLE_KEY
 );
 
-const $ = (id) => document.getElementById(id);
+const $ = id => document.getElementById(id);
 
 let currentUser = null;
 let orders = [];
 let commissionRules = [];
+let sellerApplications = [];
+let organiserApplications = [];
 let loadingOrders = false;
 let loadingCommissions = false;
+let loadingSellers = false;
+let loadingOrganisers = false;
 let sessionCheckNumber = 0;
 
 const ORDER_STATUSES = [
-  "pending_payment",
-  "payment_verification",
-  "paid",
-  "submitted_to_management",
-  "under_review",
-  "approved",
-  "processing",
-  "completed",
-  "cancelled",
-  "refunded"
+  "pending_payment", "payment_verification", "paid",
+  "submitted_to_management", "under_review", "approved",
+  "processing", "completed", "cancelled", "refunded"
 ];
 
 function show(el, visible) {
@@ -653,15 +463,11 @@ function message(id, text, type = "") {
   const el = $(id);
   el.textContent = text || "";
   el.className = "message";
-
-  if (type) {
-    el.classList.add(type);
-  }
+  if (type) el.classList.add(type);
 }
 
 function formatMoney(amount, currency = "NGN") {
   const value = Number(amount || 0);
-
   try {
     return new Intl.NumberFormat(undefined, {
       style: "currency",
@@ -675,12 +481,8 @@ function formatMoney(amount, currency = "NGN") {
 
 function formatDate(value) {
   if (!value) return "—";
-
   const date = new Date(value);
-
-  if (Number.isNaN(date.getTime())) return "—";
-
-  return date.toLocaleString();
+  return Number.isNaN(date.getTime()) ? "—" : date.toLocaleString();
 }
 
 function badgeClass(value) {
@@ -691,8 +493,7 @@ function badgeClass(value) {
 
 function makeCell(value) {
   const td = document.createElement("td");
-  td.textContent =
-    value == null || value === "" ? "—" : String(value);
+  td.textContent = value == null || value === "" ? "—" : String(value);
   return td;
 }
 
@@ -704,21 +505,16 @@ function makeBadge(value) {
 }
 
 async function checkAdmin() {
-  const { data, error } = await client.rpc(
-    "rn_can_manage_marketplace"
-  );
-
+  const { data, error } = await client.rpc("rn_can_manage_marketplace");
   if (error) {
     console.error("Administrator check failed:", error);
     return false;
   }
-
   return data === true;
 }
 
 async function handleSession(session) {
   const checkNumber = ++sessionCheckNumber;
-
   currentUser = session?.user || null;
 
   show($("userArea"), Boolean(currentUser));
@@ -729,15 +525,18 @@ async function handleSession(session) {
   if (!currentUser) {
     orders = [];
     commissionRules = [];
+    sellerApplications = [];
+    organiserApplications = [];
     $("ordersBody").replaceChildren();
     $("commissionsBody").replaceChildren();
+    $("sellerApplicationsBody").replaceChildren();
+    $("organiserApplicationsBody").replaceChildren();
     return;
   }
 
   $("signedInEmail").textContent = currentUser.email || "";
 
   const allowed = await checkAdmin();
-
   if (checkNumber !== sessionCheckNumber) return;
 
   if (!allowed) {
@@ -751,18 +550,17 @@ async function handleSession(session) {
 
   await Promise.all([
     loadOrders(),
-    loadCommissions()
+    loadCommissions(),
+    loadSellerApplications(),
+    loadOrganiserApplications()
   ]);
 }
 
 async function login(event) {
   event.preventDefault();
-
   const button = $("loginButton");
-
   button.disabled = true;
   button.textContent = "Signing in…";
-
   message("loginMessage", "");
 
   try {
@@ -770,18 +568,13 @@ async function login(event) {
       email: $("email").value.trim(),
       password: $("password").value
     });
-
     if (error) throw error;
-
     $("password").value = "";
   } catch (error) {
     console.error("Login failed:", error);
-
-    message(
-      "loginMessage",
+    message("loginMessage",
       "Sign-in failed. Check your email and password, then try again.",
-      "error"
-    );
+      "error");
   } finally {
     button.disabled = false;
     button.textContent = "Sign In";
@@ -790,22 +583,17 @@ async function login(event) {
 
 async function logout() {
   const { error } = await client.auth.signOut();
-
   if (error) {
     console.error("Sign-out failed:", error);
-
-    message(
-      "loginMessage",
-      "Could not sign out. Please try again.",
-      "error"
-    );
-
+    message("loginMessage", "Could not sign out. Please try again.", "error");
     return;
   }
 
   currentUser = null;
   orders = [];
   commissionRules = [];
+  sellerApplications = [];
+  organiserApplications = [];
 
   show($("dashboard"), false);
   show($("deniedPanel"), false);
@@ -813,60 +601,37 @@ async function logout() {
   show($("loginPanel"), true);
 }
 
+/* ORDER MANAGEMENT */
+
 async function loadOrders() {
   if (loadingOrders) return;
-
   loadingOrders = true;
   $("refreshOrders").disabled = true;
-
   message("ordersMessage", "Loading orders…");
 
   try {
     const { data, error } = await client
       .from("rn_orders")
       .select(`
-        id,
-        order_reference,
-        customer_id,
-        customer_name,
-        customer_email,
-        customer_phone,
-        currency,
-        subtotal,
-        shipping_amount,
-        tax_amount,
-        total_amount,
-        payment_status,
-        order_status,
-        management_notes,
-        created_at,
-        submitted_to_management_at
+        id, order_reference, customer_id, customer_name, customer_email,
+        customer_phone, currency, subtotal, shipping_amount, tax_amount,
+        total_amount, payment_status, order_status, management_notes,
+        created_at, submitted_to_management_at
       `)
       .order("created_at", { ascending: false })
       .limit(200);
 
     if (error) throw error;
-
     orders = data || [];
-
     renderOrders();
-
-    message(
-      "ordersMessage",
-      `Loaded ${orders.length} order record(s).`,
-      "success"
-    );
+    message("ordersMessage", `Loaded ${orders.length} order record(s).`, "success");
   } catch (error) {
     console.error("Order loading failed:", error);
-
     orders = [];
     renderOrders();
-
-    message(
-      "ordersMessage",
+    message("ordersMessage",
       "Orders could not be loaded. Check database permissions and column names.",
-      "error"
-    );
+      "error");
   } finally {
     loadingOrders = false;
     $("refreshOrders").disabled = false;
@@ -878,149 +643,89 @@ function renderOrders() {
   const query = $("orderSearch").value.trim().toLowerCase();
   const statusFilter = $("orderFilter").value;
 
-  const filtered = orders.filter((order) => {
-    const matchesStatus =
-      !statusFilter || order.order_status === statusFilter;
-
-    const searchText = [
-      order.order_reference,
-      order.customer_name,
-      order.customer_email
+  const filtered = orders.filter(order => {
+    const matchesStatus = !statusFilter || order.order_status === statusFilter;
+    const text = [
+      order.order_reference, order.customer_name, order.customer_email
     ].join(" ").toLowerCase();
-
-    return matchesStatus && searchText.includes(query);
+    return matchesStatus && text.includes(query);
   });
 
   body.replaceChildren();
-
   $("totalOrders").textContent = orders.length;
-
-  $("paidOrders").textContent = orders.filter(
-    order => order.payment_status === "paid"
+  $("paidOrders").textContent = orders.filter(o => o.payment_status === "paid").length;
+  $("awaitingOrders").textContent = orders.filter(o =>
+    ["pending_payment", "awaiting_payment", "verification_pending"]
+      .includes(o.payment_status)
   ).length;
-
-  $("awaitingOrders").textContent = orders.filter(
-    order => [
-      "pending_payment",
-      "awaiting_payment",
-      "verification_pending"
-    ].includes(order.payment_status)
-  ).length;
-
-  $("reviewOrders").textContent = orders.filter(
-    order => [
-      "submitted_to_management",
-      "under_review"
-    ].includes(order.order_status)
+  $("reviewOrders").textContent = orders.filter(o =>
+    ["submitted_to_management", "under_review"].includes(o.order_status)
   ).length;
 
   if (!filtered.length) {
     const row = document.createElement("tr");
-    const cell = makeCell(
-      orders.length
-        ? "No orders match this search or filter."
-        : "No orders found yet."
-    );
-
+    const cell = makeCell(orders.length
+      ? "No orders match this search or filter."
+      : "No orders found yet.");
     cell.colSpan = 6;
     row.append(cell);
     body.append(row);
     return;
   }
 
-  filtered.forEach((order) => {
+  filtered.forEach(order => {
     const row = document.createElement("tr");
-
     const ref = document.createElement("td");
-
     const strong = document.createElement("strong");
     strong.textContent = order.order_reference || order.id;
-
     const date = document.createElement("div");
     date.className = "small muted";
     date.textContent = formatDate(order.created_at);
-
     ref.append(strong, date);
 
     const customer = document.createElement("td");
-
     const name = document.createElement("strong");
     name.textContent = order.customer_name || "Customer";
-
     const email = document.createElement("div");
     email.className = "small muted";
     email.textContent = order.customer_email || "";
-
     customer.append(name, email);
 
-    const total = document.createElement("td");
-    total.textContent = formatMoney(
-      order.total_amount,
-      order.currency
-    );
-
+    const total = makeCell(formatMoney(order.total_amount, order.currency));
     const payment = document.createElement("td");
     payment.append(makeBadge(order.payment_status));
-
     const status = document.createElement("td");
     status.append(makeBadge(order.order_status));
 
     const controls = document.createElement("td");
     controls.className = "order-controls";
-
     const select = document.createElement("select");
-
-    select.setAttribute(
-      "aria-label",
-      "New order status for " + (order.order_reference || order.id)
-    );
-
-    ORDER_STATUSES.forEach((value) => {
-      select.add(new Option(value, value));
-    });
-
+    select.setAttribute("aria-label", "New order status");
+    ORDER_STATUSES.forEach(value => select.add(new Option(value, value)));
     select.value = ORDER_STATUSES.includes(order.order_status)
-      ? order.order_status
-      : "pending_payment";
+      ? order.order_status : "pending_payment";
 
     const save = document.createElement("button");
     save.type = "button";
-    save.textContent = "Save Status";
     save.className = "secondary";
-
-    save.addEventListener("click", () => {
-      updateOrderStatus(order, select, save);
-    });
-
+    save.textContent = "Save Status";
+    save.addEventListener("click", () => updateOrderStatus(order, select, save));
     controls.append(select, save);
-
     row.append(ref, customer, total, payment, status, controls);
-
-    /* Important: actually add each order row to the table. */
     body.append(row);
   });
 }
 
 async function updateOrderStatus(order, select, button) {
   const newStatus = select.value;
-
   const requiresPayment = [
-    "submitted_to_management",
-    "under_review",
-    "approved",
-    "processing",
-    "completed"
+    "submitted_to_management", "under_review", "approved", "processing", "completed"
   ];
 
-  if (
-    requiresPayment.includes(newStatus) &&
-    order.payment_status !== "paid"
-  ) {
-    message(
-      "ordersMessage",
+  if (requiresPayment.includes(newStatus) && order.payment_status !== "paid") {
+    message("ordersMessage",
       "This order cannot progress until its payment has been verified by the payment backend.",
-      "error"
-    );
+      "error");
     return;
   }
 
@@ -1044,27 +749,241 @@ async function updateOrderStatus(order, select, button) {
       .single();
 
     if (error) throw error;
-
     order.order_status = data.order_status;
-
     renderOrders();
-
-    message(
-      "ordersMessage",
+    message("ordersMessage",
       `Order ${order.order_reference || order.id} updated successfully.`,
-      "success"
-    );
+      "success");
   } catch (error) {
     console.error("Order status update failed:", error);
-
-    message(
-      "ordersMessage",
+    message("ordersMessage",
       "Could not update the order. Check database permissions and try again.",
-      "error"
-    );
+      "error");
   } finally {
     button.disabled = false;
     button.textContent = "Save Status";
+  }
+}
+
+/* APPLICATION MANAGEMENT */
+
+function renderApplications({
+  rows, bodyId, messageId, nameField, typeField, kind
+}) {
+  const body = $(bodyId);
+  body.replaceChildren();
+
+  if (!rows.length) {
+    const row = document.createElement("tr");
+    const cell = makeCell("No applications found yet.");
+    cell.colSpan = 6;
+    row.append(cell);
+    body.append(row);
+    return;
+  }
+
+  rows.forEach(application => {
+    const row = document.createElement("tr");
+    row.append(makeCell(application[nameField]));
+    row.append(makeCell(application[typeField]));
+    row.append(makeCell(application.country));
+    row.append(makeCell(application.description));
+    
+    const statusCell = document.createElement("td");
+    statusCell.append(makeBadge(application.status));
+    const reviewDate = document.createElement("div");
+    reviewDate.className = "small muted";
+    reviewDate.textContent = application.reviewed_at
+      ? "Reviewed: " + formatDate(application.reviewed_at)
+      : "Submitted: " + formatDate(application.submitted_at);
+    statusCell.append(reviewDate);
+    row.append(statusCell);
+
+    const actionCell = document.createElement("td");
+    actionCell.className = "review-box";
+
+    const noteLabel = document.createElement("label");
+    noteLabel.textContent = "Administrator note";
+
+    const note = document.createElement("textarea");
+    note.maxLength = 2000;
+    note.placeholder = "Optional note for this decision";
+    note.value = application.admin_note || "";
+
+    const actions = document.createElement("div");
+    actions.className = "review-actions";
+
+    const approve = document.createElement("button");
+    approve.type = "button";
+    approve.className = "approve";
+    approve.textContent = "Approve";
+
+    const reject = document.createElement("button");
+    reject.type = "button";
+    reject.className = "danger";
+    reject.textContent = "Reject";
+
+    const alreadyReviewed = ["approved", "rejected"].includes(application.status);
+    approve.disabled = alreadyReviewed && application.status === "approved";
+    reject.disabled = alreadyReviewed && application.status === "rejected";
+
+    approve.addEventListener("click", () =>
+      reviewApplication(kind, application, "approved", note, approve, reject)
+    );
+
+    reject.addEventListener("click", () => {
+      if (!confirm("Are you sure you want to reject this application?")) return;
+      reviewApplication(kind, application, "rejected", note, approve, reject);
+    });
+
+    actions.append(approve, reject);
+    actionCell.append(noteLabel, note, actions);
+
+    if (application.admin_note) {
+      const previousNote = document.createElement("p");
+      previousNote.className = "small muted";
+      previousNote.textContent = "Saved note: " + application.admin_note;
+      actionCell.append(previousNote);
+    }
+
+    row.append(actionCell);
+    body.append(row);
+  });
+}
+
+async function loadSellerApplications() {
+  if (loadingSellers) return;
+  loadingSellers = true;
+  $("refreshSellerApplications").disabled = true;
+  message("sellerApplicationsMessage", "Loading seller applications…");
+
+  try {
+    const { data, error } = await client
+      .from("rn_seller_applications")
+      .select("id,user_id,business_name,business_type,country,description,status,admin_note,submitted_at,reviewed_at")
+      .order("submitted_at", { ascending: false });
+
+    if (error) throw error;
+    sellerApplications = data || [];
+
+    renderApplications({
+      rows: sellerApplications,
+      bodyId: "sellerApplicationsBody",
+      messageId: "sellerApplicationsMessage",
+      nameField: "business_name",
+      typeField: "business_type",
+      kind: "seller"
+    });
+
+    message("sellerApplicationsMessage",
+      `Loaded ${sellerApplications.length} seller application(s).`, "success");
+  } catch (error) {
+    console.error("Seller applications loading failed:", error);
+    message("sellerApplicationsMessage",
+      "Could not load seller applications. Check the administrator SELECT policy and table permissions.",
+      "error");
+  } finally {
+    loadingSellers = false;
+    $("refreshSellerApplications").disabled = false;
+  }
+}
+
+async function loadOrganiserApplications() {
+  if (loadingOrganisers) return;
+  loadingOrganisers = true;
+  $("refreshOrganiserApplications").disabled = true;
+  message("organiserApplicationsMessage", "Loading organiser applications…");
+
+  try {
+    const { data, error } = await client
+      .from("rn_organiser_applications")
+      .select("id,user_id,organisation_name,organiser_type,country,description,status,admin_note,submitted_at,reviewed_at")
+      .order("submitted_at", { ascending: false });
+
+    if (error) throw error;
+    organiserApplications = data || [];
+
+    renderApplications({
+      rows: organiserApplications,
+      bodyId: "organiserApplicationsBody",
+      messageId: "organiserApplicationsMessage",
+      nameField: "organisation_name",
+      typeField: "organiser_type",
+      kind: "organiser"
+    });
+
+    message("organiserApplicationsMessage",
+      `Loaded ${organiserApplications.length} organiser application(s).`, "success");
+  } catch (error) {
+    console.error("Organiser applications loading failed:", error);
+    message("organiserApplicationsMessage",
+      "Could not load organiser applications. Check the administrator SELECT policy and table permissions.",
+      "error");
+  } finally {
+    loadingOrganisers = false;
+    $("refreshOrganiserApplications").disabled = false;
+  }
+}
+
+async function reviewApplication(kind, application, newStatus, note, approveButton, rejectButton) {
+  if (!currentUser) {
+    message(
+      kind === "seller" ? "sellerApplicationsMessage" : "organiserApplicationsMessage",
+      "Your session has expired. Sign in again.",
+      "error"
+    );
+    return;
+  }
+
+  const table = kind === "seller"
+    ? "rn_seller_applications"
+    : "rn_organiser_applications";
+
+  const outputMessage = kind === "seller"
+    ? "sellerApplicationsMessage"
+    : "organiserApplicationsMessage";
+
+  if (!confirm(`Confirm ${newStatus} for this ${kind} application?`)) return;
+
+  approveButton.disabled = true;
+  rejectButton.disabled = true;
+  message(outputMessage, `Saving ${newStatus} decision…`);
+
+  try {
+    const { data, error } = await client
+      .from(table)
+      .update({
+        status: newStatus,
+        admin_note: note.value.trim() || null,
+        reviewed_at: new Date().toISOString(),
+        reviewed_by: currentUser.id
+      })
+      .eq("id", application.id)
+      .select("id,status")
+      .single();
+
+    if (error) throw error;
+
+    if (!data) {
+      throw new Error("No updated application was returned.");
+    }
+
+    message(outputMessage,
+      `Application ${newStatus} successfully.`, "success");
+
+    if (kind === "seller") {
+      await loadSellerApplications();
+    } else {
+      await loadOrganiserApplications();
+    }
+  } catch (error) {
+    console.error("Application review failed:", error);
+    message(outputMessage,
+      "Could not save the decision. Confirm administrator UPDATE permissions and try again.",
+      "error");
+  } finally {
+    approveButton.disabled = false;
+    rejectButton.disabled = false;
   }
 }
 
@@ -1072,10 +991,8 @@ async function updateOrderStatus(order, select, button) {
 
 async function loadCommissions() {
   if (loadingCommissions) return;
-
   loadingCommissions = true;
   $("refreshCommissions").disabled = true;
-
   message("commissionMessage", "Loading commission rules…");
 
   try {
@@ -1085,24 +1002,15 @@ async function loadCommissions() {
       .order("category", { ascending: true });
 
     if (error) throw error;
-
     commissionRules = data || [];
-
     renderCommissions();
-
-    message(
-      "commissionMessage",
-      `Loaded ${commissionRules.length} commission rule(s).`,
-      "success"
-    );
+    message("commissionMessage",
+      `Loaded ${commissionRules.length} commission rule(s).`, "success");
   } catch (error) {
     console.error("Commission loading failed:", error);
-
-    message(
-      "commissionMessage",
-      "Could not load commission rules. Check the table columns and database permissions.",
-      "error"
-    );
+    message("commissionMessage",
+      "Could not load commission rules. Check table columns and database permissions.",
+      "error");
   } finally {
     loadingCommissions = false;
     $("refreshCommissions").disabled = false;
@@ -1111,45 +1019,34 @@ async function loadCommissions() {
 
 function renderCommissions() {
   const body = $("commissionsBody");
-
   body.replaceChildren();
 
   if (!commissionRules.length) {
     const row = document.createElement("tr");
     const cell = makeCell("No commission rules found yet.");
-
     cell.colSpan = 4;
     row.append(cell);
     body.append(row);
     return;
   }
 
-  commissionRules.forEach((rule) => {
+  commissionRules.forEach(rule => {
     const row = document.createElement("tr");
-
     row.append(makeCell(rule.category));
     row.append(makeCell(`${Number(rule.commission_rate)}%`));
 
     const statusCell = document.createElement("td");
-
-    statusCell.append(
-      makeBadge(rule.is_active ? "active" : "inactive")
-    );
-
+    statusCell.append(makeBadge(rule.is_active ? "active" : "inactive"));
     row.append(statusCell);
 
     const actionCell = document.createElement("td");
     const toggleButton = document.createElement("button");
-
     toggleButton.type = "button";
     toggleButton.className = "secondary";
-    toggleButton.textContent = rule.is_active
-      ? "Deactivate"
-      : "Activate";
+    toggleButton.textContent = rule.is_active ? "Deactivate" : "Activate";
 
     toggleButton.addEventListener("click", async () => {
       toggleButton.disabled = true;
-
       try {
         const { error } = await client
           .from("rn_commission_rules")
@@ -1160,22 +1057,12 @@ function renderCommissions() {
           .eq("id", rule.id);
 
         if (error) throw error;
-
         await loadCommissions();
-
-        message(
-          "commissionMessage",
-          "Commission status updated successfully.",
-          "success"
-        );
+        message("commissionMessage", "Commission status updated successfully.", "success");
       } catch (error) {
         console.error("Commission update failed:", error);
-
-        message(
-          "commissionMessage",
-          "Could not update this commission. Check database permissions.",
-          "error"
-        );
+        message("commissionMessage",
+          "Could not update this commission. Check database permissions.", "error");
       } finally {
         toggleButton.disabled = false;
       }
@@ -1191,11 +1078,7 @@ async function saveCommission(event) {
   event.preventDefault();
 
   if (!currentUser) {
-    message(
-      "commissionMessage",
-      "Please sign in again before saving a commission.",
-      "error"
-    );
+    message("commissionMessage", "Please sign in again before saving a commission.", "error");
     return;
   }
 
@@ -1208,26 +1091,17 @@ async function saveCommission(event) {
   }
 
   if (!Number.isFinite(rate) || rate < 0 || rate > 100) {
-    message(
-      "commissionMessage",
-      "Commission must be between 0 and 100 percent.",
-      "error"
-    );
+    message("commissionMessage", "Commission must be between 0 and 100 percent.", "error");
     return;
   }
 
-  const button = $("commissionForm").querySelector(
-    'button[type="submit"]'
-  );
-
+  const button = $("commissionForm").querySelector('button[type="submit"]');
   button.disabled = true;
   button.textContent = "Saving…";
 
   try {
-    const existing = commissionRules.find(
-      rule =>
-        String(rule.category).trim().toLowerCase() ===
-        category.toLowerCase()
+    const existing = commissionRules.find(rule =>
+      String(rule.category).trim().toLowerCase() === category.toLowerCase()
     );
 
     const values = {
@@ -1247,54 +1121,37 @@ async function saveCommission(event) {
     } else {
       result = await client
         .from("rn_commission_rules")
-        .insert({
-          ...values,
-          created_by: currentUser.id
-        });
+        .insert({...values, created_by: currentUser.id});
     }
 
     if (result.error) throw result.error;
 
     $("commissionCategory").value = "";
     $("commissionRate").value = "";
-
     await loadCommissions();
-
-    message(
-      "commissionMessage",
-      "Commission rule saved successfully.",
-      "success"
-    );
+    message("commissionMessage", "Commission rule saved successfully.", "success");
   } catch (error) {
     console.error("Saving commission failed:", error);
-
-    message(
-      "commissionMessage",
+    message("commissionMessage",
       "Could not save the commission. Check database permissions, column names and required fields.",
-      "error"
-    );
+      "error");
   } finally {
     button.disabled = false;
     button.textContent = "Save Commission";
   }
 }
 
-/* CONNECT PAGE CONTROLS */
+/* CONNECT CONTROLS */
 
 $("loginForm").addEventListener("submit", login);
-
 $("logoutButton").addEventListener("click", logout);
-
 $("deniedLogoutButton").addEventListener("click", logout);
-
 $("refreshOrders").addEventListener("click", loadOrders);
-
 $("refreshCommissions").addEventListener("click", loadCommissions);
-
+$("refreshSellerApplications").addEventListener("click", loadSellerApplications);
+$("refreshOrganiserApplications").addEventListener("click", loadOrganiserApplications);
 $("orderSearch").addEventListener("input", renderOrders);
-
 $("orderFilter").addEventListener("change", renderOrders);
-
 $("commissionForm").addEventListener("submit", saveCommission);
 
 /* RESTORE LOGIN SESSION */
@@ -1303,12 +1160,9 @@ client.auth.onAuthStateChange((event, session) => {
   setTimeout(() => {
     handleSession(session).catch(error => {
       console.error("Session handling failed:", error);
-
-      message(
-        "loginMessage",
-        "We could not finish loading your account. Refresh the page and try again.",
-        "error"
-      );
+      message("loginMessage",
+        "Could not finish loading your account. Refresh the page and try again.",
+        "error");
     });
   }, 0);
 });
@@ -1316,21 +1170,14 @@ client.auth.onAuthStateChange((event, session) => {
 (async function initialise() {
   try {
     const { data, error } = await client.auth.getSession();
-
     if (error) throw error;
-
     await handleSession(data.session);
   } catch (error) {
     console.error("Initialisation failed:", error);
-
-    message(
-      "loginMessage",
+    message("loginMessage",
       "The page could not connect to your session. Check your internet connection and refresh.",
-      "error"
-    );
+      "error");
   }
 })();
-</script>
-
-</body>
+</script></body>
 </html>
