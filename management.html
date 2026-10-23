@@ -346,7 +346,46 @@ footer {
     </table>
   </div>
 </section>
+<!-- PRODUCT LISTINGS MANAGEMENT --><section class="panel">
+  <div class="section-heading">
+    <div>
+      <h2>🛍️ Product Listings</h2>
+      <p class="small">Review products submitted by approved sellers before they appear in the marketplace.</p>
+    </div>
+    <button id="refreshListings" class="secondary" type="button">
+      Refresh Products
+    </button>
+  </div>  <div class="notice">
+    Approving a product changes its listing status. Products will only appear publicly
+    when the marketplace is also configured to display approved listings.
+  </div><label for="listingFilter">Filter products</label>
+<select id="listingFilter">
+<option value="">All products</option>
+<option value="pending">Pending review</option>
+<option value="approved">Approved</option>
+<option value="rejected">Rejected</option>
+</select>
 
+  <p id="listingsMessage" class="message" role="status"></p>  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>Product</th>
+          <th>Category</th>
+          <th>Price</th>
+          <th>Seller</th>
+          <th>Status</th>
+          <th>Review Product</th>
+        </tr>
+      </thead>
+      <tbody id="listingsBody">
+        <tr>
+          <td colspan="6">Sign in to load product listings.</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</section>
 <!-- ORGANISER APPLICATIONS -->
 <section class="panel">
   <div class="section-heading">
@@ -371,7 +410,227 @@ footer {
     </table>
   </div>
 </section>
+/* PRODUCT LISTINGS MANAGEMENT */
 
+async function loadProductListings() {
+if (loadingListings) return;
+
+loadingListings = true;
+$("refreshListings").disabled = true;
+message("listingsMessage", "Loading product listings…");
+
+try {
+const { data, error } = await client
+.from("rn_listings")
+.select("id, user_id, listing_type, title, description, category, price, currency, image_url, status, admin_note, created_at")
+.eq("listing_type", "product")
+.order("created_at", { ascending: false });
+
+if (error) throw error;
+
+productListings = data || [];
+renderProductListings();
+
+message(
+  "listingsMessage",
+  `Loaded ${productListings.length} product listing(s).`,
+  "success"
+);
+
+} catch (error) {
+console.error("Product listings loading failed:", error);
+
+message(
+  "listingsMessage",
+  "Could not load products. Check the rn_listings table and administrator SELECT permissions.",
+  "error"
+);
+
+} finally {
+loadingListings = false;
+$("refreshListings").disabled = false;
+}
+}
+
+function renderProductListings() {
+const body = $("listingsBody");
+const filter = $("listingFilter").value;
+
+body.replaceChildren();
+
+const filtered = productListings.filter(product =>
+!filter || product.status === filter
+);
+
+if (!filtered.length) {
+const row = document.createElement("tr");
+const cell = makeCell(
+productListings.length
+? "No products match this filter."
+: "No product listings found yet."
+);
+
+cell.colSpan = 6;
+row.append(cell);
+body.append(row);
+return;
+
+}
+
+filtered.forEach(product => {
+const row = document.createElement("tr");
+
+// Product name and description
+const productCell = document.createElement("td");
+
+const title = document.createElement("strong");
+title.textContent = product.title || "Untitled product";
+
+const description = document.createElement("div");
+description.className = "small muted";
+description.textContent = product.description || "No description";
+
+const submitted = document.createElement("div");
+submitted.className = "small muted";
+submitted.textContent = "Submitted: " + formatDate(product.created_at);
+
+productCell.append(title, description, submitted);
+
+// Category
+const categoryCell = makeCell(product.category || "Uncategorised");
+
+// Price
+const priceCell = makeCell(
+  formatMoney(product.price, product.currency || "NGN")
+);
+
+// Seller identifier
+const sellerCell = makeCell(product.user_id || "Unknown");
+
+// Current status
+const statusCell = document.createElement("td");
+statusCell.append(makeBadge(product.status));
+
+// Review controls
+const actionCell = document.createElement("td");
+actionCell.className = "review-box";
+
+const noteLabel = document.createElement("label");
+noteLabel.textContent = "Administrator note";
+
+const note = document.createElement("textarea");
+note.maxLength = 2000;
+note.placeholder = "Optional note for this decision";
+note.value = product.admin_note || "";
+
+const actions = document.createElement("div");
+actions.className = "review-actions";
+
+const approve = document.createElement("button");
+approve.type = "button";
+approve.className = "approve";
+approve.textContent = "Approve";
+
+const reject = document.createElement("button");
+reject.type = "button";
+reject.className = "danger";
+reject.textContent = "Reject";
+
+approve.disabled = product.status === "approved";
+reject.disabled = product.status === "rejected";
+
+approve.addEventListener("click", () => {
+  reviewProduct(product, "approved", note, approve, reject);
+});
+
+reject.addEventListener("click", () => {
+  if (!confirm("Are you sure you want to reject this product?")) return;
+
+  reviewProduct(product, "rejected", note, approve, reject);
+});
+
+actions.append(approve, reject);
+actionCell.append(noteLabel, note, actions);
+
+row.append(
+  productCell,
+  categoryCell,
+  priceCell,
+  sellerCell,
+  statusCell,
+  actionCell
+);
+
+body.append(row);
+
+});
+}
+
+async function reviewProduct(product, newStatus, note, approve, reject) {
+if (!currentUser) {
+message(
+"listingsMessage",
+"Your session has expired. Please sign in again.",
+"error"
+);
+return;
+}
+
+const confirmed = confirm(
+"Confirm ${newStatus} for "${product.title}"?"
+);
+
+if (!confirmed) return;
+
+approve.disabled = true;
+reject.disabled = true;
+
+message(
+"listingsMessage",
+"Saving product decision: ${newStatus}…"
+);
+
+try {
+const { data, error } = await client
+.from("rn_listings")
+.update({
+status: newStatus,
+admin_note: note.value.trim() || null,
+reviewed_by: currentUser.id,
+updated_at: new Date().toISOString()
+})
+.eq("id", product.id)
+.select("id,status")
+.single();
+
+if (error) throw error;
+
+if (!data) {
+  throw new Error("No updated product was returned.");
+}
+
+message(
+  "listingsMessage",
+  `"${product.title}" was ${newStatus} successfully.`,
+  "success"
+);
+
+await loadProductListings();
+
+} catch (error) {
+console.error("Product review failed:", error);
+
+message(
+  "listingsMessage",
+  "Could not save this decision. Check administrator UPDATE permissions and the rn_listings columns.",
+  "error"
+);
+
+approve.disabled = product.status === "approved";
+reject.disabled = product.status === "rejected";
+
+}
+}
 <!-- COMMISSION MANAGEMENT -->
 <section class="panel">
   <div class="section-heading">
@@ -443,6 +702,8 @@ let orders = [];
 let commissionRules = [];
 let sellerApplications = [];
 let organiserApplications = [];
+  let productListings = [];
+let loadingListings = false;
 let loadingOrders = false;
 let loadingCommissions = false;
 let loadingSellers = false;
@@ -549,11 +810,12 @@ async function handleSession(session) {
   show($("dashboard"), true);
 
   await Promise.all([
-    loadOrders(),
-    loadCommissions(),
-    loadSellerApplications(),
-    loadOrganiserApplications()
-  ]);
+  loadOrders(),
+  loadCommissions(),
+  loadSellerApplications(),
+  loadOrganiserApplications(),
+  loadProductListings()
+]);
 }
 
 async function login(event) {
@@ -1150,6 +1412,8 @@ $("refreshOrders").addEventListener("click", loadOrders);
 $("refreshCommissions").addEventListener("click", loadCommissions);
 $("refreshSellerApplications").addEventListener("click", loadSellerApplications);
 $("refreshOrganiserApplications").addEventListener("click", loadOrganiserApplications);
+  $("refreshListings").addEventListener("click", loadProductListings);
+$("listingFilter").addEventListener("change", renderProductListings);
 $("orderSearch").addEventListener("input", renderOrders);
 $("orderFilter").addEventListener("change", renderOrders);
 $("commissionForm").addEventListener("submit", saveCommission);
