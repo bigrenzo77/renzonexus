@@ -1,1447 +1,1455 @@
-<!DOCTYPE html><html lang="en">
+<!DOCTYPE html>
+<html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="theme-color" content="#080d1b">
-<meta name="description" content="RenzoNexus Founder Management Dashboard">
-<title>RenzoNexus | Founder Management</title><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><style>
+<meta name="description" content="RenzoNexus Founder and Administration Dashboard">
+<title>RenzoNexus | Founder Management</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<style>
 :root {
-  --bg:#080d1b;
-  --panel:#10182b;
-  --panel2:#151f35;
-  --text:#eef3ff;
-  --muted:#9aa8c4;
-  --blue:#66a6ff;
-  --cyan:#65e6ff;
-  --purple:#9a83ff;
-  --gold:#e9c77b;
-  --border:rgba(255,255,255,.10);
-  --green:#5de2a3;
-  --red:#ff8585;
+  --bg: #080d1b;
+  --panel: #10182b;
+  --panel2: #141f35;
+  --border: #27344d;
+  --text: #f2f5ff;
+  --muted: #9ba9c4;
+  --blue: #66a6ff;
+  --cyan: #65e6ff;
+  --purple: #9a83ff;
+  --green: #54d6a0;
+  --red: #ff7185;
+  --gold: #e9c77b;
 }
-* {box-sizing:border-box}
+
+* {
+  box-sizing: border-box;
+}
+
 body {
-  margin:0;
-  background:var(--bg);
-  color:var(--text);
-  font-family:Arial,sans-serif;
-  line-height:1.5;
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font-family: "DM Sans", sans-serif;
 }
-button,input,select,textarea {font:inherit}
-button {cursor:pointer}
-button:disabled {cursor:not-allowed;opacity:.55}
-a {color:var(--cyan)}
-header {
-  padding:20px;
-  border-bottom:1px solid var(--border);
-  background:rgba(8,13,27,.96);
-  position:sticky;
-  top:0;
-  z-index:5;
+
+button,
+input,
+select,
+textarea {
+  font: inherit;
 }
-.header-inner {
-  max-width:1400px;
-  margin:auto;
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  gap:14px;
-  flex-wrap:wrap;
+
+button {
+  cursor: pointer;
 }
-.brand {font-size:21px;font-weight:800;letter-spacing:.3px}
-.brand span {color:var(--cyan)}
-.tagline {color:var(--muted);font-size:12px}
-main {max-width:1400px;margin:auto;padding:24px 16px 60px}
-h1 {font-size:clamp(25px,4vw,38px);margin:0 0 6px}
-h2 {font-size:20px;margin-top:0}
-p {color:var(--muted)}
+
+button:disabled {
+  opacity: .55;
+  cursor: not-allowed;
+}
+
+a {
+  color: var(--cyan);
+  text-decoration: none;
+}
+
+.topbar {
+  background: rgba(8,13,27,.96);
+  border-bottom: 1px solid var(--border);
+  padding: 18px 5%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 15px;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+.brand {
+  font-family: "Space Grotesk", sans-serif;
+  font-size: 22px;
+  font-weight: 700;
+  letter-spacing: -.7px;
+}
+
+.brand span {
+  color: var(--cyan);
+}
+
+.topbar small {
+  color: var(--muted);
+}
+
+.container {
+  width: min(1400px, 94%);
+  margin: 30px auto 70px;
+}
+
+.hero {
+  margin-bottom: 25px;
+}
+
+.eyebrow {
+  color: var(--cyan);
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  font-size: 11px;
+  font-weight: 700;
+}
+
+h1, h2, h3 {
+  font-family: "Space Grotesk", sans-serif;
+}
+
+h1 {
+  font-size: clamp(27px, 5vw, 42px);
+  margin: 10px 0;
+}
+
+h2 {
+  font-size: 21px;
+  margin: 0;
+}
+
+p {
+  line-height: 1.6;
+}
+
+.muted {
+  color: var(--muted);
+}
+
 .panel {
-  background:var(--panel);
-  border:1px solid var(--border);
-  border-radius:18px;
-  padding:20px;
-  margin:20px 0;
-  min-width:0;
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 17px;
+  padding: 23px;
+  margin-bottom: 22px;
+  min-width: 0;
 }
-.grid {
-  display:grid;
-  grid-template-columns:repeat(4,minmax(0,1fr));
-  gap:14px;
-  margin:24px 0;
+
+.login-panel {
+  max-width: 460px;
+  margin: 55px auto;
 }
-.stat {
-  background:var(--panel);
-  border:1px solid var(--border);
-  border-radius:15px;
-  padding:18px;
-}
-.stat-label {font-size:13px;color:var(--muted)}
-.stat-value {
-  font-size:27px;
-  font-weight:800;
-  margin-top:8px;
-  overflow-wrap:anywhere;
-}
+
 label {
-  display:block;
-  font-size:13px;
-  color:var(--muted);
-  margin:12px 0 5px;
+  display: block;
+  color: var(--muted);
+  font-size: 13px;
+  margin: 14px 0 7px;
 }
-input,select,textarea {
-  width:100%;
-  padding:12px;
-  border-radius:10px;
-  border:1px solid var(--border);
-  background:#080f20;
-  color:var(--text);
-  min-width:0;
+
+input,
+select,
+textarea {
+  width: 100%;
+  color: var(--text);
+  background: #091224;
+  border: 1px solid var(--border);
+  border-radius: 9px;
+  padding: 12px;
+  outline: none;
 }
-textarea {min-height:85px;resize:vertical}
-button,.button {
-  border:0;
-  border-radius:10px;
-  padding:11px 15px;
-  background:linear-gradient(110deg,var(--blue),var(--purple));
-  color:#07101f;
-  font-weight:800;
+
+input:focus,
+select:focus,
+textarea:focus {
+  border-color: var(--blue);
 }
-button.secondary {
-  background:var(--panel2);
-  color:var(--text);
-  border:1px solid var(--border);
+
+textarea {
+  min-height: 85px;
+  resize: vertical;
 }
-button.gold {background:var(--gold)}
-button.danger {
-  background:#49242d;
-  color:#ffdce0;
-  border:1px solid #713640;
+
+.btn {
+  background: linear-gradient(110deg, var(--blue), var(--purple));
+  border: 0;
+  color: #08101f;
+  font-weight: 700;
+  border-radius: 9px;
+  padding: 11px 15px;
 }
-button.approve {
-  background:#123c30;
-  color:#8dffd0;
-  border:1px solid #24674e;
+
+.btn-secondary {
+  background: #1a2943;
+  color: var(--text);
+  border: 1px solid var(--border);
 }
-.actions {display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}
+
+.btn-danger {
+  background: #4b2030;
+  color: #ffd9df;
+  border: 1px solid #713246;
+}
+
+.btn-success {
+  background: #123c34;
+  color: #a8ffdc;
+  border: 1px solid #236b58;
+}
+
+.btn-small {
+  padding: 7px 10px;
+  font-size: 12px;
+  margin: 3px 3px 3px 0;
+}
+
+.full {
+  width: 100%;
+  margin-top: 20px;
+}
+
 .message {
-  margin-top:12px;
-  font-size:14px;
-  overflow-wrap:anywhere;
+  margin-top: 14px;
+  font-size: 13px;
+  line-height: 1.6;
+  overflow-wrap: anywhere;
 }
-.message.error {color:var(--red)}
-.message.success {color:var(--green)}
-.hidden {display:none!important}
-.muted {color:var(--muted)}
-.table-wrap {
-  overflow-x:auto;
-  width:100%;
-  border:1px solid var(--border);
-  border-radius:12px;
+
+.message.error {
+  color: var(--red);
 }
-table {
-  width:100%;
-  min-width:900px;
-  border-collapse:collapse;
-  font-size:13px;
+
+.message.success {
+  color: var(--green);
 }
-th,td {
-  padding:12px;
-  text-align:left;
-  vertical-align:top;
-  border-bottom:1px solid var(--border);
+
+.message.info {
+  color: var(--cyan);
 }
-th {background:var(--panel2);color:var(--cyan);white-space:nowrap}
-td {overflow-wrap:anywhere}
-tr:last-child td {border-bottom:0}
-.badge {
-  display:inline-block;
-  border-radius:20px;
-  padding:4px 8px;
-  font-size:11px;
-  background:#24304b;
-  color:var(--text);
+
+.hidden {
+  display: none !important;
 }
-.badge.paid,.badge.completed,.badge.approved,.badge.active {
-  background:#123c30;
-  color:#8dffd0;
+
+.nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 22px 0;
 }
-.badge.failed,.badge.cancelled,.badge.refunded,.badge.inactive,.badge.rejected {
-  background:#48232d;
-  color:#ffb6bf;
+
+.nav button {
+  background: var(--panel);
+  color: var(--muted);
+  border: 1px solid var(--border);
+  border-radius: 9px;
+  padding: 10px 12px;
 }
-.badge.awaiting_payment,.badge.pending_payment,
-.badge.payment_verification,.badge.pending {
-  background:#45391c;
-  color:#ffe09a;
+
+.nav button.active {
+  color: var(--cyan);
+  border-color: var(--blue);
+  background: #13213a;
 }
-.order-controls {min-width:170px}
-.order-controls select {margin-bottom:7px}
-.auth-box {max-width:440px;margin:40px auto}
-.small {font-size:12px}
+
+.stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 14px;
+  margin: 22px 0;
+}
+
+.stat {
+  padding: 18px;
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 13px;
+}
+
+.stat .number {
+  font-size: 27px;
+  font-weight: 700;
+  font-family: "Space Grotesk", sans-serif;
+  margin-top: 8px;
+}
+
+.stat .label {
+  color: var(--muted);
+  font-size: 12px;
+}
+
 .section-heading {
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  gap:12px;
-  flex-wrap:wrap;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 18px;
 }
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+}
+
+.actions select {
+  width: auto;
+  max-width: 100%;
+}
+
+.table-wrap {
+  overflow-x: auto;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 680px;
+}
+
+th, td {
+  padding: 12px;
+  text-align: left;
+  border-bottom: 1px solid var(--border);
+  vertical-align: top;
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+th {
+  color: var(--cyan);
+  background: #111d32;
+  font-size: 12px;
+}
+
+td {
+  overflow-wrap: anywhere;
+}
+
+tr:last-child td {
+  border-bottom: 0;
+}
+
+.badge {
+  display: inline-block;
+  padding: 4px 8px;
+  border-radius: 20px;
+  background: #24334d;
+  color: #d8e7ff;
+  font-size: 11px;
+  text-transform: capitalize;
+}
+
+.badge.pending {
+  color: #ffe3a0;
+  background: #473b20;
+}
+
+.badge.approved,
+.badge.completed,
+.badge.paid {
+  color: #a8ffdc;
+  background: #123c34;
+}
+
+.badge.rejected,
+.badge.cancelled,
+.badge.failed {
+  color: #ffc0cb;
+  background: #4b2030;
+}
+
+.empty {
+  color: var(--muted);
+  text-align: center;
+  padding: 25px;
+}
+
 .commission-form {
-  display:grid;
-  grid-template-columns:2fr 1fr auto;
-  gap:12px;
-  align-items:end;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 12px;
+  align-items: end;
 }
-.notice {
-  border-left:3px solid var(--gold);
-  padding:10px 14px;
-  background:rgba(233,199,123,.07);
-  border-radius:0 10px 10px 0;
-  color:var(--muted);
-  font-size:13px;
+
+.commission-form label {
+  margin-top: 0;
 }
-.review-box {min-width:220px}
-.review-box textarea {margin-bottom:8px}
-.review-actions {display:flex;gap:7px;flex-wrap:wrap}
-.review-actions button {flex:1}
+
+.commission-form .btn {
+  margin-top: 0;
+}
+
 footer {
-  text-align:center;
-  padding:25px;
-  border-top:1px solid var(--border);
-  color:var(--muted);
-  font-size:12px;
+  color: var(--muted);
+  text-align: center;
+  padding: 25px;
+  border-top: 1px solid var(--border);
+  font-size: 12px;
 }
-@media(max-width:800px) {
-  .grid {grid-template-columns:repeat(2,minmax(0,1fr))}
-  .commission-form {grid-template-columns:1fr}
-  .panel {padding:15px}
+
+@media(max-width: 600px) {
+  .topbar {
+    padding: 15px 4%;
+  }
+
+  .brand {
+    font-size: 19px;
+  }
+
+  .container {
+    width: 94%;
+    margin-top: 22px;
+  }
+
+  .panel {
+    padding: 16px;
+  }
+
+  .topbar small {
+    display: none;
+  }
 }
-@media(max-width:380px) {
-  .grid {grid-template-columns:1fr}
-}
-</style></head><body>
-<header>
-  <div class="header-inner">
-    <div>
-      <div class="brand">Renzo<span>Nexus</span></div>
-      <div class="tagline">One World. Endless Possibilities.</div>
-    </div>
-    <div id="userArea" class="hidden">
-      <span id="signedInEmail" class="small"></span>
-      <button id="logoutButton" class="secondary" type="button">Sign Out</button>
-    </div>
-  </div>
-</header><main>
-  <section id="loginPanel" class="panel auth-box">
+</style>
+</head>
+
+<body>
+
+<header class="topbar">
+  <div class="brand">Renzo<span>Nexus</span></div>
+  <small>One World. Endless Possibilities.</small>
+  <button id="logoutButton" class="btn btn-secondary hidden" type="button">
+    Sign Out
+  </button>
+</header>
+
+<main class="container">
+
+  <!-- LOGIN -->
+  <section id="loginView" class="panel login-panel">
+    <div class="eyebrow">Restricted access</div>
     <h1>Founder Management</h1>
-    <p>Sign in with your existing RenzoNexus administrator account.</p>
+    <p class="muted">
+      Sign in using your authorised RenzoNexus administrator account.
+    </p>
+
     <form id="loginForm">
       <label for="email">Administrator email</label>
-      <input id="email" type="email" autocomplete="username"
-        required maxlength="254" placeholder="Enter your admin email">  <label for="password">Password</label>
-  <input id="password" type="password" autocomplete="current-password"
-    required placeholder="Enter your password">
+      <input
+        id="email"
+        type="email"
+        autocomplete="username"
+        placeholder="Enter your administrator email"
+        required
+      >
 
-  <div class="actions">
-    <button id="loginButton" type="submit">Sign In</button>
-  </div>
-  <p id="loginMessage" class="message" role="status"></p>
-</form>
-<p class="small">Access is limited to authorised RenzoNexus administrators.</p>
+      <label for="password">Password</label>
+      <input
+        id="password"
+        type="password"
+        autocomplete="current-password"
+        placeholder="Enter your password"
+        required
+      >
 
-  </section>  <section id="deniedPanel" class="panel hidden">
-    <h2>Administrator Access Required</h2>
-    <p>This account is not authorised to access Founder Management.</p>
-    <button id="deniedLogoutButton" class="secondary" type="button">Sign Out</button>
-  </section>  <section id="dashboard" class="hidden">
-    <h1>Founder Dashboard 👑</h1>
-    <p>Central management for orders, applications, commissions and payouts.</p><div class="grid">
-  <div class="stat">
-    <div class="stat-label">Total Orders</div>
-    <div class="stat-value" id="totalOrders">0</div>
-  </div>
-  <div class="stat">
-    <div class="stat-label">Verified Payments</div>
-    <div class="stat-value" id="paidOrders">0</div>
-  </div>
-  <div class="stat">
-    <div class="stat-label">Awaiting Payment</div>
-    <div class="stat-value" id="awaitingOrders">0</div>
-  </div>
-  <div class="stat">
-    <div class="stat-label">Orders Awaiting Review</div>
-    <div class="stat-value" id="reviewOrders">0</div>
-  </div>
-</div>
+      <button id="loginButton" class="btn full" type="submit">
+        Sign In
+      </button>
+    </form>
 
-<!-- ORDER MANAGEMENT -->
-<section class="panel">
-  <div class="section-heading">
-    <div>
-      <h2>Central Order Management</h2>
-      <p class="small">View orders from RenzoNexus, sellers and organisers.</p>
+    <div id="loginMessage" class="message" role="status"></div>
+  </section>
+
+  <!-- DASHBOARD -->
+  <section id="dashboardView" class="hidden">
+
+    <div class="hero">
+      <div class="eyebrow">Administration centre</div>
+      <h1>Welcome to RenzoNexus</h1>
+      <p class="muted">
+        Manage applications, listings, orders and marketplace commission rules.
+      </p>
+      <div id="adminIdentity" class="muted"></div>
     </div>
-    <button id="refreshOrders" class="secondary" type="button">Refresh Orders</button>
-  </div>
 
-  <div class="notice">
-    Only payments verified by a trusted payment backend should be marked as paid.
-    This dashboard does not itself verify real payment transactions.
-  </div>
+    <div id="globalMessage" class="message" role="status"></div>
 
-  <label for="orderSearch">Search orders</label>
-  <input id="orderSearch" type="search"
-    placeholder="Search reference, customer or email">
-
-  <label for="orderFilter">Filter orders</label>
-  <select id="orderFilter">
-    <option value="">All orders</option>
-    <option value="pending_payment">Pending payment</option>
-    <option value="payment_verification">Payment verification</option>
-    <option value="paid">Paid</option>
-    <option value="submitted_to_management">Submitted to management</option>
-    <option value="under_review">Under review</option>
-    <option value="approved">Approved</option>
-    <option value="processing">Processing</option>
-    <option value="completed">Completed</option>
-    <option value="cancelled">Cancelled</option>
-    <option value="refunded">Refunded</option>
-  </select>
-
-  <p id="ordersMessage" class="message" role="status"></p>
-
-  <div class="table-wrap">
-    <table>
-      <thead><tr>
-        <th>Order</th><th>Customer</th><th>Total</th>
-        <th>Payment</th><th>Order Status</th><th>Management Action</th>
-      </tr></thead>
-      <tbody id="ordersBody">
-        <tr><td colspan="6">Sign in to load orders.</td></tr>
-      </tbody>
-    </table>
-  </div>
-</section>
-
-<!-- SELLER APPLICATIONS -->
-<section class="panel">
-  <div class="section-heading">
-    <div>
-      <h2>🛍️ Seller Applications</h2>
-      <p class="small">Review businesses applying to sell products on RenzoNexus.</p>
+    <div class="stats">
+      <div class="stat">
+        <div class="label">Seller applications</div>
+        <div id="sellerCount" class="number">—</div>
+      </div>
+      <div class="stat">
+        <div class="label">Organiser applications</div>
+        <div id="organiserCount" class="number">—</div>
+      </div>
+      <div class="stat">
+        <div class="label">Product listings</div>
+        <div id="listingCount" class="number">—</div>
+      </div>
+      <div class="stat">
+        <div class="label">Orders</div>
+        <div id="orderCount" class="number">—</div>
+      </div>
     </div>
-    <button id="refreshSellerApplications" class="secondary" type="button">
-      Refresh Sellers
-    </button>
-  </div>
-  <p id="sellerApplicationsMessage" class="message" role="status"></p>
-  <div class="table-wrap">
-    <table>
-      <thead><tr>
-        <th>Business</th><th>Business Type</th><th>Country</th>
-        <th>Description</th><th>Status</th><th>Review Application</th>
-      </tr></thead>
-      <tbody id="sellerApplicationsBody">
-        <tr><td colspan="6">Sign in to load applications.</td></tr>
-      </tbody>
-    </table>
-  </div>
-</section>
-<!-- PRODUCT LISTINGS MANAGEMENT --><section class="panel">
-  <div class="section-heading">
-    <div>
-      <h2>🛍️ Product Listings</h2>
-      <p class="small">Review products submitted by approved sellers before they appear in the marketplace.</p>
-    </div>
-    <button id="refreshListings" class="secondary" type="button">
-      Refresh Products
-    </button>
-  </div>  <div class="notice">
-    Approving a product changes its listing status. Products will only appear publicly
-    when the marketplace is also configured to display approved listings.
-  </div><label for="listingFilter">Filter products</label>
-<select id="listingFilter">
-<option value="">All products</option>
-<option value="pending">Pending review</option>
-<option value="approved">Approved</option>
-<option value="rejected">Rejected</option>
-</select>
 
-  <p id="listingsMessage" class="message" role="status"></p>  <div class="table-wrap">
-    <table>
-      <thead>
-        <tr>
-          <th>Product</th>
-          <th>Category</th>
-          <th>Price</th>
-          <th>Seller</th>
-          <th>Status</th>
-          <th>Review Product</th>
-        </tr>
-      </thead>
-      <tbody id="listingsBody">
-        <tr>
-          <td colspan="6">Sign in to load product listings.</td>
-        </tr>
-      </tbody>
-    </table>
-  </div>
-</section>
-<!-- ORGANISER APPLICATIONS -->
-<section class="panel">
-  <div class="section-heading">
-    <div>
-      <h2>🎟️ Organiser Applications</h2>
-      <p class="small">Review people applying to organise events on RenzoNexus.</p>
-    </div>
-    <button id="refreshOrganiserApplications" class="secondary" type="button">
-      Refresh Organisers
-    </button>
-  </div>
-  <p id="organiserApplicationsMessage" class="message" role="status"></p>
-  <div class="table-wrap">
-    <table>
-      <thead><tr>
-        <th>Organisation</th><th>Organiser Type</th><th>Country</th>
-        <th>Description</th><th>Status</th><th>Review Application</th>
-      </tr></thead>
-      <tbody id="organiserApplicationsBody">
-        <tr><td colspan="6">Sign in to load applications.</td></tr>
-      </tbody>
-    </table>
-  </div>
-</section>
-/* PRODUCT LISTINGS MANAGEMENT */
+    <nav class="nav" aria-label="Dashboard sections">
+      <button type="button" class="active" data-section="ordersSection">Orders</button>
+      <button type="button" data-section="sellersSection">Seller Applications</button>
+      <button type="button" data-section="organisersSection">Organiser Applications</button>
+      <button type="button" data-section="listingsSection">Product Listings</button>
+      <button type="button" data-section="commissionsSection">Commission Settings</button>
+      <button type="button" data-section="payoutsSection">Payouts</button>
+    </nav>
 
-async function loadProductListings() {
-if (loadingListings) return;
+    <!-- ORDERS -->
+    <section id="ordersSection" class="panel dashboard-section">
+      <div class="section-heading">
+        <div>
+          <h2>Order Management</h2>
+          <p class="muted">Review orders recorded by RenzoNexus.</p>
+        </div>
+        <button class="btn btn-secondary" type="button" id="refreshOrders">
+          Refresh Orders
+        </button>
+      </div>
+      <div id="ordersMessage" class="message"></div>
+      <div id="ordersTable" class="table-wrap"></div>
+    </section>
 
-loadingListings = true;
-$("refreshListings").disabled = true;
-message("listingsMessage", "Loading product listings…");
+    <!-- SELLERS -->
+    <section id="sellersSection" class="panel dashboard-section hidden">
+      <div class="section-heading">
+        <div>
+          <h2>Seller Applications</h2>
+          <p class="muted">Review businesses applying to sell on the platform.</p>
+        </div>
+        <button class="btn btn-secondary" type="button" id="refreshSellers">
+          Refresh
+        </button>
+      </div>
 
-try {
-const { data, error } = await client
-.from("rn_listings")
-.select("id, user_id, listing_type, title, description, category, price, currency, image_url, status, admin_note, created_at")
-.eq("listing_type", "product")
-.order("created_at", { ascending: false });
+      <div class="actions">
+        <select id="sellerFilter" aria-label="Filter seller applications">
+          <option value="all">All applications</option>
+          <option value="pending">Pending</option>
+          <option value="approved">Approved</option>
+          <option value="rejected">Rejected</option>
+        </select>
+      </div>
 
-if (error) throw error;
+      <div id="sellersMessage" class="message"></div>
+      <div id="sellersTable" class="table-wrap"></div>
+    </section>
 
-productListings = data || [];
-renderProductListings();
+    <!-- ORGANISERS -->
+    <section id="organisersSection" class="panel dashboard-section hidden">
+      <div class="section-heading">
+        <div>
+          <h2>Organiser Applications</h2>
+          <p class="muted">Review people and businesses applying to organise events.</p>
+        </div>
+        <button class="btn btn-secondary" type="button" id="refreshOrganisers">
+          Refresh
+        </button>
+      </div>
 
-message(
-  "listingsMessage",
-  `Loaded ${productListings.length} product listing(s).`,
-  "success"
-);
+      <div class="actions">
+        <select id="organiserFilter" aria-label="Filter organiser applications">
+          <option value="all">All applications</option>
+          <option value="pending">Pending</option>
+          <option value="approved">Approved</option>
+          <option value="rejected">Rejected</option>
+        </select>
+      </div>
 
-} catch (error) {
-console.error("Product listings loading failed:", error);
+      <div id="organisersMessage" class="message"></div>
+      <div id="organisersTable" class="table-wrap"></div>
+    </section>
 
-message(
-  "listingsMessage",
-  "Could not load products. Check the rn_listings table and administrator SELECT permissions.",
-  "error"
-);
+    <!-- PRODUCT LISTINGS -->
+    <section id="listingsSection" class="panel dashboard-section hidden">
+      <div class="section-heading">
+        <div>
+          <h2>Product Listings</h2>
+          <p class="muted">
+            Review submitted products before they become approved listings.
+          </p>
+        </div>
+        <button class="btn btn-secondary" type="button" id="refreshListings">
+          Refresh Listings
+        </button>
+      </div>
 
-} finally {
-loadingListings = false;
-$("refreshListings").disabled = false;
-}
-}
+      <div class="actions">
+        <select id="listingFilter" aria-label="Filter product listings">
+          <option value="all">All listings</option>
+          <option value="pending">Pending</option>
+          <option value="approved">Approved</option>
+          <option value="rejected">Rejected</option>
+        </select>
+      </div>
 
-function renderProductListings() {
-const body = $("listingsBody");
-const filter = $("listingFilter").value;
+      <div id="listingsMessage" class="message"></div>
+      <div id="listingsTable" class="table-wrap"></div>
+    </section>
 
-body.replaceChildren();
+    <!-- COMMISSIONS -->
+    <section id="commissionsSection" class="panel dashboard-section hidden">
+      <div class="section-heading">
+        <div>
+          <h2>Commission Settings</h2>
+          <p class="muted">
+            Manage the commission rate configured for each category.
+          </p>
+        </div>
+        <button class="btn btn-secondary" type="button" id="refreshCommissions">
+          Refresh
+        </button>
+      </div>
 
-const filtered = productListings.filter(product =>
-!filter || product.status === filter
-);
+      <form id="commissionForm" class="commission-form">
+        <div>
+          <label for="commissionCategory">Category</label>
+          <input id="commissionCategory" type="text" placeholder="e.g. Clothing" required>
+        </div>
 
-if (!filtered.length) {
-const row = document.createElement("tr");
-const cell = makeCell(
-productListings.length
-? "No products match this filter."
-: "No product listings found yet."
-);
+        <div>
+          <label for="commissionRate">Commission rate (%)</label>
+          <input id="commissionRate" type="number" min="0" max="100" step="0.01" placeholder="e.g. 10" required>
+        </div>
 
-cell.colSpan = 6;
-row.append(cell);
-body.append(row);
-return;
+        <div>
+          <label for="commissionActive">Rule status</label>
+          <select id="commissionActive">
+            <option value="true">Active</option>
+            <option value="false">Inactive</option>
+          </select>
+        </div>
 
-}
+        <button id="saveCommissionButton" class="btn" type="submit">
+          Save Rule
+        </button>
+      </form>
 
-filtered.forEach(product => {
-const row = document.createElement("tr");
+      <div id="commissionsMessage" class="message"></div>
+      <div id="commissionsTable" class="table-wrap"></div>
+    </section>
 
-// Product name and description
-const productCell = document.createElement("td");
-
-const title = document.createElement("strong");
-title.textContent = product.title || "Untitled product";
-
-const description = document.createElement("div");
-description.className = "small muted";
-description.textContent = product.description || "No description";
-
-const submitted = document.createElement("div");
-submitted.className = "small muted";
-submitted.textContent = "Submitted: " + formatDate(product.created_at);
-
-productCell.append(title, description, submitted);
-
-// Category
-const categoryCell = makeCell(product.category || "Uncategorised");
-
-// Price
-const priceCell = makeCell(
-  formatMoney(product.price, product.currency || "NGN")
-);
-
-// Seller identifier
-const sellerCell = makeCell(product.user_id || "Unknown");
-
-// Current status
-const statusCell = document.createElement("td");
-statusCell.append(makeBadge(product.status));
-
-// Review controls
-const actionCell = document.createElement("td");
-actionCell.className = "review-box";
-
-const noteLabel = document.createElement("label");
-noteLabel.textContent = "Administrator note";
-
-const note = document.createElement("textarea");
-note.maxLength = 2000;
-note.placeholder = "Optional note for this decision";
-note.value = product.admin_note || "";
-
-const actions = document.createElement("div");
-actions.className = "review-actions";
-
-const approve = document.createElement("button");
-approve.type = "button";
-approve.className = "approve";
-approve.textContent = "Approve";
-
-const reject = document.createElement("button");
-reject.type = "button";
-reject.className = "danger";
-reject.textContent = "Reject";
-
-approve.disabled = product.status === "approved";
-reject.disabled = product.status === "rejected";
-
-approve.addEventListener("click", () => {
-  reviewProduct(product, "approved", note, approve, reject);
-});
-
-reject.addEventListener("click", () => {
-  if (!confirm("Are you sure you want to reject this product?")) return;
-
-  reviewProduct(product, "rejected", note, approve, reject);
-});
-
-actions.append(approve, reject);
-actionCell.append(noteLabel, note, actions);
-
-row.append(
-  productCell,
-  categoryCell,
-  priceCell,
-  sellerCell,
-  statusCell,
-  actionCell
-);
-
-body.append(row);
-
-});
-}
-
-async function reviewProduct(product, newStatus, note, approve, reject) {
-if (!currentUser) {
-message(
-"listingsMessage",
-"Your session has expired. Please sign in again.",
-"error"
-);
-return;
-}
-
-const confirmed = confirm(
-"Confirm ${newStatus} for "${product.title}"?"
-);
-
-if (!confirmed) return;
-
-approve.disabled = true;
-reject.disabled = true;
-
-message(
-"listingsMessage",
-"Saving product decision: ${newStatus}…"
-);
-
-try {
-const { data, error } = await client
-.from("rn_listings")
-.update({
-status: newStatus,
-admin_note: note.value.trim() || null,
-reviewed_by: currentUser.id,
-updated_at: new Date().toISOString()
-})
-.eq("id", product.id)
-.select("id,status")
-.single();
-
-if (error) throw error;
-
-if (!data) {
-  throw new Error("No updated product was returned.");
-}
-
-message(
-  "listingsMessage",
-  `"${product.title}" was ${newStatus} successfully.`,
-  "success"
-);
-
-await loadProductListings();
-
-} catch (error) {
-console.error("Product review failed:", error);
-
-message(
-  "listingsMessage",
-  "Could not save this decision. Check administrator UPDATE permissions and the rn_listings columns.",
-  "error"
-);
-
-approve.disabled = product.status === "approved";
-reject.disabled = product.status === "rejected";
-
-}
-}
-<!-- COMMISSION MANAGEMENT -->
-<section class="panel">
-  <div class="section-heading">
-    <div>
-      <h2>Commission Settings</h2>
-      <p class="small">Set the commission percentage for each category.</p>
-    </div>
-    <button id="refreshCommissions" class="secondary" type="button">Refresh</button>
-  </div>
-
-  <form id="commissionForm" class="commission-form">
-    <div>
-      <label for="commissionCategory">Category</label>
-      <input id="commissionCategory" required maxlength="100"
-        placeholder="Example: Clothing">
-    </div>
-    <div>
-      <label for="commissionRate">Commission (%)</label>
-      <input id="commissionRate" type="number" min="0" max="100"
-        step="0.01" required placeholder="10">
-    </div>
-    <button type="submit">Save Commission</button>
-  </form>
-
-  <p id="commissionMessage" class="message" role="status"></p>
-
-  <div class="table-wrap">
-    <table>
-      <thead><tr><th>Category</th><th>Commission</th><th>Status</th><th>Action</th></tr></thead>
-      <tbody id="commissionsBody">
-        <tr><td colspan="4">No commission rules loaded.</td></tr>
-      </tbody>
-    </table>
-  </div>
-
-  <p class="small">
-    Commission settings are not yet connected to an automatic checkout calculation.
-    Existing orders should retain the terms agreed for those transactions.
-  </p>
-</section>
-
-<!-- PAYOUTS -->
-<section class="panel">
-  <h2>Seller & Organiser Payouts</h2>
-  <p>Payout records will appear here when they have been created.</p>
-  <div class="notice">
-    Seller balances, payout approvals and transfer verification still need a
-    secure payment backend before real payouts can be processed.
-  </div>
-</section>
+    <!-- PAYOUTS -->
+    <section id="payoutsSection" class="panel dashboard-section hidden">
+      <h2>Payouts</h2>
+      <p class="muted">
+        The payouts area is reserved for future payout management.
+        Actual money transfers are not enabled by this dashboard.
+      </p>
+      <div class="message info">
+        Before enabling payouts, RenzoNexus must have a secure payment
+        integration, verified recipients, and server-side financial controls.
+      </div>
+    </section>
 
   </section>
-</main><footer>RenzoNexus — One World. Endless Possibilities.</footer><script>
-"use strict";
+</main>
 
-/* Never put a Supabase service-role key or payment secret in frontend code. */
-const SUPABASE_URL = "https://anclwctvvillzpatigbr.supabase.co";
-const SUPABASE_PUBLISHABLE_KEY = "sb_publishable_t9TJatPdXprnb5gkrkINtQ_GColh4fM";
+<footer>
+  RenzoNexus — One World. Endless Possibilities.
+</footer>
 
-const client = window.supabase.createClient(
-  SUPABASE_URL,
-  SUPABASE_PUBLISHABLE_KEY
-);
+<script>
+(() => {
+  "use strict";
 
-const $ = id => document.getElementById(id);
+  const SUPABASE_URL = "https://anclwctvvillzpatigbr.supabase.co";
+  const SUPABASE_KEY = "sb_publishable_t9TJatPdXprnb5gkrkINtQ_GColh4fM";
 
-let currentUser = null;
-let orders = [];
-let commissionRules = [];
-let sellerApplications = [];
-let organiserApplications = [];
+  const client = window.supabase.createClient(
+    SUPABASE_URL,
+    SUPABASE_KEY
+  );
+
+  const $ = id => document.getElementById(id);
+
+  let currentUser = null;
+  let sellerApplications = [];
+  let organiserApplications = [];
   let productListings = [];
-let loadingListings = false;
-let loadingOrders = false;
-let loadingCommissions = false;
-let loadingSellers = false;
-let loadingOrganisers = false;
-let sessionCheckNumber = 0;
+  let orders = [];
+  let commissionRules = [];
 
-const ORDER_STATUSES = [
-  "pending_payment", "payment_verification", "paid",
-  "submitted_to_management", "under_review", "approved",
-  "processing", "completed", "cancelled", "refunded"
-];
-
-function show(el, visible) {
-  el.classList.toggle("hidden", !visible);
-}
-
-function message(id, text, type = "") {
-  const el = $(id);
-  el.textContent = text || "";
-  el.className = "message";
-  if (type) el.classList.add(type);
-}
-
-function formatMoney(amount, currency = "NGN") {
-  const value = Number(amount || 0);
-  try {
-    return new Intl.NumberFormat(undefined, {
-      style: "currency",
-      currency: currency || "NGN",
-      maximumFractionDigits: 2
-    }).format(value);
-  } catch {
-    return `${currency} ${value.toFixed(2)}`;
-  }
-}
-
-function formatDate(value) {
-  if (!value) return "—";
-  const date = new Date(value);
-  return Number.isNaN(date.getTime()) ? "—" : date.toLocaleString();
-}
-
-function badgeClass(value) {
-  return String(value || "")
-    .toLowerCase()
-    .replace(/[^a-z0-9_-]/g, "_");
-}
-
-function makeCell(value) {
-  const td = document.createElement("td");
-  td.textContent = value == null || value === "" ? "—" : String(value);
-  return td;
-}
-
-function makeBadge(value) {
-  const badge = document.createElement("span");
-  badge.className = "badge " + badgeClass(value);
-  badge.textContent = value || "unknown";
-  return badge;
-}
-
-async function checkAdmin() {
-  const { data, error } = await client.rpc("rn_can_manage_marketplace");
-  if (error) {
-    console.error("Administrator check failed:", error);
-    return false;
-  }
-  return data === true;
-}
-
-async function handleSession(session) {
-  const checkNumber = ++sessionCheckNumber;
-  currentUser = session?.user || null;
-
-  show($("userArea"), Boolean(currentUser));
-  show($("loginPanel"), !currentUser);
-  show($("deniedPanel"), false);
-  show($("dashboard"), false);
-
-  if (!currentUser) {
-    orders = [];
-    commissionRules = [];
-    sellerApplications = [];
-    organiserApplications = [];
-    $("ordersBody").replaceChildren();
-    $("commissionsBody").replaceChildren();
-    $("sellerApplicationsBody").replaceChildren();
-    $("organiserApplicationsBody").replaceChildren();
-    return;
+  function escapeHTML(value) {
+    return String(value ?? "").replace(/[&<>"']/g, char => ({
+      "&": "&amp;",
+      "<": "&lt;",
+      ">": "&gt;",
+      '"': "&quot;",
+      "'": "&#039;"
+    })[char]);
   }
 
-  $("signedInEmail").textContent = currentUser.email || "";
-
-  const allowed = await checkAdmin();
-  if (checkNumber !== sessionCheckNumber) return;
-
-  if (!allowed) {
-    show($("loginPanel"), false);
-    show($("deniedPanel"), true);
-    show($("dashboard"), false);
-    return;
+  function message(id, text, type = "") {
+    const element = $(id);
+    if (!element) return;
+    element.textContent = text || "";
+    element.className = "message" + (type ? " " + type : "");
   }
 
-  show($("dashboard"), true);
+  function setBusy(button, busy, busyText = "Please wait…") {
+    if (!button) return;
 
-  await Promise.all([
-  loadOrders(),
-  loadCommissions(),
-  loadSellerApplications(),
-  loadOrganiserApplications(),
-  loadProductListings()
-]);
-}
+    if (busy) {
+      button.dataset.originalText = button.textContent;
+      button.disabled = true;
+      button.textContent = busyText;
+    } else {
+      button.disabled = false;
+      button.textContent = button.dataset.originalText || button.textContent;
+    }
+  }
 
-async function login(event) {
-  event.preventDefault();
-  const button = $("loginButton");
-  button.disabled = true;
-  button.textContent = "Signing in…";
-  message("loginMessage", "");
+  function showLogin(text = "", type = "") {
+    $("loginView").classList.remove("hidden");
+    $("dashboardView").classList.add("hidden");
+    $("logoutButton").classList.add("hidden");
+    message("loginMessage", text, type);
+  }
 
-  try {
-    const { error } = await client.auth.signInWithPassword({
-      email: $("email").value.trim(),
-      password: $("password").value
+  function showDashboard() {
+    $("loginView").classList.add("hidden");
+    $("dashboardView").classList.remove("hidden");
+    $("logoutButton").classList.remove("hidden");
+    $("adminIdentity").textContent =
+      "Signed in as " + (currentUser?.email || "administrator");
+  }
+
+  function statusBadge(value) {
+    const status = String(value || "unknown").toLowerCase();
+    return '<span class="badge ' + escapeHTML(status) + '">' +
+      escapeHTML(status.replace(/_/g, " ")) + '</span>';
+  }
+
+  function formatValue(key, value) {
+    if (value === null || value === undefined || value === "") return "—";
+
+    if (key.toLowerCase().includes("status")) {
+      return statusBadge(value);
+    }
+
+    if (typeof value === "object") {
+      return escapeHTML(JSON.stringify(value));
+    }
+
+    if (key.toLowerCase().includes("password") ||
+        key.toLowerCase().includes("secret") ||
+        key.toLowerCase().includes("token")) {
+      return "Hidden";
+    }
+
+    return escapeHTML(value);
+  }
+
+  function renderTable(containerId, rows, options = {}) {
+    const container = $(containerId);
+
+    if (!rows || rows.length === 0) {
+      container.innerHTML = '<div class="empty">No records found.</div>';
+      return;
+    }
+
+    const excluded = options.exclude || [];
+    const preferred = options.columns || [];
+
+    let keys = [];
+
+    preferred.forEach(key => {
+      if (rows.some(row => Object.prototype.hasOwnProperty.call(row, key)) &&
+          !excluded.includes(key)) {
+        keys.push(key);
+      }
     });
-    if (error) throw error;
-    $("password").value = "";
-  } catch (error) {
-    console.error("Login failed:", error);
-    message("loginMessage",
-      "Sign-in failed. Check your email and password, then try again.",
-      "error");
-  } finally {
-    button.disabled = false;
-    button.textContent = "Sign In";
+
+    rows.forEach(row => {
+      Object.keys(row).forEach(key => {
+        if (!excluded.includes(key) && !keys.includes(key)) {
+          keys.push(key);
+        }
+      });
+    });
+
+    keys = keys.slice(0, options.maxColumns || 8);
+
+    const headers = keys.map(key =>
+      "<th>" + escapeHTML(key.replace(/_/g, " ")) + "</th>"
+    ).join("");
+
+    const body = rows.map((row, index) => {
+      const cells = keys.map(key =>
+        "<td>" + formatValue(key, row[key]) + "</td>"
+      ).join("");
+
+      let actionCell = "";
+
+      if (options.actions) {
+        actionCell = "<td>" + options.actions(row, index) + "</td>";
+      }
+
+      return "<tr>" + cells + actionCell + "</tr>";
+    }).join("");
+
+    container.innerHTML =
+      '<table><thead><tr>' + headers +
+      (options.actions ? "<th>Actions</th>" : "") +
+      '</tr></thead><tbody>' + body + '</tbody></table>';
   }
-}
 
-async function logout() {
-  const { error } = await client.auth.signOut();
-  if (error) {
-    console.error("Sign-out failed:", error);
-    message("loginMessage", "Could not sign out. Please try again.", "error");
-    return;
+  function filteredRows(rows, filterId) {
+    const filter = $(filterId).value;
+    if (filter === "all") return rows;
+
+    return rows.filter(row =>
+      String(row.status || "pending").toLowerCase() === filter
+    );
   }
 
-  currentUser = null;
-  orders = [];
-  commissionRules = [];
-  sellerApplications = [];
-  organiserApplications = [];
+  function applicationActions(row, type) {
+    const id = escapeHTML(row.id);
 
-  show($("dashboard"), false);
-  show($("deniedPanel"), false);
-  show($("userArea"), false);
-  show($("loginPanel"), true);
-}
+    return `
+      <button class="btn btn-success btn-small"
+        data-action="application-status"
+        data-type="${type}"
+        data-id="${id}"
+        data-status="approved">Approve</button>
 
-/* ORDER MANAGEMENT */
+      <button class="btn btn-danger btn-small"
+        data-action="application-status"
+        data-type="${type}"
+        data-id="${id}"
+        data-status="rejected">Reject</button>
+    `;
+  }
 
-async function loadOrders() {
-  if (loadingOrders) return;
-  loadingOrders = true;
-  $("refreshOrders").disabled = true;
-  message("ordersMessage", "Loading orders…");
+  function renderSellers() {
+    renderTable("sellersTable",
+      filteredRows(sellerApplications, "sellerFilter"), {
+        columns: [
+          "id", "business_name", "full_name", "name", "email",
+          "business_type", "country", "status", "created_at"
+        ],
+        exclude: ["password", "access_token"],
+        maxColumns: 8,
+        actions: row => applicationActions(row, "seller")
+      }
+    );
 
-  try {
+    $("sellerCount").textContent = sellerApplications.length;
+  }
+
+  function renderOrganisers() {
+    renderTable("organisersTable",
+      filteredRows(organiserApplications, "organiserFilter"), {
+        columns: [
+          "id", "organisation_name", "organiser_name", "full_name",
+          "name", "email", "country", "status", "created_at"
+        ],
+        exclude: ["password", "access_token"],
+        maxColumns: 8,
+        actions: row => applicationActions(row, "organiser")
+      }
+    );
+
+    $("organiserCount").textContent = organiserApplications.length;
+  }
+
+  function renderListings() {
+    renderTable("listingsTable",
+      filteredRows(productListings, "listingFilter"), {
+        columns: [
+          "id", "title", "listing_type", "category", "price",
+          "currency", "location", "status", "created_at"
+        ],
+        exclude: ["user_id", "description", "admin_note", "image_url"],
+        maxColumns: 8,
+        actions: row => `
+          <button class="btn btn-success btn-small"
+            data-action="listing-status"
+            data-id="${escapeHTML(row.id)}"
+            data-status="approved">Approve</button>
+
+          <button class="btn btn-danger btn-small"
+            data-action="listing-status"
+            data-id="${escapeHTML(row.id)}"
+            data-status="rejected">Reject</button>
+        `
+      }
+    );
+
+    $("listingCount").textContent = productListings.length;
+  }
+
+  function renderOrders() {
+    renderTable("ordersTable", orders, {
+      columns: [
+        "id", "user_id", "status", "total_amount", "currency",
+        "payment_status", "created_at"
+      ],
+      exclude: ["access_token", "secret"],
+      maxColumns: 8
+    });
+
+    $("orderCount").textContent = orders.length;
+  }
+
+  function renderCommissions() {
+    renderTable("commissionsTable", commissionRules, {
+      columns: [
+        "id", "category", "commission_rate", "is_active", "updated_at"
+      ],
+      maxColumns: 6,
+      actions: row => `
+        <button class="btn btn-secondary btn-small"
+          data-action="edit-commission"
+          data-id="${escapeHTML(row.id)}">Edit</button>
+
+        <button class="btn btn-danger btn-small"
+          data-action="toggle-commission"
+          data-id="${escapeHTML(row.id)}"
+          data-active="${String(row.is_active)}">
+          ${row.is_active ? "Deactivate" : "Activate"}
+        </button>
+      `
+    });
+  }
+
+  async function fetchTable(tableName) {
     const { data, error } = await client
-      .from("rn_orders")
-      .select(`
-        id, order_reference, customer_id, customer_name, customer_email,
-        customer_phone, currency, subtotal, shipping_amount, tax_amount,
-        total_amount, payment_status, order_status, management_notes,
-        created_at, submitted_to_management_at
-      `)
+      .from(tableName)
+      .select("*")
       .order("created_at", { ascending: false })
       .limit(200);
 
     if (error) throw error;
-    orders = data || [];
-    renderOrders();
-    message("ordersMessage", `Loaded ${orders.length} order record(s).`, "success");
-  } catch (error) {
-    console.error("Order loading failed:", error);
-    orders = [];
-    renderOrders();
-    message("ordersMessage",
-      "Orders could not be loaded. Check database permissions and column names.",
-      "error");
-  } finally {
-    loadingOrders = false;
-    $("refreshOrders").disabled = false;
-  }
-}
-
-function renderOrders() {
-  const body = $("ordersBody");
-  const query = $("orderSearch").value.trim().toLowerCase();
-  const statusFilter = $("orderFilter").value;
-
-  const filtered = orders.filter(order => {
-    const matchesStatus = !statusFilter || order.order_status === statusFilter;
-    const text = [
-      order.order_reference, order.customer_name, order.customer_email
-    ].join(" ").toLowerCase();
-    return matchesStatus && text.includes(query);
-  });
-
-  body.replaceChildren();
-  $("totalOrders").textContent = orders.length;
-  $("paidOrders").textContent = orders.filter(o => o.payment_status === "paid").length;
-  $("awaitingOrders").textContent = orders.filter(o =>
-    ["pending_payment", "awaiting_payment", "verification_pending"]
-      .includes(o.payment_status)
-  ).length;
-  $("reviewOrders").textContent = orders.filter(o =>
-    ["submitted_to_management", "under_review"].includes(o.order_status)
-  ).length;
-
-  if (!filtered.length) {
-    const row = document.createElement("tr");
-    const cell = makeCell(orders.length
-      ? "No orders match this search or filter."
-      : "No orders found yet.");
-    cell.colSpan = 6;
-    row.append(cell);
-    body.append(row);
-    return;
+    return data || [];
   }
 
-  filtered.forEach(order => {
-    const row = document.createElement("tr");
-    const ref = document.createElement("td");
-    const strong = document.createElement("strong");
-    strong.textContent = order.order_reference || order.id;
-    const date = document.createElement("div");
-    date.className = "small muted";
-    date.textContent = formatDate(order.created_at);
-    ref.append(strong, date);
+  async function loadOrders() {
+    message("ordersMessage", "Loading orders…", "info");
 
-    const customer = document.createElement("td");
-    const name = document.createElement("strong");
-    name.textContent = order.customer_name || "Customer";
-    const email = document.createElement("div");
-    email.className = "small muted";
-    email.textContent = order.customer_email || "";
-    customer.append(name, email);
-
-    const total = makeCell(formatMoney(order.total_amount, order.currency));
-    const payment = document.createElement("td");
-    payment.append(makeBadge(order.payment_status));
-    const status = document.createElement("td");
-    status.append(makeBadge(order.order_status));
-
-    const controls = document.createElement("td");
-    controls.className = "order-controls";
-    const select = document.createElement("select");
-    select.setAttribute("aria-label", "New order status");
-    ORDER_STATUSES.forEach(value => select.add(new Option(value, value)));
-    select.value = ORDER_STATUSES.includes(order.order_status)
-      ? order.order_status : "pending_payment";
-
-    const save = document.createElement("button");
-    save.type = "button";
-    save.className = "secondary";
-    save.textContent = "Save Status";
-    save.addEventListener("click", () => updateOrderStatus(order, select, save));
-    controls.append(select, save);
-    row.append(ref, customer, total, payment, status, controls);
-    body.append(row);
-  });
-}
-
-async function updateOrderStatus(order, select, button) {
-  const newStatus = select.value;
-  const requiresPayment = [
-    "submitted_to_management", "under_review", "approved", "processing", "completed"
-  ];
-
-  if (requiresPayment.includes(newStatus) && order.payment_status !== "paid") {
-    message("ordersMessage",
-      "This order cannot progress until its payment has been verified by the payment backend.",
-      "error");
-    return;
-  }
-
-  if (newStatus === order.order_status) {
-    message("ordersMessage", "The order already has this status.");
-    return;
-  }
-
-  button.disabled = true;
-  button.textContent = "Saving…";
-
-  try {
-    const { data, error } = await client
-      .from("rn_orders")
-      .update({
-        order_status: newStatus,
-        updated_at: new Date().toISOString()
-      })
-      .eq("id", order.id)
-      .select("id, order_status")
-      .single();
-
-    if (error) throw error;
-    order.order_status = data.order_status;
-    renderOrders();
-    message("ordersMessage",
-      `Order ${order.order_reference || order.id} updated successfully.`,
-      "success");
-  } catch (error) {
-    console.error("Order status update failed:", error);
-    message("ordersMessage",
-      "Could not update the order. Check database permissions and try again.",
-      "error");
-  } finally {
-    button.disabled = false;
-    button.textContent = "Save Status";
-  }
-}
-
-/* APPLICATION MANAGEMENT */
-
-function renderApplications({
-  rows, bodyId, messageId, nameField, typeField, kind
-}) {
-  const body = $(bodyId);
-  body.replaceChildren();
-
-  if (!rows.length) {
-    const row = document.createElement("tr");
-    const cell = makeCell("No applications found yet.");
-    cell.colSpan = 6;
-    row.append(cell);
-    body.append(row);
-    return;
-  }
-
-  rows.forEach(application => {
-    const row = document.createElement("tr");
-    row.append(makeCell(application[nameField]));
-    row.append(makeCell(application[typeField]));
-    row.append(makeCell(application.country));
-    row.append(makeCell(application.description));
-    
-    const statusCell = document.createElement("td");
-    statusCell.append(makeBadge(application.status));
-    const reviewDate = document.createElement("div");
-    reviewDate.className = "small muted";
-    reviewDate.textContent = application.reviewed_at
-      ? "Reviewed: " + formatDate(application.reviewed_at)
-      : "Submitted: " + formatDate(application.submitted_at);
-    statusCell.append(reviewDate);
-    row.append(statusCell);
-
-    const actionCell = document.createElement("td");
-    actionCell.className = "review-box";
-
-    const noteLabel = document.createElement("label");
-    noteLabel.textContent = "Administrator note";
-
-    const note = document.createElement("textarea");
-    note.maxLength = 2000;
-    note.placeholder = "Optional note for this decision";
-    note.value = application.admin_note || "";
-
-    const actions = document.createElement("div");
-    actions.className = "review-actions";
-
-    const approve = document.createElement("button");
-    approve.type = "button";
-    approve.className = "approve";
-    approve.textContent = "Approve";
-
-    const reject = document.createElement("button");
-    reject.type = "button";
-    reject.className = "danger";
-    reject.textContent = "Reject";
-
-    const alreadyReviewed = ["approved", "rejected"].includes(application.status);
-    approve.disabled = alreadyReviewed && application.status === "approved";
-    reject.disabled = alreadyReviewed && application.status === "rejected";
-
-    approve.addEventListener("click", () =>
-      reviewApplication(kind, application, "approved", note, approve, reject)
-    );
-
-    reject.addEventListener("click", () => {
-      if (!confirm("Are you sure you want to reject this application?")) return;
-      reviewApplication(kind, application, "rejected", note, approve, reject);
-    });
-
-    actions.append(approve, reject);
-    actionCell.append(noteLabel, note, actions);
-
-    if (application.admin_note) {
-      const previousNote = document.createElement("p");
-      previousNote.className = "small muted";
-      previousNote.textContent = "Saved note: " + application.admin_note;
-      actionCell.append(previousNote);
+    try {
+      orders = await fetchTable("rn_orders");
+      renderOrders();
+      message("ordersMessage", "Orders loaded.", "success");
+    } catch (error) {
+      console.error("Orders loading error:", error);
+      message("ordersMessage",
+        "Could not load orders: " + error.message, "error");
+      $("ordersTable").innerHTML =
+        '<div class="empty">Orders could not be loaded.</div>';
     }
-
-    row.append(actionCell);
-    body.append(row);
-  });
-}
-
-async function loadSellerApplications() {
-  if (loadingSellers) return;
-  loadingSellers = true;
-  $("refreshSellerApplications").disabled = true;
-  message("sellerApplicationsMessage", "Loading seller applications…");
-
-  try {
-    const { data, error } = await client
-      .from("rn_seller_applications")
-      .select("id,user_id,business_name,business_type,country,description,status,admin_note,submitted_at,reviewed_at")
-      .order("submitted_at", { ascending: false });
-
-    if (error) throw error;
-    sellerApplications = data || [];
-
-    renderApplications({
-      rows: sellerApplications,
-      bodyId: "sellerApplicationsBody",
-      messageId: "sellerApplicationsMessage",
-      nameField: "business_name",
-      typeField: "business_type",
-      kind: "seller"
-    });
-
-    message("sellerApplicationsMessage",
-      `Loaded ${sellerApplications.length} seller application(s).`, "success");
-  } catch (error) {
-    console.error("Seller applications loading failed:", error);
-    message("sellerApplicationsMessage",
-      "Could not load seller applications. Check the administrator SELECT policy and table permissions.",
-      "error");
-  } finally {
-    loadingSellers = false;
-    $("refreshSellerApplications").disabled = false;
-  }
-}
-
-async function loadOrganiserApplications() {
-  if (loadingOrganisers) return;
-  loadingOrganisers = true;
-  $("refreshOrganiserApplications").disabled = true;
-  message("organiserApplicationsMessage", "Loading organiser applications…");
-
-  try {
-    const { data, error } = await client
-      .from("rn_organiser_applications")
-      .select("id,user_id,organisation_name,organiser_type,country,description,status,admin_note,submitted_at,reviewed_at")
-      .order("submitted_at", { ascending: false });
-
-    if (error) throw error;
-    organiserApplications = data || [];
-
-    renderApplications({
-      rows: organiserApplications,
-      bodyId: "organiserApplicationsBody",
-      messageId: "organiserApplicationsMessage",
-      nameField: "organisation_name",
-      typeField: "organiser_type",
-      kind: "organiser"
-    });
-
-    message("organiserApplicationsMessage",
-      `Loaded ${organiserApplications.length} organiser application(s).`, "success");
-  } catch (error) {
-    console.error("Organiser applications loading failed:", error);
-    message("organiserApplicationsMessage",
-      "Could not load organiser applications. Check the administrator SELECT policy and table permissions.",
-      "error");
-  } finally {
-    loadingOrganisers = false;
-    $("refreshOrganiserApplications").disabled = false;
-  }
-}
-
-async function reviewApplication(kind, application, newStatus, note, approveButton, rejectButton) {
-  if (!currentUser) {
-    message(
-      kind === "seller" ? "sellerApplicationsMessage" : "organiserApplicationsMessage",
-      "Your session has expired. Sign in again.",
-      "error"
-    );
-    return;
   }
 
-  const table = kind === "seller"
-    ? "rn_seller_applications"
-    : "rn_organiser_applications";
+  async function loadSellerApplications() {
+    message("sellersMessage", "Loading seller applications…", "info");
 
-  const outputMessage = kind === "seller"
-    ? "sellerApplicationsMessage"
-    : "organiserApplicationsMessage";
+    try {
+      sellerApplications = await fetchTable("rn_seller_applications");
+      renderSellers();
+      message("sellersMessage", "Seller applications loaded.", "success");
+    } catch (error) {
+      console.error("Seller applications error:", error);
+      message("sellersMessage",
+        "Could not load seller applications: " + error.message, "error");
+      $("sellersTable").innerHTML =
+        '<div class="empty">Seller applications could not be loaded.</div>';
+    }
+  }
 
-  if (!confirm(`Confirm ${newStatus} for this ${kind} application?`)) return;
+  async function loadOrganiserApplications() {
+    message("organisersMessage", "Loading organiser applications…", "info");
 
-  approveButton.disabled = true;
-  rejectButton.disabled = true;
-  message(outputMessage, `Saving ${newStatus} decision…`);
+    try {
+      organiserApplications = await fetchTable("rn_organiser_applications");
+      renderOrganisers();
+      message("organisersMessage",
+        "Organiser applications loaded.", "success");
+    } catch (error) {
+      console.error("Organiser applications error:", error);
+      message("organisersMessage",
+        "Could not load organiser applications: " + error.message, "error");
+      $("organisersTable").innerHTML =
+        '<div class="empty">Organiser applications could not be loaded.</div>';
+    }
+  }
 
-  try {
+  async function loadProductListings() {
+    message("listingsMessage", "Loading product listings…", "info");
+
+    try {
+      const { data, error } = await client
+        .from("rn_listings")
+        .select("*")
+        .eq("listing_type", "product")
+        .order("created_at", { ascending: false })
+        .limit(200);
+
+      if (error) throw error;
+
+      productListings = data || [];
+      renderListings();
+      message("listingsMessage", "Product listings loaded.", "success");
+    } catch (error) {
+      console.error("Product listings error:", error);
+      message("listingsMessage",
+        "Could not load product listings: " + error.message, "error");
+      $("listingsTable").innerHTML =
+        '<div class="empty">Product listings could not be loaded.</div>';
+    }
+  }
+
+  async function loadCommissions() {
+    message("commissionsMessage", "Loading commission rules…", "info");
+
+    try {
+      const { data, error } = await client
+        .from("rn_commission_rules")
+        .select("*")
+        .order("category", { ascending: true });
+
+      if (error) throw error;
+
+      commissionRules = data || [];
+      renderCommissions();
+      message("commissionsMessage", "Commission rules loaded.", "success");
+    } catch (error) {
+      console.error("Commission loading error:", error);
+      message("commissionsMessage",
+        "Could not load commission rules: " + error.message, "error");
+      $("commissionsTable").innerHTML =
+        '<div class="empty">Commission rules could not be loaded.</div>';
+    }
+  }
+
+  async function loadDashboardData() {
+    await Promise.all([
+      loadOrders(),
+      loadSellerApplications(),
+      loadOrganiserApplications(),
+      loadProductListings(),
+      loadCommissions()
+    ]);
+  }
+
+  async function checkAdministrator(user) {
     const { data, error } = await client
-      .from(table)
-      .update({
-        status: newStatus,
-        admin_note: note.value.trim() || null,
-        reviewed_at: new Date().toISOString(),
-        reviewed_by: currentUser.id
-      })
-      .eq("id", application.id)
-      .select("id,status")
-      .single();
+      .from("admin_users")
+      .select("user_id, role")
+      .eq("user_id", user.id)
+      .maybeSingle();
 
-    if (error) throw error;
+    if (error) {
+      console.error("Administrator check error:", error);
+      throw new Error(
+        "We could not verify administrator access. " +
+        "Please check the admin_users table permissions. " + error.message
+      );
+    }
 
     if (!data) {
-      throw new Error("No updated application was returned.");
+      throw new Error(
+        "This account is signed in, but it is not listed as an authorised administrator."
+      );
     }
 
-    message(outputMessage,
-      `Application ${newStatus} successfully.`, "success");
+    const role = String(data.role || "").toLowerCase();
 
-    if (kind === "seller") {
-      await loadSellerApplications();
-    } else {
-      await loadOrganiserApplications();
+    if (!["admin", "super_admin", "administrator", "founder"].includes(role)) {
+      throw new Error(
+        "This account does not have an accepted administrator role."
+      );
     }
-  } catch (error) {
-    console.error("Application review failed:", error);
-    message(outputMessage,
-      "Could not save the decision. Confirm administrator UPDATE permissions and try again.",
-      "error");
-  } finally {
-    approveButton.disabled = false;
-    rejectButton.disabled = false;
-  }
-}
 
-/* COMMISSION MANAGEMENT */
-
-async function loadCommissions() {
-  if (loadingCommissions) return;
-  loadingCommissions = true;
-  $("refreshCommissions").disabled = true;
-  message("commissionMessage", "Loading commission rules…");
-
-  try {
-    const { data, error } = await client
-      .from("rn_commission_rules")
-      .select("*")
-      .order("category", { ascending: true });
-
-    if (error) throw error;
-    commissionRules = data || [];
-    renderCommissions();
-    message("commissionMessage",
-      `Loaded ${commissionRules.length} commission rule(s).`, "success");
-  } catch (error) {
-    console.error("Commission loading failed:", error);
-    message("commissionMessage",
-      "Could not load commission rules. Check table columns and database permissions.",
-      "error");
-  } finally {
-    loadingCommissions = false;
-    $("refreshCommissions").disabled = false;
-  }
-}
-
-function renderCommissions() {
-  const body = $("commissionsBody");
-  body.replaceChildren();
-
-  if (!commissionRules.length) {
-    const row = document.createElement("tr");
-    const cell = makeCell("No commission rules found yet.");
-    cell.colSpan = 4;
-    row.append(cell);
-    body.append(row);
-    return;
+    return data;
   }
 
-  commissionRules.forEach(rule => {
-    const row = document.createElement("tr");
-    row.append(makeCell(rule.category));
-    row.append(makeCell(`${Number(rule.commission_rate)}%`));
+  async function activateSession(user) {
+    if (!user) {
+      currentUser = null;
+      showLogin();
+      return;
+    }
 
-    const statusCell = document.createElement("td");
-    statusCell.append(makeBadge(rule.is_active ? "active" : "inactive"));
-    row.append(statusCell);
+    currentUser = user;
 
-    const actionCell = document.createElement("td");
-    const toggleButton = document.createElement("button");
-    toggleButton.type = "button";
-    toggleButton.className = "secondary";
-    toggleButton.textContent = rule.is_active ? "Deactivate" : "Activate";
+    try {
+      await checkAdministrator(user);
+      showDashboard();
+      message("globalMessage", "Administrator access verified.", "success");
+      await loadDashboardData();
+    } catch (error) {
+      console.error("Dashboard access error:", error);
+      await client.auth.signOut();
+      currentUser = null;
+      showLogin(error.message, "error");
+    }
+  }
 
-    toggleButton.addEventListener("click", async () => {
-      toggleButton.disabled = true;
-      try {
-        const { error } = await client
-          .from("rn_commission_rules")
-          .update({
-            is_active: !rule.is_active,
-            updated_at: new Date().toISOString()
-          })
-          .eq("id", rule.id);
+  async function login(event) {
+    event.preventDefault();
 
-        if (error) throw error;
-        await loadCommissions();
-        message("commissionMessage", "Commission status updated successfully.", "success");
-      } catch (error) {
-        console.error("Commission update failed:", error);
-        message("commissionMessage",
-          "Could not update this commission. Check database permissions.", "error");
-      } finally {
-        toggleButton.disabled = false;
+    const button = $("loginButton");
+    setBusy(button, true, "Signing in…");
+    message("loginMessage", "Checking your sign-in details…", "info");
+
+    try {
+      const email = $("email").value.trim();
+      const password = $("password").value;
+
+      const { data, error } = await client.auth.signInWithPassword({
+        email,
+        password
+      });
+
+      if (error) throw error;
+
+      if (!data.user) {
+        throw new Error("Sign-in did not return a user account.");
       }
-    });
 
-    actionCell.append(toggleButton);
-    row.append(actionCell);
-    body.append(row);
-  });
-}
+      $("password").value = "";
 
-async function saveCommission(event) {
-  event.preventDefault();
+      await activateSession(data.user);
 
-  if (!currentUser) {
-    message("commissionMessage", "Please sign in again before saving a commission.", "error");
-    return;
+    } catch (error) {
+      console.error("Login failed:", error);
+      message("loginMessage",
+        "Sign-in failed: " + error.message, "error");
+    } finally {
+      setBusy(button, false);
+    }
   }
 
-  const category = $("commissionCategory").value.trim();
-  const rate = Number($("commissionRate").value);
+  async function logout() {
+    const button = $("logoutButton");
+    setBusy(button, true, "Signing out…");
 
-  if (!category) {
-    message("commissionMessage", "Enter a category.", "error");
-    return;
+    try {
+      const { error } = await client.auth.signOut();
+      if (error) throw error;
+
+      currentUser = null;
+      showLogin("You have signed out.", "success");
+    } catch (error) {
+      console.error("Sign-out error:", error);
+      message("globalMessage",
+        "Could not sign out: " + error.message, "error");
+    } finally {
+      setBusy(button, false);
+    }
   }
 
-  if (!Number.isFinite(rate) || rate < 0 || rate > 100) {
-    message("commissionMessage", "Commission must be between 0 and 100 percent.", "error");
-    return;
+  async function updateApplicationStatus(type, id, status) {
+    const table = type === "seller"
+      ? "rn_seller_applications"
+      : "rn_organiser_applications";
+
+    const label = type === "seller"
+      ? "seller application"
+      : "organiser application";
+
+    if (!confirm("Confirm " + status + " for this " + label + "?")) return;
+
+    const target = type === "seller"
+      ? sellerApplications
+      : organiserApplications;
+
+    const existing = target.find(row => String(row.id) === String(id));
+
+    if (!existing) {
+      alert("This application was not found. Refresh and try again.");
+      return;
+    }
+
+    try {
+      const { error } = await client
+        .from(table)
+        .update({ status })
+        .eq("id", id);
+
+      if (error) throw error;
+
+      message(
+        type === "seller" ? "sellersMessage" : "organisersMessage",
+        "Application status updated to " + status + ".",
+        "success"
+      );
+
+      if (type === "seller") {
+        await loadSellerApplications();
+      } else {
+        await loadOrganiserApplications();
+      }
+    } catch (error) {
+      console.error("Application status update error:", error);
+      alert("Could not update application: " + error.message);
+    }
   }
 
-  const button = $("commissionForm").querySelector('button[type="submit"]');
-  button.disabled = true;
-  button.textContent = "Saving…";
-
-  try {
-    const existing = commissionRules.find(rule =>
-      String(rule.category).trim().toLowerCase() === category.toLowerCase()
+  async function reviewProduct(id, newStatus) {
+    const product = productListings.find(
+      item => String(item.id) === String(id)
     );
 
-    const values = {
-      category,
-      commission_rate: rate,
-      is_active: true,
-      updated_at: new Date().toISOString()
-    };
-
-    let result;
-
-    if (existing) {
-      result = await client
-        .from("rn_commission_rules")
-        .update(values)
-        .eq("id", existing.id);
-    } else {
-      result = await client
-        .from("rn_commission_rules")
-        .insert({...values, created_by: currentUser.id});
+    if (!product) {
+      alert("Product not found. Refresh the listings and try again.");
+      return;
     }
 
-    if (result.error) throw result.error;
+    if (!confirm(
+      'Confirm ' + newStatus + ' for "' + (product.title || "this product") + '"?'
+    )) {
+      return;
+    }
 
-    $("commissionCategory").value = "";
-    $("commissionRate").value = "";
-    await loadCommissions();
-    message("commissionMessage", "Commission rule saved successfully.", "success");
-  } catch (error) {
-    console.error("Saving commission failed:", error);
-    message("commissionMessage",
-      "Could not save the commission. Check database permissions, column names and required fields.",
-      "error");
-  } finally {
-    button.disabled = false;
-    button.textContent = "Save Commission";
+    try {
+      const updateData = {
+        status: newStatus,
+        reviewed_by: currentUser.id
+      };
+
+      const { error } = await client
+        .from("rn_listings")
+        .update(updateData)
+        .eq("id", id)
+        .eq("listing_type", "product");
+
+      if (error) throw error;
+
+      message("listingsMessage",
+        "Product status updated to " + newStatus + ".", "success");
+
+      await loadProductListings();
+
+    } catch (error) {
+      console.error("Product review error:", error);
+      alert(
+        "Could not update this product. Check administrator update permissions. " +
+        error.message
+      );
+    }
   }
-}
 
-/* CONNECT CONTROLS */
+  async function saveCommission(event) {
+    event.preventDefault();
 
-$("loginForm").addEventListener("submit", login);
-$("logoutButton").addEventListener("click", logout);
-$("deniedLogoutButton").addEventListener("click", logout);
-$("refreshOrders").addEventListener("click", loadOrders);
-$("refreshCommissions").addEventListener("click", loadCommissions);
-$("refreshSellerApplications").addEventListener("click", loadSellerApplications);
-$("refreshOrganiserApplications").addEventListener("click", loadOrganiserApplications);
-  $("refreshListings").addEventListener("click", loadProductListings);
-$("listingFilter").addEventListener("change", renderProductListings);
-$("orderSearch").addEventListener("input", renderOrders);
-$("orderFilter").addEventListener("change", renderOrders);
-$("commissionForm").addEventListener("submit", saveCommission);
+    const button = $("saveCommissionButton");
+    setBusy(button, true, "Saving…");
 
-/* RESTORE LOGIN SESSION */
+    try {
+      const category = $("commissionCategory").value.trim();
+      const rate = Number($("commissionRate").value);
+      const active = $("commissionActive").value === "true";
 
-client.auth.onAuthStateChange((event, session) => {
-  setTimeout(() => {
-    handleSession(session).catch(error => {
-      console.error("Session handling failed:", error);
-      message("loginMessage",
-        "Could not finish loading your account. Refresh the page and try again.",
-        "error");
+      if (!category) {
+        throw new Error("Enter a commission category.");
+      }
+
+      if (!Number.isFinite(rate) || rate < 0 || rate > 100) {
+        throw new Error("Commission must be between 0 and 100 percent.");
+      }
+
+      const existing = commissionRules.find(
+        rule => rule.category.toLowerCase() === category.toLowerCase()
+      );
+
+      const values = {
+        category,
+        commission_rate: rate,
+        is_active: active,
+        updated_at: new Date().toISOString()
+      };
+
+      let result;
+
+      if (existing) {
+        result = await client
+          .from("rn_commission_rules")
+          .update(values)
+          .eq("id", existing.id);
+      } else {
+        values.created_by = currentUser.id;
+
+        result = await client
+          .from("rn_commission_rules")
+          .insert(values);
+      }
+
+      if (result.error) throw result.error;
+
+      $("commissionForm").reset();
+      $("commissionActive").value = "true";
+
+      message("commissionsMessage",
+        "Commission rule saved successfully.", "success");
+
+      await loadCommissions();
+
+    } catch (error) {
+      console.error("Commission save error:", error);
+      message("commissionsMessage",
+        "Could not save commission rule: " + error.message, "error");
+    } finally {
+      setBusy(button, false);
+    }
+  }
+
+  function editCommission(id) {
+    const rule = commissionRules.find(
+      item => String(item.id) === String(id)
+    );
+
+    if (!rule) return;
+
+    $("commissionCategory").value = rule.category || "";
+    $("commissionRate").value = rule.commission_rate ?? "";
+    $("commissionActive").value = String(Boolean(rule.is_active));
+
+    $("commissionCategory").focus();
+
+    message("commissionsMessage",
+      "Edit the selected rule and press Save Rule.", "info");
+  }
+
+  async function toggleCommission(id, currentlyActive) {
+    const newActive = !currentlyActive;
+
+    if (!confirm(
+      "Are you sure you want to " +
+      (newActive ? "activate" : "deactivate") +
+      " this commission rule?"
+    )) return;
+
+    try {
+      const { error } = await client
+        .from("rn_commission_rules")
+        .update({
+          is_active: newActive,
+          updated_at: new Date().toISOString()
+        })
+        .eq("id", id);
+
+      if (error) throw error;
+
+      await loadCommissions();
+
+    } catch (error) {
+      console.error("Commission status error:", error);
+      message("commissionsMessage",
+        "Could not change commission status: " + error.message, "error");
+    }
+  }
+
+  // LOGIN AND SIGN-OUT EVENTS
+  $("loginForm").addEventListener("submit", login);
+  $("logoutButton").addEventListener("click", logout);
+
+  // NAVIGATION
+  document.querySelectorAll("[data-section]").forEach(button => {
+    button.addEventListener("click", () => {
+      document.querySelectorAll("[data-section]").forEach(item => {
+        item.classList.toggle("active", item === button);
+      });
+
+      document.querySelectorAll(".dashboard-section").forEach(section => {
+        section.classList.toggle(
+          "hidden",
+          section.id !== button.dataset.section
+        );
+      });
     });
-  }, 0);
-});
+  });
 
-(async function initialise() {
-  try {
-    const { data, error } = await client.auth.getSession();
-    if (error) throw error;
-    await handleSession(data.session);
-  } catch (error) {
-    console.error("Initialisation failed:", error);
-    message("loginMessage",
-      "The page could not connect to your session. Check your internet connection and refresh.",
-      "error");
+  // REFRESH BUTTONS
+  $("refreshOrders").addEventListener("click", loadOrders);
+  $("refreshSellers").addEventListener("click", loadSellerApplications);
+  $("refreshOrganisers").addEventListener("click", loadOrganiserApplications);
+  $("refreshListings").addEventListener("click", loadProductListings);
+  $("refreshCommissions").addEventListener("click", loadCommissions);
+
+  // FILTERS
+  $("sellerFilter").addEventListener("change", renderSellers);
+  $("organiserFilter").addEventListener("change", renderOrganisers);
+  $("listingFilter").addEventListener("change", renderListings);
+
+  // COMMISSION FORM
+  $("commissionForm").addEventListener("submit", saveCommission);
+
+  // ACTION BUTTONS IN TABLES
+  document.addEventListener("click", event => {
+    const button = event.target.closest("[data-action]");
+    if (!button) return;
+
+    const action = button.dataset.action;
+    const id = button.dataset.id;
+
+    if (action === "application-status") {
+      updateApplicationStatus(
+        button.dataset.type,
+        id,
+        button.dataset.status
+      );
+    }
+
+    if (action === "listing-status") {
+      reviewProduct(id, button.dataset.status);
+    }
+
+    if (action === "edit-commission") {
+      editCommission(id);
+    }
+
+    if (action === "toggle-commission") {
+      toggleCommission(id, button.dataset.active === "true");
+    }
+  });
+
+  // RESTORE AN EXISTING SESSION
+  async function initialise() {
+    try {
+      const { data, error } = await client.auth.getSession();
+      if (error) throw error;
+
+      if (data.session?.user) {
+        await activateSession(data.session.user);
+      } else {
+        showLogin();
+      }
+    } catch (error) {
+      console.error("Session initialisation error:", error);
+      showLogin(
+        "Could not initialise the dashboard: " + error.message,
+        "error"
+      );
+    }
   }
+
+  // AUTH SESSION CHANGES
+  client.auth.onAuthStateChange((event, session) => {
+    if (event === "SIGNED_OUT") {
+      currentUser = null;
+      showLogin();
+    }
+  });
+
+  initialise();
+
 })();
-</script></body>
+</script>
+
+</body>
 </html>
